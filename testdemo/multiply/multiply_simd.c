@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-// gcc -g multiply.c -o multiply
+/*
+一维矩阵计算，采用NEON指令优化
+gcc -g multiply_simd.c -o multiply_simd
+*/
+
 #include <stdlib.h>
 #include <time.h>
 #include <stdio.h>
 #include <sys/time.h>
+#include <arm_neon.h>
 
 #define N    1000000000
 #define SEED    0x1234
@@ -52,6 +57,23 @@ void multiply(void)
     }
 }
 
+void multiply_neon(void)
+{
+    int i;
+    float32x4_t src1, src2, dst;
+
+    for (i = 0; i < (N & ((~(unsigned)0x3))); i += 4) {
+        src1 = vld1q_f32(a + i);
+        src2 = vld1q_f32(b + i);
+        dst = vmulq_f32(src1, src2);
+        vst1q_f32(c + i, dst);
+    }
+
+    for (; i < N; i++){
+        c[i] = a[i] * b[i];
+    }
+}
+
 void print_data(void)
 {
     printf("%f, %f, %f, %f\n", c[0], c[1], c[N-2], c[N-1]);
@@ -64,7 +86,7 @@ int main(void)
 
     gen_data();
     gettimeofday(&before, NULL);
-    multiply();
+    multiply_neon();
     gettimeofday(&after, NULL);
 
     // 1000 is used to convert tv_sec and tv_usec to msec.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// gcc -g pthread_mutex_long_mod.c -o pthread_mutex_long_mod -lpthread -lm
+// gcc -g pthread_mutex_long.c -o pthread_mutex_long -lpthread -lm
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -48,13 +48,15 @@ void* fun(void *arg)
     for (; i <= count; ++i) {
         pthread_mutex_lock(&mutex);
         num += 1;
-        printf("tid = %u, num = %d\n", pthread_self(), num);
-        pthread_mutex_unlock(&mutex);
 
         float s = 0;
-        for (int j = 0; j < N; j++) {
+        int j;
+        for (j = 0; j < N; j++) {
             s += sqrt(j);
-        }    
+        }
+
+        printf("tid = %u, num = %d\n", pthread_self(), num);
+        pthread_mutex_unlock(&mutex);
     }
 }
 

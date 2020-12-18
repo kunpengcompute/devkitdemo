@@ -31,7 +31,7 @@ struct mem_info {
     char MemAvailable[20];
     char SwapTotal[20];
     char SwapFree[20];
-}
+};
 
 typedef struct mem_info MEM_info, *pMEM_info；
 
@@ -96,15 +96,17 @@ int get_mem_info(pMEM_info mem)
 int main()
 {
     MEM_info mem;
-    char c;
+    int a;
     long long i;
 
     get_mem_info(&mem);
-    printf("\n MemTotal: %s, MemFree: %s, MemAvailable: %s, SwapTotal: %s, SwapFree: %s\n", mem.MemTotal, mem.MemFree, mem.MemAvailable, mem.SwapTotal, mem.SwapFree);
+    printf("\n MemTotal: %s, MemFree: %s, MemAvailable: %s, SwapTotal: %s, SwapFree: %s\n", \
+    mem.MemTotal, mem.MemFree, mem.MemAvailable, mem.SwapTotal, mem.SwapFree);
     long long MemFree = strtol(mem.MemFree, NULL, 10);
     long long SwapFree = strtol(mem.SwapFree, NULL, 10);
     const long long N = 900 * (MemFree + SwapFree);
-    for (int a = 0; a < M; a++) {
+
+    for (a = 0; a < M; a++) {
         char *p = (char*) malloc(sizeof(char) * N);
         for (i = 0; i < N; i += STEP) {
             p[i] = "A";
@@ -112,5 +114,6 @@ int main()
         sleep(1);
         free(p);
     }
+
     return 0;
 }

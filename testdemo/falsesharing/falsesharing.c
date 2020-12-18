@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-// gcc falsesharing_mod.c -lpthread -D _GNU_SOURCE -o falsesharing_mod -g
+// gcc falsesharing.c -lpthread -D _GNU_SOURCE -o falsesharing -g
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <stdalign.h>
 #include <sched.h>
 #include <ctype.h>
 #include <string.h>
 
-#define _GNU_SOURCE
-#define TIME_S 2000000000
-#define NUM_THREADS 4
+#define TIME_S    2000000000
+#define NUM_THREADS    4
 
 struct foo {
-    alignas(64) long x;
-    alignas(64) long y;
+    int x;
+    int y;
 };
 
 static struct foo f;
@@ -39,6 +37,7 @@ static struct foo testf;
 
 void *inc_b1(void* arg)
 {
+    int i;
     cpu_set_t mask;
     cpu_set_t get;
     int *a = (int *)arg;
@@ -54,13 +53,14 @@ void *inc_b1(void* arg)
     if (CPU_ISSET(*a, &get)) {
         printf("inc_b1 is running in %d\n", get);
     }
-    for (int i = 0; i < TIME_S; ++i) {
+    for (i = 0; i < TIME_S; ++i) {
         ++testf.y;
     }
 }
 
 void *sum_a1(void* arg)
 {
+    int i;
     cpu_set_t mask;
     cpu_set_t get;
     int *a = (int *)arg;
@@ -77,13 +77,14 @@ void *sum_a1(void* arg)
         printf("sum_a1 is running in %d\n", get);
     }
     int s = 0;
-    for (int i = 0; i < TIME_S; ++i) {
+    for (i = 0; i < TIME_S; ++i) {
         s += testf.x;
     }
 }
 
 void *sum_a(void* arg)
 {
+    int i;
     cpu_set_t mask;
     cpu_set_t get;
     int *a = (int *)arg;
@@ -100,13 +101,14 @@ void *sum_a(void* arg)
         printf("sum_a is running in %d\n", get);
     }
     int s = 0;
-    for (int i = 0; i < TIME_S; ++i) {
+    for (i = 0; i < TIME_S; ++i) {
         s += f.x;
     }
 }
 
 void *inc_b(void* arg)
 {
+    int i;
     cpu_set_t mask;
     cpu_set_t get;
     int *a = (int *)arg;
@@ -122,7 +124,7 @@ void *inc_b(void* arg)
     if (CPU_ISSET(*a, &get)) {
         printf("inc_b is running in %d\n", get);
     }
-    for (int i = 0; i < TIME_S; ++i) {
+    for (i = 0; i < TIME_S; ++i) {
         ++f.y;
     }
 }
@@ -130,11 +132,12 @@ void *inc_b(void* arg)
 int main()
 {
     int ret = 0;
+    int i;
     int tid[NUM_THREADS];
     pthread_t tids[NUM_THREADS];
     printf("start the threads\n");
 
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (i = 0; i < NUM_THREADS; i++) {
         tid[i] = i;
     }
 
@@ -154,7 +157,7 @@ int main()
     if (ret != 0) {
         printf("pthread_create inc_b1 error: error_code = %d\n", ret)
     }
-    for (int i = 0; i < NUM_THREADS; i++) {
+    for (i = 0; i < NUM_THREADS; i++) {
         pthread_join(tids[i], NULL);
     }
 
