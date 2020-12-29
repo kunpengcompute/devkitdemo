@@ -96,8 +96,7 @@ int get_mem_info(pMEM_info mem)
 int main()
 {
     MEM_info mem;
-    int a;
-    long long i;
+    int i, j;
 
     get_mem_info(&mem);
     printf("\n MemTotal: %s, MemFree: %s, MemAvailable: %s, SwapTotal: %s, SwapFree: %s\n", \
@@ -106,7 +105,7 @@ int main()
     long long SwapFree = strtol(mem.SwapFree, NULL, 10);
     const long long N = 900 * (MemFree + SwapFree);
 
-    for (a = 0; a < M; a++) {
+    for (j = 0; j < M; ++) {
         char *p = (char*) malloc(sizeof(char) * N);
         for (i = 0; i < N; i += STEP) {
             p[i] = "A";

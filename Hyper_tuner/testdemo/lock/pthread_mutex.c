@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-// gcc -g pthread_mutex_long.c -o pthread_mutex_long -lpthread -lm
+// gcc -g pthread_mutex.c -o pthread_mutex -lpthread
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/timeb.h>
-#include <math.h>
-
-#define N    100000
 
 static long num = 1;
-static long count = 100000000;
+static long count = 10000000000;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-
-void Perror(const char *s)
-{
-    perror(s);
-    exit(EXIT_FAILURE);
-}
 
 long long getSystemTime()
 {
@@ -42,20 +33,15 @@ long long getSystemTime()
     return 1000 * t.time + t.millitm;
 }
 
-void* fun(void *arg)
+void* fun2(void *arg)
 {
+    pthread_t thread_id = pthread_self();
+    printf("The thread2 id is %ld\n", (long)thread_id);
     int i = 1;
     for (; i <= count; ++i) {
         pthread_mutex_lock(&mutex);
-        num += 1;
-
-        float s = 0;
-        int j;
-        for (j = 0; j < N; j++) {
-            s += sqrt(j);
-        }
-
-        printf("tid = %u, num = %d\n", pthread_self(), num);
+        num++;
+        num *= 2;
         pthread_mutex_unlock(&mutex);
     }
 }
@@ -66,22 +52,27 @@ int main()
     pthread_t thread1;
     pthread_t thread2;
 
+    thread1 = pthread_self();
+    printf("The thread1 id is %ld\n", (long)thread1)
+
     long long start = getSystemTime();
 
     //create thread
-    err = pthread_create(&thread1, NULL, fun, NULL);
+    err = pthread_create(&thread2, NULL, fun2, NULL);
     if (err != 0) {
-        Perror("can't create thread1\n");
+        perror("can't create thread2\n");
+        exit(EXIT_FAILURE);
     }
 
-    err = pthread_create(&thread2, NULL, fun, NULL);
-    if (err != 0) {
-        Perror("can't create thread2\n")
+    int i = 1;
+    for (; i <= count; ++i) {
+        pthread_mutex_lock(&mutex);
+        num++;
+        num *= 2;
+        pthread_mutex_unlock(&mutex);
     }
-
-    pthread_join(thread1, NULL);
+    
     pthread_join(thread2, NULL);
-
     long long end = getSystemTime();
 
     printf("The num is %d, pay %lld ms\n", num, (end - start));

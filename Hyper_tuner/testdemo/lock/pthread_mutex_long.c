@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// gcc -g pthread_mutex_long_mod.c -o pthread_mutex_long_mod -lpthread -lm
+// gcc -g pthread_mutex_long.c -o pthread_mutex_long -lpthread -lm
 #include <pthread.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -29,12 +29,6 @@ static long num = 1;
 static long count = 100000000;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void Perror(const char *s)
-{
-    perror(s);
-    exit(EXIT_FAILURE);
-}
-
 long long getSystemTime()
 {
     struct timeb t;
@@ -48,14 +42,15 @@ void* fun(void *arg)
     for (; i <= count; ++i) {
         pthread_mutex_lock(&mutex);
         num += 1;
-        printf("tid = %u, num = %d\n", pthread_self(), num);
-        pthread_mutex_unlock(&mutex);
 
         float s = 0;
         int j;
         for (j = 0; j < N; j++) {
             s += sqrt(j);
-        }    
+        }
+
+        printf("tid = %u, num = %d\n", pthread_self(), num);
+        pthread_mutex_unlock(&mutex);
     }
 }
 
@@ -70,12 +65,14 @@ int main()
     //create thread
     err = pthread_create(&thread1, NULL, fun, NULL);
     if (err != 0) {
-        Perror("can't create thread1\n");
+        perror("can't create thread1\n");
+        exit(EXIT_FAILURE);
     }
 
     err = pthread_create(&thread2, NULL, fun, NULL);
     if (err != 0) {
-        Perror("can't create thread2\n")
+        perror("can't create thread2\n");
+        exit(EXIT_FAILURE);
     }
 
     pthread_join(thread1, NULL);

@@ -31,7 +31,7 @@ gcc -g cache_miss.c -o cache_miss
 int main(void)
 {
     int i, j;
-    int *p = (int*) malloc(sizeof(int) * N)
+    int *p = (int*) malloc(sizeof(int) * N);
     double msecs;
     struct timeval before, after;
 
