@@ -108,7 +108,7 @@ int main()
     for (j = 0; j < M; ++) {
         char *p = (char*) malloc(sizeof(char) * N);
         for (i = 0; i < N; i += STEP) {
-            p[i] = "A";
+            p[i] = 'A';
         }
         sleep(1);
         free(p);

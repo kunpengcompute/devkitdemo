@@ -39,7 +39,7 @@ int main(void)
 
     for (j = 0; j < ROW; j++) {
         for (i = 0; i < COL; i++) {
-            p[i + j*COL]++;
+            p[i + j*COL] = 'A';
         }
     }
 
