@@ -22,26 +22,26 @@
 #include <errno.h>
 #include <sys/timeb.h>
 
-static long num = 1;
-static long count = 10000000000;
+static long g_num = 1;
+static long g_count = 10000000000;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-long long getSystemTime()
+long long GetSystemTime()
 {
     struct timeb t;
     ftime(&t);
     return 1000 * t.time + t.millitm;
 }
 
-void* fun2(void *arg)
+void* Func(void *arg)
 {
     pthread_t thread_id = pthread_self();
     printf("The thread2 id is %ld\n", (long)thread_id);
     int i = 1;
-    for (; i <= count; ++i) {
+    for (; i <= g_count; ++i) {
         pthread_mutex_lock(&mutex);
-        num++;
-        num *= 2;
+        g_num++;
+        g_num *= 2;
         pthread_mutex_unlock(&mutex);
     }
 }
@@ -55,27 +55,27 @@ int main()
     thread1 = pthread_self();
     printf("The thread1 id is %ld\n", (long)thread1)
 
-    long long start = getSystemTime();
+    long long start = GetSystemTime();
 
     //create thread
-    err = pthread_create(&thread2, NULL, fun2, NULL);
+    err = pthread_create(&thread2, NULL, Func, NULL);
     if (err != 0) {
         perror("can't create thread2\n");
         exit(EXIT_FAILURE);
     }
 
     int i = 1;
-    for (; i <= count; ++i) {
+    for (; i <= g_count; ++i) {
         pthread_mutex_lock(&mutex);
-        num++;
-        num *= 2;
+        g_num++;
+        g_num *= 2;
         pthread_mutex_unlock(&mutex);
     }
     
     pthread_join(thread2, NULL);
-    long long end = getSystemTime();
+    long long end = GetSystemTime();
 
-    printf("The num is %d, pay %lld ms\n", num, (end - start));
+    printf("The num is %d, pay %lld ms\n", g_num, (end - start));
 
     return 0;
 }

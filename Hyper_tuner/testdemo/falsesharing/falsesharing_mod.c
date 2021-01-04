@@ -28,22 +28,22 @@
 #define TIME_S    2000000000
 #define NUM_THREADS    4
 
-struct foo {
+struct Foo {
     alignas(64) long x;
     alignas(64) long y;
 };
 
-static struct foo f;
-static struct foo testf;
+static struct Foo f;
+static struct Foo testf;
 
-void *inc_b1(void* arg)
+void *inc_b1(void *arg)
 {
     int i;
     cpu_set_t mask;
     cpu_set_t get;
-    int *a = (int *)arg;
+    int *threadNum = (int *)arg;
     CPU_ZERO(&mask);
-    CPU_SET(*a, &mask);
+    CPU_SET(*threadNum, &mask);
     if (sched_setaffinity(0, sizeof(mask), &mask) == -1) {
         printf("warning: could not set CPU affinity, continuing...\n");
     }
@@ -51,7 +51,7 @@ void *inc_b1(void* arg)
     if (sched_getaffinity(0, sizeof(get), &get) == -1) {
         printf("warning: could not get thread affinity, continuing...\n");
     }
-    if (CPU_ISSET(*a, &get)) {
+    if (CPU_ISSET(*threadNum, &get)) {
         printf("inc_b1 is running in %d\n", get);
     }
     for (i = 0; i < TIME_S; ++i) {
@@ -59,14 +59,14 @@ void *inc_b1(void* arg)
     }
 }
 
-void *sum_a1(void* arg)
+void *sum_a1(void *arg)
 {
     int i;
     cpu_set_t mask;
     cpu_set_t get;
-    int *a = (int *)arg;
+    int *threadNum = (int *)arg;
     CPU_ZERO(&mask);
-    CPU_SET(*a, &mask);
+    CPU_SET(*threadNum, &mask);
     if (sched_setaffinity(0, sizeof(mask), &mask) == -1) {
         printf("warning: could not set CPU affinity, continuing...\n");
     }
@@ -74,7 +74,7 @@ void *sum_a1(void* arg)
     if (sched_getaffinity(0, sizeof(get), &get) == -1) {
         printf("warning: could not get thread affinity, continuing...\n");
     }
-    if (CPU_ISSET(*a, &get)) {
+    if (CPU_ISSET(*threadNum, &get)) {
         printf("sum_a1 is running in %d\n", get);
     }
     int s = 0;
@@ -83,14 +83,14 @@ void *sum_a1(void* arg)
     }
 }
 
-void *sum_a(void* arg)
+void *sum_a(void *arg)
 {
     int i;
     cpu_set_t mask;
     cpu_set_t get;
-    int *a = (int *)arg;
+    int *threadNum = (int *)arg;
     CPU_ZERO(&mask);
-    CPU_SET(*a, &mask);
+    CPU_SET(*threadNum, &mask);
     if (sched_setaffinity(0, sizeof(mask), &mask) == -1) {
         printf("warning: could not set CPU affinity, continuing...\n");
     }
@@ -98,7 +98,7 @@ void *sum_a(void* arg)
     if (sched_getaffinity(0, sizeof(get), &get) == -1) {
         printf("warning: could not get thread affinity, continuing...\n");
     }
-    if (CPU_ISSET(*a, &get)) {
+    if (CPU_ISSET(*threadNum, &get)) {
         printf("sum_a is running in %d\n", get);
     }
     int s = 0;
@@ -107,14 +107,14 @@ void *sum_a(void* arg)
     }
 }
 
-void *inc_b(void* arg)
+void *inc_b(void *arg)
 {
     int i;
     cpu_set_t mask;
     cpu_set_t get;
-    int *a = (int *)arg;
+    int *threadNum = (int *)arg;
     CPU_ZERO(&mask);
-    CPU_SET(*a, &mask);
+    CPU_SET(*threadNum, &mask);
     if (sched_setaffinity(0, sizeof(mask), &mask) == -1) {
         printf("warning: could not set CPU affinity, continuing...\n");
     }
@@ -122,7 +122,7 @@ void *inc_b(void* arg)
     if (sched_getaffinity(0, sizeof(get), &get) == -1) {
         printf("warning: could not get thread affinity, continuing...\n");
     }
-    if (CPU_ISSET(*a, &get)) {
+    if (CPU_ISSET(*threadNum, &get)) {
         printf("inc_b is running in %d\n", get);
     }
     for (i = 0; i < TIME_S; ++i) {
@@ -144,19 +144,23 @@ int main()
 
     ret = pthread_create(&tids[0], NULL, sum_a, (void*)&tid[0]);
     if (ret != 0) {
-        printf("pthread_create sum_a error: error_code = %d\n", ret)
+        printf("pthread_create sum_a error: error_code = %d\n", ret);
+        exit(EXIT_FAILURE);
     }
     ret = pthread_create(&tids[1], NULL, inc_b, (void*)&tid[1]);
     if (ret != 0) {
-        printf("pthread_create inc_b error: error_code = %d\n", ret)
+        printf("pthread_create inc_b error: error_code = %d\n", ret);
+        exit(EXIT_FAILURE);
     }
     ret = pthread_create(&tids[2], NULL, sum_a1, (void*)&tid[2]);
     if (ret != 0) {
-        printf("pthread_create sum_a1 error: error_code = %d\n", ret)
+        printf("pthread_create sum_a1 error: error_code = %d\n", ret);
+        exit(EXIT_FAILURE);
     }
     ret = pthread_create(&tids[3], NULL, inc_b1, (void*)&tid[3]);
     if (ret != 0) {
-        printf("pthread_create inc_b1 error: error_code = %d\n", ret)
+        printf("pthread_create inc_b1 error: error_code = %d\n", ret);
+        exit(EXIT_FAILURE);
     }
     for (i = 0; i < NUM_THREADS; i++) {
         pthread_join(tids[i], NULL);
