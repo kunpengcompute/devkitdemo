@@ -32,7 +32,7 @@ struct MemInfo {
     char swapFree[20];
 };
 
-typedef struct MemInfo MemInfoRead, *p_MemInfoRead；
+typedef struct MemInfo MemInfoRead, *p_MemInfoRead;
 
 int GetFileLine(char *result, char *fileName, int lineNumber)
 {
