@@ -23,15 +23,19 @@ gcc -g cache_hit.c -o cache_hit
 #include <stdlib.h>
 #include <sys/time.h>
 
-#define ROW (10*1024)
-#define COL (10*1024)
-#define N   (ROW*COL)
+#define ROW (10 * 1024)
+#define COL (10 * 1024)
+#define N   (ROW * COL)
 
 
 int main(void)
 {
     int i, j;
-    int *p = (int*) malloc(sizeof(int) * N);
+    int *p = (int*)malloc(sizeof(int) * N);
+    if (p == NULL) {
+        perror("Memory allocation through malloc failed");
+        exit(EXIT_FAILURE);
+    }
     double msecs;
     struct timeval before, after;
 
@@ -39,7 +43,7 @@ int main(void)
 
     for (j = 0; j < ROW; j++) {
         for (i = 0; i < COL; i++) {
-            p[i + j*COL] = 'A';
+            p[i + j * COL] = 'A';
         }
     }
 

@@ -22,20 +22,19 @@
 #include <fcntl.h>
 
 #define MEM_PART "/proc/meminfo"
-#define STEP    4096
 #define M    50
 
-struct mem_info {
-    char MemTotal[20];
-    char MemFree[20];
-    char MemAvailable[20];
-    char SwapTotal[20];
-    char SwapFree[20];
+struct MemInfo {
+    char memTotal[20];
+    char memFree[20];
+    char memAvailable[20];
+    char swapTotal[20];
+    char swapFree[20];
 };
 
-typedef struct mem_info MEM_info, *pMEM_info；
+typedef struct MemInfo MemInfoRead, *p_MemInfoRead；
 
-int get_file_line(char *result, char *fileName, int lineNumber)
+int GetFileLine(char *result, char *fileName, int lineNumber)
 {
     FILE *filePointer = NULL;
     int i = 0;
@@ -60,13 +59,13 @@ int get_file_line(char *result, char *fileName, int lineNumber)
     strcpy(result, buffer);
 
     if (fclose(filePointer) != 0) {
-        return 0;
+        return 1;
     }
 
-    return 1;
+    return 0;
 }
 
-int get_mem_info(pMEM_info mem)
+int GetMemInfo(p_MemInfoRead mem)
 {
     const size_t BUFSIZE = 300;
     char buffer[BUFSIZE];
@@ -74,40 +73,45 @@ int get_mem_info(pMEM_info mem)
         printf("\nget_mem_info error!\n");
         return 0;
     }
-    memset(mem, 0, sizeof(MEM_info));
-    if (get_file_line(buffer, MEM_PART, 1) == 1) { // read 1st line: MemTotal
-        sscanf(buffer, "%*s %s", mem->MemTotal);
+    memset(mem, 0, sizeof(MemInfoRead));
+    if (GetFileLine(buffer, MEM_PART, 1) == 0) { // read 1st line: memTotal
+        sscanf(buffer, "%*s %s", mem->memTotal);
     }
-    if (get_file_line(buffer, MEM_PART, 2) == 1) { // read 2nd line: MemFree
-        sscanf(buffer, "%*s %s", mem->MemFree);
+    if (GetFileLine(buffer, MEM_PART, 2) == 0) { // read 2nd line: memFree
+        sscanf(buffer, "%*s %s", mem->memFree);
     }
-    if (get_file_line(buffer, MEM_PART, 3) == 1) { // read 3rd line: MemAvailable
-        sscanf(buffer, "%*s %s", mem->MemAvailable);
+    if (GetFileLine(buffer, MEM_PART, 3) == 0) { // read 3rd line: memAvailable
+        sscanf(buffer, "%*s %s", mem->memAvailable);
     }
-    if (get_file_line(buffer, MEM_PART, 15) == 1) { // read 15th line: SwapTotal
-        sscanf(buffer, "%*s %s", mem->SwapTotal);
+    if (GetFileLine(buffer, MEM_PART, 15) == 0) { // read 15th line: swapTotal
+        sscanf(buffer, "%*s %s", mem->swapTotal);
     }
-    if (get_file_line(buffer, MEM_PART, 16) == 1) { // read 16th line: SwapFree
-        sscanf(buffer, "%*s %s", mem->SwapFree);
+    if (GetFileLine(buffer, MEM_PART, 16) == 0) { // read 16th line: swapFree
+        sscanf(buffer, "%*s %s", mem->swapFree);
     }
     return 0;
 }
 
 int main()
 {
-    MEM_info mem;
+    MemInfoRead mem;
+    const int STEP = 4096;
     int j;
     long long i;
 
-    get_mem_info(&mem);
-    printf("\n MemTotal: %s, MemFree: %s, MemAvailable: %s, SwapTotal: %s, SwapFree: %s\n", \
-    mem.MemTotal, mem.MemFree, mem.MemAvailable, mem.SwapTotal, mem.SwapFree);
-    long long MemFree = strtol(mem.MemFree, NULL, 10);
-    long long SwapFree = strtol(mem.SwapFree, NULL, 10);
+    GetMemInfo(&mem);
+    printf("\n MemTotal: %s, MemFree: %s, MemAvailable: %s, SwapTotal: %s, SwapFree: %s\n", 
+        mem.memTotal, mem.memFree, mem.memAvailable, mem.swapTotal, mem.swapFree);
+    long long MemFree = strtol(mem.memFree, NULL, 10);
+    long long SwapFree = strtol(mem.swapFree, NULL, 10);
     const long long N = 900 * (MemFree + SwapFree);
 
     for (j = 0; j < M; j++) {
         char *p = (char*) malloc(sizeof(char) * N);
+        if (p == NULL) {
+            perror("Memory allocation through malloc failed");
+            exit(EXIT_FAILURE);
+        }
         for (i = 0; i < N; i += STEP) {
             p[i] = 'A';
         }

@@ -27,39 +27,44 @@ gcc -g multiply.c -o multiply
 #define N    1000000000
 #define SEED    0x1234
 
-float *a, *b, *c;
+float *g_a, *g_b, *g_c;
 
 void gen_data(void)
 {
     unsigned i;
-    a = (float*) malloc(N * sizeof(float));
-    b = (float*) malloc(N * sizeof(float));
-    c = (float*) malloc(N * sizeof(float));
+    g_a = (float*)malloc(N * sizeof(float));
+    g_b = (float*)malloc(N * sizeof(float));
+    g_c = (float*)malloc(N * sizeof(float));
+
+    if (g_a == NULL || g_b == NULL || g_c == NULL) {
+        perror("Memory allocation through malloc failed");
+        exit(EXIT_FAILURE);
+    }
     
     for (i = 0; i < N; i++) {
-        a[i] = (float)(SEED * 0.1);
-        b[i] = (float)(SEED * 0.1);
+        g_a[i] = (float)(SEED * 0.1);
+        g_b[i] = (float)(SEED * 0.1);
     }
 }
 
 void free_data(void)
 {
-    free(a);
-    free(b);
-    free(c);
+    free(g_a);
+    free(g_b);
+    free(g_c);
 }
 
 void multiply(void)
 {
     unsigned i;
     for (i = 0; i < N; i++) {
-        c[i] = a[i] * b[i];
+        g_c[i] = g_a[i] * g_b[i];
     }
 }
 
 void print_data(void)
 {
-    printf("%f, %f, %f, %f\n", c[0], c[1], c[N-2], c[N-1]);
+    printf("%f, %f, %f, %f\n", g_c[0], g_c[1], g_c[N - 2], g_c[N - 1]);
 }
 
 int main(void)
