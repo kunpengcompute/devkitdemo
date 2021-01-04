@@ -36,13 +36,12 @@ void gen_data(void)
     g_a = (float*)malloc(N * sizeof(float));
     g_b = (float*)malloc(N * sizeof(float));
     g_c = (float*)malloc(N * sizeof(float));
-    
     if (g_a == NULL || g_b == NULL || g_c == NULL) {
         perror("Memory allocation through malloc failed");
         exit(EXIT_FAILURE);
     }
-
     for (i = 0; i < N; i++) {
+        // SEED * 0.1 is used to get duplicated random number
         g_a[i] = (float)(SEED * 0.1);
         g_b[i] = (float)(SEED * 0.1);
     }
@@ -75,19 +74,20 @@ void multiply_neon(void)
         vst1q_f32(g_c + i, dst);
     }
 
-    for (; i < N; i++){
+    for (; i < N; i++) {
         g_c[i] = g_a[i] * g_b[i];
     }
 }
 
 void print_data(void)
 {
+    // print first 2 and last 2 element.
     printf("%f, %f, %f, %f\n", g_c[0], g_c[1], g_c[N - 2], g_c[N - 1]);
 }
 
 int main(void)
 {
-    double start = 0.0, stop = 0.0, msecs;
+    double msecs;
     struct timeval before, after;
 
     gen_data();

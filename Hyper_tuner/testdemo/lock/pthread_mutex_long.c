@@ -62,7 +62,7 @@ int main()
 
     long long start = GetSystemTime();
 
-    //create thread
+    // create thread
     err = pthread_create(&thread1, NULL, Func, NULL);
     if (err != 0) {
         perror("can't create thread1\n");

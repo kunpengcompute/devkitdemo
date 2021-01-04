@@ -96,15 +96,16 @@ int main()
 {
     MemInfoRead mem;
     const int STEP = 4096;
+    const int MALLOC_SIZE = 900;
     int j;
     long long i;
 
     GetMemInfo(&mem);
     printf("\n MemTotal: %s, MemFree: %s, MemAvailable: %s, SwapTotal: %s, SwapFree: %s\n", 
         mem.memTotal, mem.memFree, mem.memAvailable, mem.swapTotal, mem.swapFree);
-    long long MemFree = strtol(mem.memFree, NULL, 10);
-    long long SwapFree = strtol(mem.swapFree, NULL, 10);
-    const long long N = 900 * (MemFree + SwapFree);
+    long long MemFree = strtol(mem.memFree, NULL, 10); // convert string to long int base 10
+    long long SwapFree = strtol(mem.swapFree, NULL, 10); // convert string to long int base 10
+    const long long N = MALLOC_SIZE * (MemFree + SwapFree);
 
     for (j = 0; j < M; j++) {
         char *p = (char*) malloc(sizeof(char) * N);
