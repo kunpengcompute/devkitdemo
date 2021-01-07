@@ -41,8 +41,8 @@ int main(void)
 
     gettimeofday(&before, NULL);
 
-    for (i = 0; i < ROW; j++) {
-        for (j = 0; j < COL; i++) {
+    for (i = 0; i < ROW; i++) {
+        for (j = 0; j < COL; j++) {
             p[i + j * COL] = 'A';
         }
     }
