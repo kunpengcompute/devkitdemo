@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-for i in {1..20};
+for i in {1..200};
 do
 	taskset -c 1 ./cache_miss;
 done
