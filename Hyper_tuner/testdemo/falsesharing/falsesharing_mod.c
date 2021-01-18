@@ -29,8 +29,8 @@
 #define NUM_THREADS    4
 
 struct Foo {
-    alignas(64) long x;
-    alignas(64) long y;
+    alignas(128) long x;
+    alignas(128) long y;
 };
 
 static struct Foo f;
