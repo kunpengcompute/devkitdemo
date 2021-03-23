@@ -3,7 +3,7 @@ RELEASE=202011
 
 CURDIR = ${sheLL pwd}
 ifdef __x86_64__
-	FLAGS = -g -DDEBUG -W -Wall -fPI
+	FLAGS = -g -DDEBUG -W -Wall -fPIC
 else ifdef __aarch64__
 	FLAGS = -g -DDEBUG -W -Wall -fPIC -march=armv8-a -fsigned-char
 endif
