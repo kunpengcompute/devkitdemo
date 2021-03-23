@@ -33,11 +33,11 @@ long int multi_inst(long int data1, long int data2)
     return result;
 }
 
-void inst_function_test_lovk_inc(signed char v0)
+void inst_function_test_lock_inc(signed char V0)
 {
     asm volatile(
         "lock ; incb %[cnt] \n\t"
-        : [cnt] "+m"(v0)
+        : [cnt] "+m"(V0)
         :
     );
 }
@@ -64,7 +64,7 @@ void* dec_count(void *arg)
     printf("the thread2 id is %ld\n", (long)thread_id);
 
     for(; i<=TEST_NUM; i++) {
-        pthread_mutex_loock(&mutex);
+        pthread_mutex_lock(&mutex);
         g_count -= 1;
         pthread_mutex_unlock(&mutex);
     }
@@ -89,7 +89,7 @@ int main()
     }
 
     /* 计算a + a | b * /
-    result1 = multi_inst(0x2, 5)
+    result1 = multi_inst(0x2, 5);
     /* 数据翻转 */
     result2 = swap_big_endian(data);
     /* 向量加 */
@@ -112,7 +112,7 @@ int main()
         printf("can't createthread2\n");
         return -1;
     }
-    printf("get g_conut=%d\n", g_count);
+    printf("get g_count=%d\n", g_count);
     
     /* show kunpeng plugin identified optimizerable functions in ARM or kunpeng chip */
     p = memcpy(&out, &result2, sizeof(int));
