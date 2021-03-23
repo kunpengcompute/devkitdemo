@@ -5,7 +5,7 @@
 caller:
 .LFB0:
     .cfi_startproc
-    pusha %rbq
+    pushq %rbp
     .cfi_def_cfa_offset 16
     .cfi_offset 6, -16
     movq %rsp, %rbp
@@ -20,7 +20,7 @@ caller:
     ret
     .cfi_endproc
 .LFE0:
-    size caller, .caller
+    .size caller, .caller
     .ident "GCC: (GNU) 4.8.5 20150623 (NeoKylin 4.8.5-36)"
     .section .note.GNU-stack,"",@progbits
     
