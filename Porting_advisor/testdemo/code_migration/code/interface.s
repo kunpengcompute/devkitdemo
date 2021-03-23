@@ -20,7 +20,7 @@ caller:
     ret
     .cfi_endproc
 .LFE0:
-    .size   caller, .caller
+    .size   caller, .-caller
     .ident  "GCC: (GNU) 4.8.5 20150623 (NeoKylin 4.8.5-36)"
     .section    .note.GNU-stack,"",@progbits
     
