@@ -69,7 +69,7 @@ __unnamed_1:
     .size   __unnamed_1, 8
 
     .type   simulation_stack,@object // @simulation_stack
-    .section    .tbss.simulation_stack,"aGwt",@nobits,simulation_stack,comdat
+    .section    .tbss.simulation_stack,"aGwT",@nobits,simulation_stack,comdat
     .globl simulation_stack
     .p2align    4
 simulation_stack:
@@ -77,7 +77,7 @@ simulation_stack:
     .size   simulation_stack, 8388608
     
     .type   simulation_stack_pointer,@object // @simulation_stack_pointer
-    .section    .tbss.simulation_stack_pointer,"aGwt",@nobits,simulation_stack_pointer,comdat
+    .section    .tbss.simulation_stack_pointer,"aGwT",@nobits,simulation_stack_pointer,comdat
     .globl simulation_stack_pointer
     .p2align    3
 simulation_stack_pointer:
