@@ -1,7 +1,7 @@
 VERSION=1.0
 RELEASE=202011
 
-CURDIR = ${sheLL pwd}
+CURDIR = ${shell pwd}
 FLAGS = -g -DDEBUG -W -Wall -fPIC
 GLIBS = -lm -lrt -pthread -lz
 
