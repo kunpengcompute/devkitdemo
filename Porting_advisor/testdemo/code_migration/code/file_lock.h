@@ -33,7 +33,7 @@ typedef struct z_stream_s {
     unsigned int avail_in; /* number of bytes available at next_in */
     long total_in; /*total number of input bytes read so far */
 
-char *next_out; /* next output byte will go here */
+    char *next_out; /* next output byte will go here */
     unsigned int avail_out; /* remaining free space at next_out */
     long total_out; /* total numberi of bytes output so far */
     
