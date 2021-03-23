@@ -1,7 +1,7 @@
 VERSION=1.0
 RELEASE=202011
 
-CURDIR = ${sheLL pwd}
+CURDIR = ${shell pwd}
 ifdef __x86_64__
 	FLAGS = -g -DDEBUG -W -Wall -fPIC
 else ifdef __aarch64__
@@ -10,7 +10,7 @@ endif
 GLIBS = -lm -lrt -pthread -lz
 
 PATK: file_lock.o ksw.o interface.o 
-	gcc -o PATK $(FLAGS) ./ file_lock.o ./ksw.o ./interface.o $(GLIBS)
+	gcc -o PATK $(FLAGS) ./file_lock.o ./ksw.o ./interface.o $(GLIBS)
 
 file_lock.o: file_lock.c
 	gcc -o file_lock.o -c file_lock.c
