@@ -3,7 +3,7 @@
     .p2align 4        // -- Begin function sub_0_caller_wrapper
     .type sub_0_caller_wrapper,@function
 sub_0_caller_wrapper:               // @sub_0_caller_wrapper
-// %bb.0
+// %bb.0:
     and x8, x0, #0xffffffff
     str q0, [sp, #-16]!
     ldp x9, x10, [sp], #16
@@ -28,12 +28,12 @@ caller:                                  //@caller
     add x10,x10, :tprel_lo12_nc:simulation_stack
     add x8, x8, :tprel_hi12:simulation_stack_pointer
     add x9, x10, x9
-    adrp x10, _unnamed_1
+    adrp x10, __unnamed_1
     add x8, x8, :tprel_lo12_nc:simulation_stack_pointer
-    add x10, x10, :lo12__unnamed_1
+    add x10, x10, :lo12:__unnamed_1
     //APP
     stur x30, [sp, #-16]
-    sub sp, sp, #16             // ==16
+    sub sp, sp, #16             // =16
     mov x21, x8
     mov x22, x9
     ldr x20, [x21]
