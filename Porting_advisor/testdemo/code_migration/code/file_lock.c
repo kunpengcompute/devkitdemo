@@ -6,12 +6,12 @@
 #define TEST_NUM 10000000
 
 static int g_count = 0;
-static pthread_mutesx_t mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* 存储大小端交换 */
 unsigned int swap_big_endian(unsigned int data)
 {
-    unsigned int reault = 0;
+    unsigned int result = 0;
     /* 汇编倒序指令 */
     __asm__("bswap %0" : "=r" (result) : "0" (data));
     return result;
@@ -21,10 +21,11 @@ long int multi_inst(long int data1, long int data2)
 {
     long int result = 0;
     __asm__ __volatile("nop\n\t"
-    "mova %[data1], %%rax\n\t"
+    "movq %[data1], %%rax\n\t"
     "movl $4, %%ecx\n\t"
     "addq %%rax, %%rax\n\t"
     "orq %[data2], %%rax\n"
+    "movq %%rax, %0\n"
     :"=r"(result)
     :[data1]"r"(data1), [data2]"r"(data2)
     :"rax", "ecx", "cc", "memory"
@@ -32,7 +33,16 @@ long int multi_inst(long int data1, long int data2)
     return result;
 }
 
-/* 对全局变量g_cout进行加操作 */
+void inst_function_test_lovk_inc(signed char v0)
+{
+    asm volatile(
+        "lock ; incb %[cnt] \n\t"
+        : [cnt] "+m"(v0)
+        :
+    );
+}
+
+/* 对全局变量g_count进行加操作 */
 void* inc_count(void *arg)
 {
     int i = 0;
@@ -40,13 +50,13 @@ void* inc_count(void *arg)
     printf("the thread1 id is %ld\n", (long)thread_id);
 
     for(; i<=TEST_NUM; i++) {
-        pthread_mutes_loock(&mutex);
-        g_count += 1；
+        pthread_mutex_lock(&mutex);
+        g_count += 1;
         pthread_mutex_unlock(&mutex);
     }
 }
 
-/* 对全局变量g_cout进行减操作 */
+/* 对全局变量g_count进行减操作 */
 void* dec_count(void *arg)
 {
     int i = 0;
@@ -54,8 +64,8 @@ void* dec_count(void *arg)
     printf("the thread2 id is %ld\n", (long)thread_id);
 
     for(; i<=TEST_NUM; i++) {
-        pthread_mutes_loock(&mutex);
-        g_count -= 1；
+        pthread_mutex_loock(&mutex);
+        g_count -= 1;
         pthread_mutex_unlock(&mutex);
     }
 }
@@ -85,26 +95,27 @@ int main()
     /* 向量加 */
     __m128i sumVec = add_epi(result1, result2);
     uint16_t *valVec = (uint16_t*)&sumVec;
-    printf("sun vec: %x %X %x %x %x %X %x %x \n",
+    printf("sum vec: %x %x %x %x %x %x %x %x \n",
         valVec[0], valVec[1], valVec[2], valVec[3],
         valVec[4], valVec[5], valVec[6], valVec[7]);
 
     /* Create thread1 */
-    ret = pthread_create(&thread1, NULL, inc_conut, NULL);
+    ret = pthread_create(&thread1, NULL, inc_count, NULL);
     if (ret != 0 ) {
         printf("can't createthread1\n");
         return -1;
     }
 
     /* Create thread2 */
-    ret = pthread_create(&thread2, NULL, dec_conut, NULL);
+    ret = pthread_create(&thread2, NULL, dec_count, NULL);
     if (ret != 0 ) {
         printf("can't createthread2\n");
         return -1;
     }
-
+    printf("get g_conut=%d\n", g_count);
+    
     /* show kunpeng plugin identified optimizerable functions in ARM or kunpeng chip */
-    p = memecpy(&out, &result2, sizeof(int));
+    p = memcpy(&out, &result2, sizeof(int));
     if (p == NULL) {
         printf("memcpy failed\n");
         return -1;
