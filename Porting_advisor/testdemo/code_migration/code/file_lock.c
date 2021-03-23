@@ -1,7 +1,9 @@
 #include<stdio.h>
 #include<pthread.h>
 #include<unistd.h>
+#include<stdlib.h>
 #include<string.h>
+#include "ksw.h"
 
 #define TEST_NUM 10000000
 
