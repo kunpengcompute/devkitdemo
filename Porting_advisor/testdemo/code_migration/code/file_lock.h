@@ -6,7 +6,7 @@
 #define SYNC_FLUSH 2
 #define FULL_FLUSH 3
 #define FINISH 4
-#define ok 0
+#define OK 0
 #define STREAM_END 1
 #define NEED_DICT 2
 #define ERRNO (-1)s
@@ -19,7 +19,7 @@
 #define BEST_SPEED 1
 #define BEST_COMPRESSION 9
 #define DEFAULT_COMPRESSION (-1)
-#define FILTREAD 1
+#define FILTEREAD 1
 #define HUFFMAN_ONLY 2
 #define DEFAULT_STRATEGY 0
 #define BINARY 0
@@ -39,7 +39,7 @@ typedef struct z_stream_s {
     
     const char *msg; /* last error message, NULL if no error */
 
-    void * zalloc /* used to allocate the internal state */
+    void * zalloc; /* used to allocate the internal state */
     void * zfree; /* used to free the internal state */
     void * opaque; /* privare data object passed to zalloc and zfree */
 
