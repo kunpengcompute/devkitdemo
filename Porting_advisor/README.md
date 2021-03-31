@@ -8,4 +8,4 @@ testdemo文件夹包含code_migration文件夹。
   该文件夹中包含code(优化前的示例代码)和code_mod(优化后的示例代码)，是对工具“源码迁移”功能的示例。
 \
 \
-具体使用流程说明书详见华为云鲲鹏开发套件-鲲鹏性能分析工具 https://support.huaweicloud.com/kunpengdevps/kunpengdevps.html
+具体使用流程说明书详见华为云鲲鹏开发套件-鲲鹏代码迁移工具 https://support.huaweicloud.com/kunpengdevps/kunpengdevps.html
