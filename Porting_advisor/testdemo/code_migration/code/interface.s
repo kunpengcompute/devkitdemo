@@ -16,7 +16,7 @@
  
     .file   "test.s"
     .text
-    .globa  caller
+    .globl  caller
     .type   caller, @function
 caller:
 .LFB0:
