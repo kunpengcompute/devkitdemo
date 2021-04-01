@@ -23,7 +23,7 @@ PATK: file_lock.o ksw.o interface.o
 	gcc -o PATK $(FLAGS) ./file_lock.o ./ksw.o ./interface.o $(GLIBS)
 
 file_lock.o: file_lock.c
-	gcc -o file_lock.o $(FLAGS) -c file_lock.c
+	gcc -o file_lock.o -c file_lock.c
 
 ksw.o: ksw.c
 	gcc -o ksw.o $(FLAGS) -c ksw.c
