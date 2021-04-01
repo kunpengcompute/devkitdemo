@@ -97,7 +97,6 @@ int main()
     unsigned int data = 0x12345678;
     unsigned int result1, result2;
     unsigned int out;
-    unsigned int ans = 0;
     int n, t;
 
     for (n = 1; n <= 20000000; n = n +1)
@@ -105,7 +104,7 @@ int main()
         t += 1;
     }
 
-    /* 计算a + a | b * /
+    /* 计算a + a | b */
     result1 = multi_inst(0x2, 5);
     /* 数据翻转 */
     result2 = swap_big_endian(data);
