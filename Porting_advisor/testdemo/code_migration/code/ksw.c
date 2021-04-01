@@ -22,7 +22,7 @@ __m256i add_epi(unsigned int data1, unsigned int data2)
 {
     __m256i i2561 = _mm256_set1_epi32(data1);
     __m256i i2562 = _mm256_set1_epi32(data2);
-    __m256i result256 = _mm32_sub_epi32(i2561, i2562);
+    __m256i result256 = _mm256_sub_epi32(i2561, i2562);
     return result256;
 }
 
@@ -30,6 +30,6 @@ __m256i max_epi(unsigned int data1, unsigned int data2)
 {
     __m256i i2561 = _mm256_set1_epi32(data1);
     __m256i i2562 = _mm256_set1_epi32(data2);
-    __m256i result256 = _mm32_max_epi32(i2561, i2562);
+    __m256i result256 = _mm256_max_epi32(i2561, i2562);
     return result256;
 }
