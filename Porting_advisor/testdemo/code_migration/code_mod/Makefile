@@ -16,11 +16,7 @@ VERSION=1.0
 RELEASE=202011
 
 CURDIR = ${shell pwd}
-ifdef __x86_64__
-	FLAGS = -g -DDEBUG -W -Wall -fPIC
-else ifdef __aarch64__
-	FLAGS = -g -DDEBUG -W -Wall -fPIC -std=gnu99 -march=armv8-a -fsigned-char
-endif
+FLAGS = -g -DDEBUG -W -Wall -fPIC -std=gnu99 -march=armv8-a -fsigned-char
 GLIBS = -lm -lrt -pthread -lz
 
 PATK: file_lock.o ksw.o interface.o 
