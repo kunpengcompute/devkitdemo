@@ -19,7 +19,7 @@ CURDIR = ${shell pwd}
 ifdef __x86_64__
 	FLAGS = -g -DDEBUG -W -Wall -fPIC
 else ifdef __aarch64__
-	FLAGS = -g -DDEBUG -W -Wall -fPIC -march=armv8-a -fsigned-char
+	FLAGS = -g -DDEBUG -W -Wall -fPIC -std=gnu99 -march=armv8-a -fsigned-char
 endif
 GLIBS = -lm -lrt -pthread -lz
 
@@ -27,10 +27,10 @@ PATK: file_lock.o ksw.o interface.o
 	gcc -o PATK $(FLAGS) ./file_lock.o ./ksw.o ./interface.o $(GLIBS)
 
 file_lock.o: file_lock.c
-	gcc -o file_lock.o -c file_lock.c
+	gcc -o file_lock.o $(FLAGS) -c file_lock.c
 
 ksw.o: ksw.c
-	gcc -o ksw.o -c ksw.c
+	gcc -o ksw.o $(FLAGS) -c ksw.c
 
 interface.o: interface.s
 	@gcc -c ./interface.s
