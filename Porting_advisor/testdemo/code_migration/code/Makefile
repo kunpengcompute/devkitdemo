@@ -16,7 +16,7 @@ VERSION=1.0
 RELEASE=202011
 
 CURDIR = ${shell pwd}
-FLAGS = -g -DDEBUG -W -Wall -fPIC -std=c99
+FLAGS = -g -DDEBUG -W -Wall -fPIC -std=gnu99
 GLIBS = -lm -lrt -pthread -lz
 
 PATK: file_lock.o ksw.o interface.o 
