@@ -22,7 +22,7 @@
 #endif
 
 
-__m128i add_epi(unsigned int data1, unsigned int data2);
-__m128i max_epi(unsigned int data1, unsigned int data2);
+__m256i add_epi(unsigned int data1, unsigned int data2);
+__m256i max_epi(unsigned int data1, unsigned int data2);
 
 #endif
