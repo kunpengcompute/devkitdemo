@@ -152,7 +152,7 @@ int main()
     __m256i sumVec = add_epi(result1, result2);
     uint32_t *valVec = (uint32_t*)&sumVec;
     printf("sum vec: %x %x %x %x \n",
-        valVec[0], valVec[1], valVec[2], valVec[3];
+        valVec[0], valVec[1], valVec[2], valVec[3]);
 
     /* Create thread1 */
     ret = pthread_create(&thread1, NULL, inc_count, NULL);
