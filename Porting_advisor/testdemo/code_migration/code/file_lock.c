@@ -97,7 +97,6 @@ int main()
     unsigned int data = 0x12345678;
     unsigned int result1, result2;
     unsigned int out;
-    unsigned int ans = 0;
     int n, t;
 
     for (n = 1; n <= 20000000; n = n +1)
@@ -105,16 +104,15 @@ int main()
         t += 1;
     }
 
-    /* 计算a + a | b * /
+    /* 计算a + a | b */
     result1 = multi_inst(0x2, 5);
     /* 数据翻转 */
     result2 = swap_big_endian(data);
     /* 向量加 */
-    __m128i sumVec = add_epi(result1, result2);
-    uint16_t *valVec = (uint16_t*)&sumVec;
-    printf("sum vec: %x %x %x %x %x %x %x %x \n",
-        valVec[0], valVec[1], valVec[2], valVec[3],
-        valVec[4], valVec[5], valVec[6], valVec[7]);
+    __m256i sumVec = add_epi(result1, result2);
+    uint32_t *valVec = (uint32_t*)&sumVec;
+    printf("sum vec: %x %x %x %x \n",
+        valVec[0], valVec[1], valVec[2], valVec[3]);
 
     /* Create thread1 */
     ret = pthread_create(&thread1, NULL, inc_count, NULL);

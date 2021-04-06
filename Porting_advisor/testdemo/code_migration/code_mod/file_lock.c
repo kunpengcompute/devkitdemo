@@ -149,11 +149,10 @@ int main()
     /* 翻转数据 */
     result2 = swap_big_endian(data);
     /* 向量加 */
-    __m128i sumVec = add_epi(result1, result2);
-    uint16_t *valVec = (uint16_t*)&sumVec;
-    printf("sum vec: %x %x %x %x %x %x %x %x \n",
-        valVec[0], valVec[1], valVec[2], valVec[3],
-        valVec[4], valVec[5], valVec[6], valVec[7]);
+    __m256i sumVec = add_epi(result1, result2);
+    uint32_t *valVec = (uint32_t*)&sumVec;
+    printf("sum vec: %x %x %x %x \n",
+        valVec[0], valVec[1], valVec[2], valVec[3]);
 
     /* Create thread1 */
     ret = pthread_create(&thread1, NULL, inc_count, NULL);
