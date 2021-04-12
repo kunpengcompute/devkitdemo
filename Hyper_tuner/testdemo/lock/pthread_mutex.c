@@ -53,7 +53,7 @@ int main()
     pthread_t thread2;
 
     thread1 = pthread_self();
-    printf("The thread1 id is %ld\n", (long)thread1)
+    printf("The thread1 id is %ld\n", (long)thread1);
 
     long long start = GetSystemTime();
 
