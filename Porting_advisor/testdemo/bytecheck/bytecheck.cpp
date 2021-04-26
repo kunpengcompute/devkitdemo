@@ -100,7 +100,7 @@ enum myEnum1{
 };
 
 enum myEnum2{
-    MON2=-1, TUE2, WED2, TUE2=2, FRI2='a', SAT2=123456
+    MON2=-1, TUE2, WED2, THU2=2, FRI2='a', SAT2=123456
 };
 
 struct myStruct12{
