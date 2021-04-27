@@ -117,10 +117,12 @@ int main(){
     cout << "验证自定义基本类型" << endl;
     struct myStruct0 tempStruct0;
     struct myStruct1 tempStruct1;
+
+    cout << "验证嵌套使用struct" << endl;
     struct myStruct2 tempStruct2;
     struct myStruct3 tempStruct3;
 
-    cout << "验证引入其他自定义文件内struct的使用 && 嵌套使用struct" << endl;
+    cout << "验证引入其他自定义文件内struct的使用" << endl;
     struct myStruct4 tempStruct4;
 
     cout << "验证位域不提示" << endl;
