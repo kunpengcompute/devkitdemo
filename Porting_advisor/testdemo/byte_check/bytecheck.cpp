@@ -19,7 +19,7 @@
 #include "bytecheck.hpp"
 using namespace std;
 
-/* 验证引入其他自定义文件内struct的使用 && 嵌套使用struct */
+/* 验证引入其他自定义文件内struct的使用 */
 typedef struct myStruct4{
 	char value4_1;
 	int value4_2;
