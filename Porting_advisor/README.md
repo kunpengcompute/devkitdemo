@@ -6,7 +6,7 @@
 testdemo文件夹包含code_migration文件夹。
 - code_migration \
   该文件夹中包含code(优化前的示例代码)和code_mod(优化后的示例代码)，是对工具“源码迁移”功能的示例。
-- bytecheck \
+- byte_check \
   该文件夹中包含bytecheck(示例代码)，是对工具“增强功能-结构体字节对齐检查”功能的示例。
 \
 \
