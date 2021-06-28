@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright 2020 Huawei Technologies Co., Ltd
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ void thread0()
     pthread_mutex_lock(&g_valLock);
     x = 1;
     y = 1; // 锁保护，不会被扫描出
-    pthread_mutex_lock(&g_valLock);
+    pthread_mutex_unlock(&g_valLock);
 }
 
 void thread1()
@@ -33,7 +33,7 @@ void thread1()
     pthread_mutex_lock(&g_valLock);
     r1 = y;
     r2 = x; // 锁保护，不会被扫描出
-    pthread_mutex_lock(&g_valLock);
+    pthread_mutex_unlock(&g_valLock);
 }
 
 int main()
