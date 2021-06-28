@@ -9,7 +9,7 @@ testdemo文件夹包含code_migration,byte_check,asm_trans,weak_consistency文�
 - byte_check \
   该文件夹中包含bytecheck(示例代码)，是对工具“增强功能-结构体字节对齐检查”功能的示例。
 - asm_trans \
-  该文件夹中包含all_asm(全汇编示例代码)、mult_inline_asm(嵌入式汇编多指令示例代码)和single_inline_asm(嵌入式汇编单指令示例代码)三个使用内嵌汇编的示例代码，是对工具“”功能的示例。
+  该文件夹中包含all_asm(全汇编示例代码)、mult_inline_asm(嵌入式汇编多指令示例代码)和single_inline_asm(嵌入式汇编单指令示例代码)三个使用内嵌汇编的示例代码，是对工具“源码迁移”功能的示例。
 - weak_consistency \
   该文件夹中包含atomic(使用c++ atomic的示例代码)、common(普通场景的示例代码)和lock(含锁保护的示例代码)，是对工具“增强功能-内存一致性检查”功能的示例。
 \
