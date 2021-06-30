@@ -23,7 +23,7 @@ void func002(void)
     char *c = NULL;
     int *p = NULL;
 
-    c = pclose;
+    c = p;
 }
 
 int main(int argc, char *argv[])
