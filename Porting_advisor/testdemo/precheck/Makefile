@@ -23,14 +23,14 @@ func001: func001.o
 	${CC} ${CFLAGS} -o $@ func001.c
 
 func002: func002.o
-	${CC} ${CFLAGS} -o $@ func001.c
+	${CC} ${CFLAGS} -o $@ func002.c
 
 func003: func003.o
-	${CC} ${CFLAGS} -o $@ func001.c
+	${CC} ${CFLAGS} -o $@ func003.c
 
 func004: func004.o
-	${CC} ${CFLAGS} -o $@ func001.c
+	${CC} ${CFLAGS} -o $@ func004.c
 
 .PHONY: clean
 clean:
-	rm -rf ${cleanfile} ${prog}
+	rm -f ${cleanfile} ${prog}
