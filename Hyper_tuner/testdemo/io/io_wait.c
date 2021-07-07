@@ -63,12 +63,12 @@ long int get_value(char *str)
     return value;
 }
 
-void sub_process(const char *disk, size_t, buffer_size, size_t count)
+void sub_process(const char *disk, size_t buffer_size, size_t count)
 {
     int fd = open(disk, O_RDONLY | O_DIRECT | O_LARGEFILE, 0755);
     if (fd < 0)
     {
-        peeor("failed to open disk");
+        perror("failed to open disk");
         _exit(1);
     }
 
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
     char *size = NULL;
     char *count = NULL;
 
-    while ((c = getopt(argc, argv, "d:s:c")) != -1)
+    while ((c = getopt(argc, argv, "d:s:c:")) != -1)
     {
         switch (c)
         {
@@ -111,8 +111,11 @@ int main(int argc, char **argv)
             case 's':
                 size = optarg;
                 break;
+            case 'c':
+                count = optarg;
+                break;
             case '?':
-                print("Illegal option: -%c\n", isprint(optopt) ? optopt: '#');
+                printf("Illegal option: -%c\n", isprint(optopt) ? optopt: '#');
                 _exit(1);
             default:
                 _exit(1);
