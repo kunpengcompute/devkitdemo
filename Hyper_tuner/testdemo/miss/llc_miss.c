@@ -21,7 +21,7 @@ int main(void)
 
 void llcMiss3Array(int *** pArr, int x, int y, int z, int m)
 {
-    int 1, j, k;
+    int i, j, k;
 	pArr = (int ***)malloc(m * sizeof(int **));
 	
 	for (i = 0; i < x; i++)
@@ -32,7 +32,7 @@ void llcMiss3Array(int *** pArr, int x, int y, int z, int m)
 		    pArr[i][j] = (int *)malloc(z * sizeof(int));
 			for (k = 0; k < z; k++)
 			{
-			    pArr[1][j][k] = 100*(i + j + k + 1) + 1000*x + 100*y + 10*z + 101*m + 19999999999;
+			    pArr[i][j][k] = 100*(i + j + k + 1) + 1000*x + 100*y + 10*z + 101*m + 19999999999;
 				printf("%d ", pArr[i][j][k]);
 			}
 			printf("\n");
