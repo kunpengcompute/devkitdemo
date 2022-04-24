@@ -274,7 +274,7 @@ static int ReadFile (const char *filePath, char *fileContent)
     {
         return 0;
     }
-    int readSize = fread (fileContent, 1, FILE_SIZE_MAX, pFile);
+    int readSize = fread (fileContent, 1, FILE_SIZE_MAX + 1, pFile);
     if (readSize > FILE_SIZE_MAX || readSize == 0)
     {
         printf ("The maximum file size is 4096B.\n");
@@ -354,10 +354,10 @@ static void Encrypt (const char *key, const char *filePath)
     if (!CheckKey (key))
     {
         printf ("Check if the key is legal!\n");
-        exit(EXIT_FAILURE);
+        Usage (EXIT_FAILURE);
     }
     TEEC_Result result;
-    char fileContent[FILE_SIZE_MAX];
+    char fileContent[FILE_SIZE_MAX + 1];
     int fileSize = ReadFile (filePath, fileContent);
     if (fileSize > 0)
     {
@@ -375,7 +375,7 @@ static void Encrypt (const char *key, const char *filePath)
     else
     {
         printf ("Check if the file is legal!\n");
-        exit(EXIT_FAILURE);
+        Usage (EXIT_FAILURE);
     }
 }
 
@@ -384,7 +384,7 @@ static void Decrypt (const char *key, const char *outputFilePath)
     if (!CheckKey (key))
     {
         printf ("Check if the key is legal!\n");
-        exit(EXIT_FAILURE);
+        Usage (EXIT_FAILURE);
     }
     TEEC_Result result;
     char fileContent[FILE_SIZE_MAX];
