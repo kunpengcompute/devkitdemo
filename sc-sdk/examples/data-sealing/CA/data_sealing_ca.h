@@ -34,7 +34,7 @@
 #define PARAMS_IDX2        2  //params参数的下标索引 2
 #define PARAMS_IDX3        3  //params参数的下标索引 3
 
-#define DATA_SEALING_TA_UUID        "7824610d-0e54-4448-a905-86fffeeff327"
+#define DATA_SEALING_TA_UUID        "7824610d-0e54-4448-a905-86fffeeff327"    //开发者证书UUID[需根据实际情况进行修改]
 #define DATA_SEALING_TA_DIR_NAME    "/data/"
 #define DATA_SEALING_TA_SUFFIX      ".sec"
 
@@ -42,8 +42,8 @@
 
 typedef enum
 {
-    CMD_DATA_SEALING_READ_FILE = 0X1,
-    CMD_DATA_SEALING_WRITE_FILE,
+	CMD_DATA_SEALING_READ_FILE = 0X1,
+	CMD_DATA_SEALING_WRITE_FILE,
 } DataSealingCMD;
 
 #define KEY_LENGTH_MAX    128    //key的最大字符数
