@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required (VERSION 3.13)
-project (data-sealing)
-cmake_policy (SET CMP0037 OLD)
+cmake_minimum_required(VERSION 3.13)
+project(data-sealing)
+cmake_policy(SET CMP0037 OLD)
 
 # Set variable
 # kunpeng-sc-devel-1.0.0 path set
@@ -29,14 +29,14 @@ set(SRCS ${SRCS} ../data_sealing_ta.c)
 
 # Add header file include directories
 include_directories(
-    ${LIBC}/libc
-    ${LIBC}/libc/arch/aarch64
-    ${LIBC}/libc/arch/aarch64/bits
-    ${LIBC}/libc/arch/generic
-    ${LIBSECURE}/include
-    ${iTrustee_SDK_HEADER_PATH}/TA
-    ${iTrustee_SDK_HEADER_PATH}/TA/huawei_ext
-    ${PROJECT_SOURCE_DIR}/include
+        ${LIBC}/libc
+        ${LIBC}/libc/arch/aarch64
+        ${LIBC}/libc/arch/aarch64/bits
+        ${LIBC}/libc/arch/generic
+        ${LIBSECURE}/include
+        ${iTrustee_SDK_HEADER_PATH}/TA
+        ${iTrustee_SDK_HEADER_PATH}/TA/huawei_ext
+        ${PROJECT_SOURCE_DIR}/include
 )
 
 # Set options
@@ -55,15 +55,15 @@ set_target_properties(tmp_object PROPERTIES COMPILE_FLAGS ${CMAKE_TEE_FLAGS})
 add_library(combine SHARED $<TARGET_OBJECTS:tmp_object>)
 set_target_properties(combine PROPERTIES LINK_FLAGS ${CMAKE_TEE_LD_FLAGS})
 target_link_options(combine PUBLIC -nodefaultlibs)
- 
+
 add_custom_command(TARGET combine
-    POST_BUILD
-    COMMAND cp -f ${PROJECT_SOURCE_DIR}/../manifest.txt ${PROJECT_SOURCE_DIR}
-    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --config ${PROJECT_SOURCE_DIR}/config_cloud.ini
-)
+        POST_BUILD
+        COMMAND cp -f ${PROJECT_SOURCE_DIR}/../manifest.txt ${PROJECT_SOURCE_DIR}
+        COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --config ${PROJECT_SOURCE_DIR}/config_cloud.ini
+        )
 
 # Clean output
 add_custom_target(clean
-    COMMAND rm -rf ${PROJECT_SOURCE_DIR}/libcombine.so ${PROJECT_SOURCE_DIR}/*.sec
-    COMMAND @echo "clean up"
-)
+        COMMAND rm -rf ${PROJECT_SOURCE_DIR}/libcombine.so ${PROJECT_SOURCE_DIR}/*.sec
+        COMMAND @echo "clean up"
+        )

@@ -1,7 +1,7 @@
-gpd.ta.appID:   		7824610d-0e54-4448-a905-86fffeeff327
+gpd.ta.appID:   		    7824610d-0e54-4448-a905-86fffeeff327
 gpd.ta.service_name:		data-sealing
 gpd.ta.singleInstance:		true
 gpd.ta.multiSession: 		false
 gpd.ta.instanceKeepAlive:	false
-gpd.ta.dataSize:		67928064
-gpd.ta.stackSize:		40960
+gpd.ta.dataSize:		    67928064
+gpd.ta.stackSize:		    40960
