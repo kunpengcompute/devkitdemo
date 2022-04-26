@@ -48,8 +48,8 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t paramTypes, TEE_Param params[PARAMS
 	uint32_t pkgNameLen;
 	SLogTrace("DataSealing open session entry point.");
 	if (!(TEE_PARAM_TYPE_MEMREF_INPUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)
-		  || TEE_PARAM_TYPE_MEMREF_OUTPUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)
-		  || TEE_PARAM_TYPE_MEMREF_INOUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)))
+	      || TEE_PARAM_TYPE_MEMREF_OUTPUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)
+	      || TEE_PARAM_TYPE_MEMREF_INOUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)))
 	{
 		SLogError("Bad parameters (paramTypes, 3)");
 		return TEE_ERROR_BAD_PARAMETERS;

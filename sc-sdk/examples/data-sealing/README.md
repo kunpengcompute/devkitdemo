@@ -21,13 +21,13 @@ data-sealing demo展示使用TEE安全存储对文件进行加密保存的CA和T
 
 3. 安装TA demo
 
-   cd TA && ./install.sh
+   cd TA && bash ./install.sh
 
-4. 将CA/data-sealing-ca.h中的DATA_SEALING_TA_UUID修改为开发者申请证书的uuid
+4. 将CA/data_sealing_ca.h中的DATA_SEALING_TA_UUID修改为开发者申请证书的uuid
 
 5. 安装CA demo
 
-   cd CA && ./install.sh
+   cd CA && bash ./install.sh
 
 6. 运行demo
 

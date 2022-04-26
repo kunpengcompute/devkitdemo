@@ -39,29 +39,29 @@
 
 typedef enum
 {
-		CMD_DATA_SEALING_READ_FILE = 0X1,
-		CMD_DATA_SEALING_WRITE_FILE,
+	CMD_DATA_SEALING_READ_FILE = 0X1,
+	CMD_DATA_SEALING_WRITE_FILE,
 } DataSealingCMD;
 
 enum Data_Flag_Constants
 {
-		TEE_DATA_FLAG_CREATE = 0x00000200,          // 未使用
-		TEE_DATA_FLAG_EXCLUSIVE = 0x00000400,       // 保护已有同名数据文件。如果同名文件不存在，则新建数据文件；如果同名文件存在则报错
-		TEE_DATA_FLAG_AES256 = 0x10000000,          // bit28如果为1代表AES256，为0代表AES128
+	TEE_DATA_FLAG_CREATE = 0x00000200,          // 未使用
+	TEE_DATA_FLAG_EXCLUSIVE = 0x00000400,       // 保护已有同名数据文件。如果同名文件不存在，则新建数据文件；如果同名文件存在则报错
+	TEE_DATA_FLAG_AES256 = 0x10000000,          // bit28如果为1代表AES256，为0代表AES128
 };
 
 enum Object_Storage_Constants
 {
-		TEE_OBJECT_STORAGE_PRIVATE = 0x00000001,    // 对应每个应用单独的私有存储空间
+	TEE_OBJECT_STORAGE_PRIVATE = 0x00000001,    // 对应每个应用单独的私有存储空间
 };
 
 extern TEE_Result
 TEE_CreatePersistentObject(uint32_t storageID, const void* objectID, size_t objectIDLen, uint32_t flags,
-		TEE_ObjectHandle attributes, const void* initialData, size_t initialDataLen,
-		TEE_ObjectHandle* object);
+	TEE_ObjectHandle attributes, const void* initialData, size_t initialDataLen,
+	TEE_ObjectHandle* object);
 
 extern TEE_Result TEE_OpenPersistentObject(uint32_t storageID, const void* objectID, size_t objectIDLen, uint32_t flags,
-		TEE_ObjectHandle* object);
+	TEE_ObjectHandle* object);
 
 extern TEE_Result TEE_ReadObjectData(TEE_ObjectHandle object, void* buffer, size_t size, uint32_t* count);
 

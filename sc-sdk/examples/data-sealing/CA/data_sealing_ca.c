@@ -27,10 +27,10 @@
 
 enum DataFlagConstants
 {
-		TEE_DATA_FLAG_ACCESS_READ = 0x00000001,
-		TEE_DATA_FLAG_ACCESS_WRITE = 0x00000002,
-		TEE_DATA_FLAG_CREATE = 0x00000200,
-		TEE_DATA_FLAG_EXCLUSIVE = 0x00000400,
+	TEE_DATA_FLAG_ACCESS_READ = 0x00000001,
+	TEE_DATA_FLAG_ACCESS_WRITE = 0x00000002,
+	TEE_DATA_FLAG_CREATE = 0x00000200,
+	TEE_DATA_FLAG_EXCLUSIVE = 0x00000400,
 };
 
 /*************************************************
@@ -38,9 +38,9 @@ Description: 操作类型枚举
 *************************************************/
 enum OperationType
 {
-		ENCRYPT,    //加密操作
-		DECRYPT,    //解密操作
-		UNKNOWN     //未知的操作
+	ENCRYPT,    //加密操作
+	DECRYPT,    //解密操作
+	UNKNOWN     //未知的操作
 };
 
 /*************************************************
@@ -48,10 +48,10 @@ Description: 输入的参数结构体
 *************************************************/
 typedef struct
 {
-		enum OperationType operationType;    // 操作类型
-		char* key;                           // encrypt 或 decrypt 时指定的key字符串
-		char* filePath;                      // 被加密的文件路径
-		char* output;                        // 被解密的文件输出路径
+	enum OperationType operationType;    // 操作类型
+	char* key;                           // encrypt 或 decrypt 时指定的key字符串
+	char* filePath;                      // 被加密的文件路径
+	char* output;                        // 被解密的文件输出路径
 } ParameterT;
 
 TEEC_Context g_context;
@@ -130,9 +130,9 @@ static TEEC_Result TeecInit(void)
 	}
 	operation.started = 1;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_NONE,
-			TEEC_NONE,
-			TEEC_MEMREF_TEMP_INPUT,
-			TEEC_MEMREF_TEMP_INPUT);
+		TEEC_NONE,
+		TEEC_MEMREF_TEMP_INPUT,
+		TEEC_MEMREF_TEMP_INPUT);
 	char dataSealingTAPath[PATH_MAX];
 	int ret = sprintf(dataSealingTAPath, "%s%s%s", DATA_SEALING_TA_DIR_NAME, DATA_SEALING_TA_UUID, DATA_SEALING_TA_SUFFIX);
 	if (ret <= 0)
@@ -158,7 +158,7 @@ static TEEC_Result TeecInit(void)
 		return result;
 	}
 	TEEC_Debug("teec initialize context andopen session success, session id: 0x%x, service id: 0x%x, context 0x%x.",
-			g_session.session_id, g_session.service_id, g_session.context);
+		g_session.session_id, g_session.service_id, g_session.context);
 	TEEC_Debug("teec init OK.");
 	return result;
 }
@@ -194,9 +194,9 @@ DataSealingReadFile(IN const char* path, IN const uint32_t mode, OUT char* readB
 	operation.started = 1;
 	operation.cancel_flag = 0;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
-			TEEC_VALUE_INPUT,
-			TEEC_MEMREF_TEMP_INOUT,
-			TEEC_VALUE_OUTPUT);
+		TEEC_VALUE_INPUT,
+		TEEC_MEMREF_TEMP_INOUT,
+		TEEC_VALUE_OUTPUT);
 	operation.params[PARAMS_IDX0].tmpref.buffer = (void*)path;
 	operation.params[PARAMS_IDX0].tmpref.size = strlen(path);
 	operation.params[PARAMS_IDX1].value.a = mode;
@@ -213,7 +213,8 @@ DataSealingReadFile(IN const char* path, IN const uint32_t mode, OUT char* readB
 		return result;
 	}
 	*readSize = operation.params[PARAMS_IDX2].tmpref.size;
-	printf("LOG: DataSealing read file success: fd=%d, read count=%zu.\n", operation.params[PARAMS_IDX3].value.a, *readSize);
+	printf("LOG: DataSealing read file success: fd=%d, read count=%zu.\n", operation.params[PARAMS_IDX3].value
+		.a, *readSize);
 	return TEEC_SUCCESS;
 }
 
@@ -247,9 +248,9 @@ DataSealingWriteFile(IN const char* path, IN const uint32_t mode, IN const char*
 	operation.started = 1;
 	operation.cancel_flag = 0;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
-			TEEC_VALUE_INPUT,
-			TEEC_MEMREF_TEMP_INPUT,
-			TEEC_VALUE_OUTPUT);
+		TEEC_VALUE_INPUT,
+		TEEC_MEMREF_TEMP_INPUT,
+		TEEC_VALUE_OUTPUT);
 	operation.params[PARAMS_IDX0].tmpref.buffer = (void*)path;
 	operation.params[PARAMS_IDX0].tmpref.size = strlen(path);
 	operation.params[PARAMS_IDX1].value.a = mode;
@@ -379,17 +380,17 @@ static void Usage(int status)
 	else
 	{
 		printf("Usage: /vendor/bin/data-sealing [TYPE OPTION] [REQUIRED_ARGUMENT]\n"
-					 "Examples:\n"
-					 "\t/vendor/bin/data-sealing encrypt -k <key> -f <path>\t# Encrypt data.\n"
-					 "\t/vendor/bin/data-sealing decrypt -k <key> -o <path>\t# Decrypt data.\n"
-					 "TYPE OPTION:\n"
-					 "\tencrypt\t\tEncrypt operation.\n"
-					 "\tdecrypt\t\tDecrypt operation.\n"
-					 "REQUIRED_ARGUMENT:\n"
-					 "\t-k, --key <key>\t\tThe key string specified when encrypting or decrypting [0 < KEY_LENGTH <= 128, letters and numbers only].\n"
-					 "\t-f, --file-path <path>\t\tEncrypted data file path [0 < FILE_SIZE <= 4096B, strong keys are recommended].\n"
-					 "\t-o, --output <path>\t\tDecrypted data output path.\n"
-					 "\t-h, --help\t\tDisplay this help and exit.\n");
+		       "Examples:\n"
+		       "\t/vendor/bin/data-sealing encrypt -k <key> -f <path>\t# Encrypt data.\n"
+		       "\t/vendor/bin/data-sealing decrypt -k <key> -o <path>\t# Decrypt data.\n"
+		       "TYPE OPTION:\n"
+		       "\tencrypt\t\tEncrypt operation.\n"
+		       "\tdecrypt\t\tDecrypt operation.\n"
+		       "REQUIRED_ARGUMENT:\n"
+		       "\t-k, --key <key>\t\tThe key string specified when encrypting or decrypting [0 < KEY_LENGTH <= 128, letters and numbers only].\n"
+		       "\t-f, --file-path <path>\t\tEncrypted data file path [0 < FILE_SIZE <= 4096B, strong keys are recommended].\n"
+		       "\t-o, --output <path>\t\tDecrypted data output path.\n"
+		       "\t-h, --help\t\tDisplay this help and exit.\n");
 	}
 	exit(status);
 }
@@ -525,11 +526,11 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 	{
 		int option_index = 0;
 		static struct option const longOptions[] = {
-				{ "key",       required_argument, NULL, 'k' },
-				{ "file-path", required_argument, NULL, 'f' },
-				{ "output",    required_argument, NULL, 'o' },
-				{ "help",      no_argument,       NULL, 'h' },
-				{ NULL,        0,                 NULL, 0 }
+			{ "key", required_argument, NULL, 'k' },
+			{ "file-path", required_argument, NULL, 'f' },
+			{ "output", required_argument, NULL, 'o' },
+			{ "help", no_argument, NULL, 'h' },
+			{ NULL, 0, NULL, 0 }
 		};
 		c = getopt_long(argc, argv, "k:f:o:h", longOptions, &option_index);
 		if (c == -1)
