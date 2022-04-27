@@ -43,7 +43,8 @@ The **data-sealing demo** shows a code example for CAs and TAs that encrypt and 
 
    ```shell
    cd ./TA/
-   bash ./install.sh
+   chmod +x ./install.sh
+   ./install.sh
    ```
 
 6. Change **DATA_SEALING_TA_UUID** in .**./CA/data_sealing_ca.h** to the UUID of the developer certificate.

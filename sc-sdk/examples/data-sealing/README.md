@@ -41,7 +41,8 @@
 
    ```shell
    cd ./TA/
-   bash ./install.sh
+   chmod +x ./install.sh
+   ./install.sh
    ```
 
 6. 将../CA/data_sealing_ca.h中的DATA_SEALING_TA_UUID修改为开发者申请证书的uuid
