@@ -560,7 +560,7 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 			exit(EXIT_FAILURE);
 		}
 	}
-	// 仅执行 /vendor/bin/data-sealing 时,返回详细de帮助信息.
+	// 仅执行 /vendor/bin/data-sealing 时,返回详细的帮助信息.
 	if (argc == 1)
 	{
 		Usage(EXIT_SUCCESS);
