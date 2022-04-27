@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Huawei Technologies Co., Ltd
+ * Copyright 2022 Huawei Technologies Co., Ltd
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ TA_DataSealingReadFile(IN uint32_t paramTypes, IN TEE_Param params[PARAMS_SIZE],
 	SLogTrace("TA DataSealing read file is running.");
 	if (identity == NULL)
 	{
-		SLogError("bad parameters.");
+		SLogError("Bad parameters.");
 		return TEE_ERROR_BAD_PARAMETERS;
 	}
 	if (!check_param_type(paramTypes, TEE_PARAM_TYPE_MEMREF_INPUT, TEE_PARAM_TYPE_VALUE_INPUT,
@@ -105,14 +105,14 @@ TA_DataSealingReadFile(IN uint32_t paramTypes, IN TEE_Param params[PARAMS_SIZE],
 	ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, path, pathLen, flags, &object);
 	if (ret != TEE_SUCCESS)
 	{
-		SLogError("open failed.");
+		SLogError("Open failed.");
 		return ret;
 	}
 
 	ret = TEE_ReadObjectData(object, (void*)readBuff, readLen, &realReadLen);
 	if (ret != TEE_SUCCESS)
 	{
-		SLogError("read failed.");
+		SLogError("Read failed.");
 		goto clean;
 	}
 
@@ -131,7 +131,7 @@ TA_DataSealingWriteFile(uint32_t paramTypes, IN TEE_Param params[PARAMS_SIZE], I
 	SLogTrace("TA DataSealing write file is running.");
 	if (identity == NULL)
 	{
-		SLogError("bad parameters.");
+		SLogError("Bad parameters.");
 		return TEE_ERROR_BAD_PARAMETERS;
 	}
 	if (!check_param_type(paramTypes, TEE_PARAM_TYPE_MEMREF_INPUT, TEE_PARAM_TYPE_VALUE_INPUT,
@@ -169,13 +169,13 @@ TA_DataSealingWriteFile(uint32_t paramTypes, IN TEE_Param params[PARAMS_SIZE], I
 
 	if (ret != TEE_SUCCESS)
 	{
-		SLogError("create or open failed");
+		SLogError("Create or open failed");
 		return ret;
 	}
 	ret = TEE_WriteObjectData(object, (void*)writeBuff, writeLen);
 	if (ret != TEE_SUCCESS)
 	{
-		SLogError("write failed.");
+		SLogError("Write failed.");
 		goto clean;
 	}
 	params[PARAMS_IDX3].value.a = (uint64_t)object->dataPtr & UNSIGN_INT_MASK;
@@ -183,7 +183,7 @@ TA_DataSealingWriteFile(uint32_t paramTypes, IN TEE_Param params[PARAMS_SIZE], I
 	TEE_GetObjectInfo(object, &objectinfo);
 	if ((objectinfo.dataSize != writeLen) || (objectinfo.dataPosition != writeLen))
 	{
-		SLogError("after write, info file: len=%d, pos=%d\n", objectinfo.dataSize, objectinfo.dataPosition);
+		SLogError("After write, info file: len=%d, pos=%d\n", objectinfo.dataSize, objectinfo.dataPosition);
 		goto clean;
 	}
 	SLogTrace("TA DataSealing check object ok.");

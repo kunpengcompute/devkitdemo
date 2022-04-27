@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Huawei Technologies Co., Ltd
+ * Copyright 2022 Huawei Technologies Co., Ltd
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,24 +34,24 @@ enum DataFlagConstants
 };
 
 /*************************************************
-Description: 操作类型枚举
+Description: Operation types
 *************************************************/
 enum OperationType
 {
-	ENCRYPT,    //加密操作
-	DECRYPT,    //解密操作
-	UNKNOWN     //未知的操作
+	ENCRYPT,    //Encryption operation.
+	DECRYPT,    //Decryption operation.
+	UNKNOWN     //Unknown operation.
 };
 
 /*************************************************
-Description: 输入的参数结构体
+Description: Input parameter structure
 *************************************************/
 typedef struct
 {
-	enum OperationType operationType;    // 操作类型
-	char* key;                           // encrypt 或 decrypt 时指定的key字符串
-	char* filePath;                      // 被加密的文件路径
-	char* output;                        // 被解密的文件输出路径
+	enum OperationType operationType;    // Operation type.
+	char* key;                           // Key character string specified during encryption or decryption.
+	char* filePath;                      // Encrypted file path.
+	char* output;                        // Output path of the decrypted file.
 } ParameterT;
 
 TEEC_Context g_context;
@@ -116,7 +116,7 @@ static errno_t GetDataSealingUUID(TEEC_UUID* dataSealingUUID)
 	return EOK;
 }
 
-/* initialize context and opensession */
+/* initialize context and opensession. */
 static TEEC_Result TeecInit(void)
 {
 	TEEC_Operation operation;
@@ -125,7 +125,7 @@ static TEEC_Result TeecInit(void)
 	result = TEEC_InitializeContext(NULL, &g_context);
 	if (result != TEEC_SUCCESS)
 	{
-		TEEC_Error("teec initial failed.");
+		TEEC_Error("TEEC initial failed.");
 		return result;
 	}
 	operation.started = 1;
@@ -157,9 +157,9 @@ static TEEC_Result TeecInit(void)
 		TEEC_FinalizeContext(&g_context);
 		return result;
 	}
-	TEEC_Debug("teec initialize context andopen session success, session id: 0x%x, service id: 0x%x, context 0x%x.",
+	TEEC_Debug("TEEC initialize context andopen session success, session id: 0x%x, service id: 0x%x, context 0x%x.",
 		g_session.session_id, g_session.service_id, g_session.context);
-	TEEC_Debug("teec init OK.");
+	TEEC_Debug("TEEC init OK.");
 	return result;
 }
 
@@ -167,7 +167,7 @@ static void TeecClose(void)
 {
 	TEEC_CloseSession(&g_session);
 	TEEC_FinalizeContext(&g_context);
-	TEEC_Debug("teec uninit OK.");
+	TEEC_Debug("TEEC uninit OK.");
 }
 
 static TEEC_Result
@@ -176,21 +176,21 @@ DataSealingReadFile(IN const char* path, IN const uint32_t mode, OUT char* readB
 	TEEC_Operation operation;
 	TEEC_Result result;
 	uint32_t origin = 0;
-	printf("LOG: DATA_SEALING READ FILE is running.\n");
+	printf("LOG: DataSealing read file is running.\n");
 	if (path == NULL)
 	{
-		printf("LOG: DATA_SEALING READ FILE failed, path is null.\n");
-		TEEC_Error("DATA_SEALING READ FILE failed, path is null.\n");
+		printf("LOG: DataSealing read file failed, path is null.\n");
+		TEEC_Error("DataSealing read file failed, path is null.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
-	/* First, Check Init is ok or not */
+	/* First, Check Init is ok or not. */
 	if ((g_context.fd == 0) || (g_session.session_id == 0))
 	{
-		printf("LOG: DATA_SEALING READ FILE failed, Please Init Storage Service.\n");
-		TEEC_Error("DATA_SEALING READ FILE failed, Please Init Storage Service.\n");
+		printf("LOG: DataSealing read file failed, Please Init Storage Service.\n");
+		TEEC_Error("DataSealing read file failed, Please Init Storage Service.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
-	/* Then, Invoke Command */
+	/* Then, Invoke Command. */
 	operation.started = 1;
 	operation.cancel_flag = 0;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
@@ -224,27 +224,27 @@ DataSealingWriteFile(IN const char* path, IN const uint32_t mode, IN const char*
 	TEEC_Operation operation;
 	TEEC_Result result;
 	uint32_t origin = 0;
-	printf("LOG: DATA_SEALING WRITE FILE is running.\n");
+	printf("LOG: DataSealing write file is running.\n");
 	if (path == NULL)
 	{
-		printf("LOG: DATA_SEALING WRITE FILE failed, path is null.\n");
-		TEEC_Error("DATA_SEALING WRITE FILE failed, path is null.\n");
+		printf("LOG: DataSealing write file failed, path is null.\n");
+		TEEC_Error("DataSealing write file failed, path is null.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
 	if ((mode & TEE_DATA_FLAG_CREATE) && (mode & TEE_DATA_FLAG_EXCLUSIVE))
 	{
-		printf("LOG: DATA_SEALING WRITE FILE failed, mode error, CREATE&EXCLUSIVE canot be concurrence.\n");
-		TEEC_Error("DATA_SEALING WRITE FILE failed, mode error, CREATE&EXCLUSIVE canot be concurrence.\n");
+		printf("LOG: DataSealing write file failed, mode error, CREATE & EXCLUSIVE canot be concurrence.\n");
+		TEEC_Error("DataSealing write file failed, mode error, CREATE & EXCLUSIVE canot be concurrence.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
-	/* First, Check Init is ok or not */
+	/* First, Check Init is ok or not. */
 	if ((g_context.fd == 0) || (g_session.session_id == 0))
 	{
-		printf("LOG: DATA_SEALING WRITE FILE failed, Please Init Storage Service.\n");
-		TEEC_Error("DATA_SEALING WRITE FILE failed, Please Init Storage Service.\n");
+		printf("LOG: DataSealing write file failed, Please Init Storage Service.\n");
+		TEEC_Error("DataSealing write file failed, Please Init Storage Service.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
-	/* Then, Invoke Command */
+	/* Then, Invoke Command. */
 	operation.started = 1;
 	operation.cancel_flag = 0;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
@@ -298,13 +298,13 @@ static bool ValidateString(const char* str, const char* baseStr)
 
 /*************************************************
 Function: CheckKey
-Description: 校验Key的合法性
+Description: Verify the key validity.
 Calls: ValidateString()
 Called By: GetParameter()
-Input: key: encrypt 或 decrypt 时指定的key字符串
+Input: key: Key character string specified during encryption or decryption.
 Output: none
-Return: 符合要求返回 true 否则返回 false
-Others: 合规的key字符串仅由字母和数字组成,且长度为 0 < KEY_LENGTH <= 128
+Return: ‘true’ is returned if the requirements are met. Otherwise, ‘false’ is returned.
+Others: A valid key string consists of only letters and digits, and the length is: 0 < KEY_LENGTH <= 128.
 *************************************************/
 static bool CheckKey(char* key)
 {
@@ -313,13 +313,13 @@ static bool CheckKey(char* key)
 
 /*************************************************
 Function: ReadFile
-Description: 读取文件
+Description: Read a file.
 Calls: fopen(), fread(), fclose()
 Called By: Encrypt()
-Input: filePath: 将要被读取的文件路径
-Output: fileContent: 输出被读取的文件BUFF
-Return: 读取失败返回 0,读取成功则返回实际读取的文件大小
-Others: 如果实际读取的文件大小大于 FILE_SIZE_MAX 则读取失败
+Input: filePath: Path of the file to be read.
+Output: fileContent: Output the read file buff.
+Return: If the read fails, '0' is returned. If the read succeeds, the actual file size is returned.
+Others: If the actual file size is greater than FILE_SIZE_MAX, the read fails.
 *************************************************/
 static int ReadFile(const char* filePath, char* fileContent)
 {
@@ -331,7 +331,7 @@ static int ReadFile(const char* filePath, char* fileContent)
 	int readSize = fread(fileContent, 1, FILE_SIZE_MAX + 1, pFile);
 	if (readSize > FILE_SIZE_MAX || readSize == 0)
 	{
-		printf("The maximum file size is 4096B.\n");
+		printf("The maximum file size is 4096 byte.\n");
 		fclose(pFile);
 		return 0;
 	}
@@ -341,12 +341,14 @@ static int ReadFile(const char* filePath, char* fileContent)
 
 /*************************************************
 Function: WriteFile
-Description: 写入文件
+Description: Write a file.
 Calls: fopen(), fwrite(), fclose()
 Called By: Decrypt()
-Input: filePath: 写入文件的路径, fileContent: 写入文件的内容, fileContentLen: 写入文件的内容长度
+Input: filePath: Target path of the file to be written.
+       fileContent: Content to be written into the file.
+       fileContentLen: Length of the content to be written into the file.
 Output: none
-Return: 写入失败返回 0,写入成功则返回实际写入的文件大小
+Return: If the write fails, '0' is returned. If the write succeeds, the actual file size is returned.
 Others: none
 *************************************************/
 static int WriteFile(const char* filePath, const char* fileContent, size_t fileContentLen)
@@ -363,10 +365,10 @@ static int WriteFile(const char* filePath, const char* fileContent, size_t fileC
 
 /*************************************************
 Function: Usage
-Description: 使用手册
+Description: User manual.
 Calls: printf(), exit()
 Called By: GetParameter(), PerformAction(), Encrypt(), Decrypt()
-Input: status 退出状态[请使用 stdlib.h 中定义的 EXIT_FAILURE 或 EXIT_SUCCESS 作为函数的入参值]
+Input: status: exit status [Use the 'EXIT_FAILURE' or 'EXIT_SUCCESS' defined in stdlib.h as the input parameter value of the function].
 Output: none
 Return: none
 Others: none
@@ -387,7 +389,7 @@ static void Usage(int status)
 		       "\tencrypt\t\tEncrypt operation.\n"
 		       "\tdecrypt\t\tDecrypt operation.\n"
 		       "REQUIRED_ARGUMENT:\n"
-		       "\t-k, --key <key>\t\tThe key string specified when encrypting or decrypting [0 < KEY_LENGTH <= 128, letters and numbers only].\n"
+		       "\t-k, --key <key>\t\tKey string specified when encrypting or decrypting [0 < KEY_LENGTH <= 128, letters and numbers only].\n"
 		       "\t-f, --file-path <path>\t\tEncrypted data file path [0 < FILE_SIZE <= 4096B, strong keys are recommended].\n"
 		       "\t-o, --output <path>\t\tDecrypted data output path.\n"
 		       "\t-h, --help\t\tDisplay this help and exit.\n");
@@ -397,10 +399,11 @@ static void Usage(int status)
 
 /*************************************************
 Function: Encrypt
-Description: 执行加密操作
+Description: Perform an encryption operation.
 Calls: ReadFile(), DataSealingWriteFile(), TeecClose(), fprintf(), Usage(), exit()
 Called By: PerformAction()
-Input: key 加密时指定的key字符串, filePath 被加密的文件路径
+Input: key: Key character string specified during encryption.
+       filePath: Path of the encrypted file.
 Output: none
 Return: none
 Others: none
@@ -416,30 +419,31 @@ static void Encrypt(const char* key, const char* filePath)
 		if (result != TEEC_SUCCESS)
 		{
 			TeecClose();
-			fprintf(stderr, "Encrypt file Failed!\n");
+			fprintf(stderr, "Failed to encrypt the file.!\n");
 			exit(EXIT_FAILURE);
 		}
 		else
 		{
 			TeecClose();
-			printf("Successfully performed file encryption operation.\n");
+			printf("File encrypted successfully.\n");
 			exit(EXIT_SUCCESS);
 		}
 	}
 	else
 	{
 		TeecClose();
-		fprintf(stderr, "Check if the file is legal!\n");
+		fprintf(stderr, "Check if the file is valid.\n");
 		Usage(EXIT_FAILURE);
 	}
 }
 
 /*************************************************
 Function: Decrypt
-Description: 执行解密操作
+Description: Perform a decryption operation.
 Calls: DataSealingReadFile(), WriteFile(), TeecClose(), fprintf(), Usage(), exit()
 Called By: PerformAction()
-Input: key 加密时指定的key字符串, outputFilePath 被解密的文件输出路径
+Input: key: Key character string specified during encryption.
+       outputFilePath: Output path of the decrypted file.
 Output: none
 Return: none
 Others: none
@@ -453,7 +457,7 @@ static void Decrypt(const char* key, const char* outputFilePath)
 	if (result != TEEC_SUCCESS)
 	{
 		TeecClose();
-		fprintf(stderr, "Decrypt file Failed!\n");
+		fprintf(stderr, "Failed to decrypt the file.\n");
 		Usage(EXIT_FAILURE);
 	}
 	else
@@ -461,21 +465,21 @@ static void Decrypt(const char* key, const char* outputFilePath)
 		if (!WriteFile(outputFilePath, fileContent, readSize))
 		{
 			TeecClose();
-			fprintf(stderr, "Decryption is successful, but there is an exception when writing out [please check if the path to the outgoing file is legal]!\n");
+			fprintf(stderr, "Filed decrypted successfully. But there is an exception during output. [Please check if the path of the output file is valid.]\n");
 			exit(EXIT_FAILURE);
 		}
 		TeecClose();
-		printf("Successfully performed file decryption operation.\n");
+		printf("File decrypted successfully.\n");
 		exit(EXIT_SUCCESS);
 	}
 }
 
 /*************************************************
 Function: PerformAction
-Description: 执行的动作 encrypt 或者 decrypt
+Description: Perform encryption or decryption.
 Calls: TeecInit(), TeecClose(), Encrypt(), Decrypt(), fprintf(), Usage(), exit()
 Called By: main()
-Input: parameterT: 输入的参数结构体
+Input: parameterT: Input parameter structure.
 Output: none
 Return: void
 Others: none
@@ -510,18 +514,19 @@ static void PerformAction(ParameterT parameterT)
 
 /*************************************************
 Function: GetParameter
-Description: 获取输入的参数
+Description: Obtain the input parameters.
 Calls: getopt_long()
 Called By: main()
-Input: argc: 输入的参数个数, argv: 输入参数的字符串数组
-Output: parameterT: ParameterT 参数结构体
+Input: argc: Number of input parameters.
+       argv: String array of input parameters.
+Output: parameterT: Command line option parameter structure[ParameterT].
 Return: void
 Others: none
 *************************************************/
 static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 {
-	int c;    // getopt_long() 返回的选项元素值
-	// 根据输入的选项元素分别获取对应的值
+	int c;    // Value of the option element returned by getopt_long().
+	// Obtain the corresponding values based on the input option elements.
 	while (true)
 	{
 		int option_index = 0;
@@ -542,7 +547,7 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 		case 'k':
 			if (!CheckKey(optarg))
 			{
-				fprintf(stderr, "Check if the key is legal!\n");
+				fprintf(stderr, "Check if the key is valid.\n");
 				Usage(EXIT_FAILURE);
 			}
 			parameterT->key = optarg;
@@ -560,12 +565,13 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 			exit(EXIT_FAILURE);
 		}
 	}
-	// 仅执行 /vendor/bin/data-sealing 时,返回详细的帮助信息.
+	// Detailed help information is returned only when /vendor/bin/data-sealing is executed.
 	if (argc == 1)
 	{
 		Usage(EXIT_SUCCESS);
 	}
-	// 根据输入的非选项元素判断操作类型[未知的操作类型及多个重复非选项元素时,则操作类型为 UNKNOWN]
+	// Determine the operation type based on the input non-option elements.
+	// [If the operation type is unknown or multiple repeated non-option elements are input, the operation type is UNKNOWN.]
 	if ((argc - optind) == 1)
 	{
 		if (strcmp("encrypt", argv[optind]) == 0)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Huawei Technologies Co., Ltd
+ * Copyright 2022 Huawei Technologies Co., Ltd
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@
 
 #define SECURE_STORAGE_INVALID_FD    (0xFFFFFFFF)
 
-#define PARAMS_IDX0        0  //params参数的下标索引 0
-#define PARAMS_IDX1        1  //params参数的下标索引 1
-#define PARAMS_IDX2        2  //params参数的下标索引 2
-#define PARAMS_IDX3        3  //params参数的下标索引 3
+#define PARAMS_IDX0        0  //Subscript index 0 of the params parameter.
+#define PARAMS_IDX1        1  //Subscript index 1 of the params parameter.
+#define PARAMS_IDX2        2  //Subscript index 2 of the params parameter.
+#define PARAMS_IDX3        3  //Subscript index 3 of the params parameter.
 
-#define DATA_SEALING_TA_UUID        "7824610d-0e54-4448-a905-86fffeeff327"    //开发者证书UUID[需根据实际情况进行修改]
+#define DATA_SEALING_TA_UUID        "7824610d-0e54-4448-a905-86fffeeff327"    //Developer certificate UUID. [Change it based on the site requirements.]
 #define DATA_SEALING_TA_DIR_NAME    "/data/"
 #define DATA_SEALING_TA_SUFFIX      ".sec"
 
@@ -46,8 +46,8 @@ typedef enum
 	CMD_DATA_SEALING_WRITE_FILE,
 } DataSealingCMD;
 
-#define KEY_LENGTH_MAX    128    //key的最大字符数
-#define FILE_SIZE_MAX     4096   //写入文件的最大字节数
+#define KEY_LENGTH_MAX    128    //Maximum number of characters of the key.
+#define FILE_SIZE_MAX     4096   //Maximum number of bytes written to the file.
 
 #define BASE_STR    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Huawei Technologies Co., Ltd
+ * Copyright 2022 Huawei Technologies Co., Ltd
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@
 #include "tee_defines.h"
 
 #define FILE_NAME_LEN_MAX      255
-#define PARAMS_IDX0            0            // params参数的下标索引 0
-#define PARAMS_IDX1            1            // params参数的下标索引 1
-#define PARAMS_IDX2            2            // params参数的下标索引 2
-#define PARAMS_IDX3            3            // params参数的下标索引 3
-#define PARAMS_SIZE            4            // params数组大小
+#define PARAMS_IDX0            0            // Subscript index 0 of the params parameter.
+#define PARAMS_IDX1            1            // Subscript index 1 of the params parameter.
+#define PARAMS_IDX2            2            // Subscript index 2 of the params parameter.
+#define PARAMS_IDX3            3            // Subscript index 3 of the params parameter.
+#define PARAMS_SIZE            4            // Size of the params array.
 #define UNSIGN_INT_MASK        0xffffffff
 
 typedef enum
@@ -45,14 +45,14 @@ typedef enum
 
 enum Data_Flag_Constants
 {
-	TEE_DATA_FLAG_CREATE = 0x00000200,          // 未使用
-	TEE_DATA_FLAG_EXCLUSIVE = 0x00000400,       // 保护已有同名数据文件。如果同名文件不存在，则新建数据文件；如果同名文件存在则报错
-	TEE_DATA_FLAG_AES256 = 0x10000000,          // bit28如果为1代表AES256，为0代表AES128
+	TEE_DATA_FLAG_CREATE = 0x00000200,          // Not used.
+	TEE_DATA_FLAG_EXCLUSIVE = 0x00000400,       // Protect existing data files with the same name. If no file with the same name exist, create a data file. If a file with the same name exists, an error is reported.
+	TEE_DATA_FLAG_AES256 = 0x10000000,          // If 'bit28' is set to '1', the algorithm is AES256. If 'bit28' is set to '0', the algorithm is AES128.
 };
 
 enum Object_Storage_Constants
 {
-	TEE_OBJECT_STORAGE_PRIVATE = 0x00000001,    // 对应每个应用单独的私有存储空间
+	TEE_OBJECT_STORAGE_PRIVATE = 0x00000001,    // Correspond to private storage space of each application.
 };
 
 extern TEE_Result
