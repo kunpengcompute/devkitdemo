@@ -389,10 +389,12 @@ static void Usage(int status)
 		       "\tencrypt\t\tEncrypt operation.\n"
 		       "\tdecrypt\t\tDecrypt operation.\n"
 		       "REQUIRED_ARGUMENT:\n"
-		       "\t-k, --key <key>\t\tKey string specified when encrypting or decrypting [0 < KEY_LENGTH <= 128, letters and numbers only].\n"
-		       "\t-f, --file-path <path>\t\tEncrypted data file path [0 < FILE_SIZE <= 4096B, strong keys are recommended].\n"
-		       "\t-o, --output <path>\t\tDecrypted data output path.\n"
-		       "\t-h, --help\t\tDisplay this help and exit.\n");
+		       "\t-k, --key <key>\t\t\t\tKey string specified when encrypting or decrypting\n"
+		       "\t\t\t\t\t\t\t\t [0 < KEY_LENGTH <= 128, letters and numbers only].\n"
+		       "\t-f, --file-path <path>\t\tEncrypted data file path\n"
+		       "\t\t\t\t\t\t\t\t [0 < FILE_SIZE <= 4096B, strong keys are recommended].\n"
+		       "\t-o, --output <path>\t\t\tDecrypted data output path.\n"
+		       "\t-h, --help\t\t\t\t\tDisplay this help and exit.\n");
 	}
 	exit(status);
 }
