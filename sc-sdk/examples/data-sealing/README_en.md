@@ -23,7 +23,7 @@ The **data-sealing demo** shows a code example for CAs and TAs that encrypt and 
 2. Switch to the project root path.
 
    ```shell
-   cd ./devkitdemo/devkitdemo-main/sc-sdk/examples/data-sealing/
+   cd ./devkitdemo/sc-sdk/examples/data-sealing/
    ```
 
 3. Modify the absolute paths of the developer private key and config file in the **./TA/cloud/config_cloud.ini** file.
