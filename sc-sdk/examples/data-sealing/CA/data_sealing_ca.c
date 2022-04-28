@@ -116,7 +116,7 @@ static errno_t GetDataSealingUUID(TEEC_UUID* dataSealingUUID)
 	return EOK;
 }
 
-/* initialize context and opensession. */
+/* Initialize context and opensession. */
 static TEEC_Result TeecInit(void)
 {
 	TEEC_Operation operation;
@@ -157,7 +157,7 @@ static TEEC_Result TeecInit(void)
 		TEEC_FinalizeContext(&g_context);
 		return result;
 	}
-	TEEC_Debug("TEEC initialize context andopen session success, session id: 0x%x, service id: 0x%x, context 0x%x.",
+	TEEC_Debug("TEEC initialize context and open session success, session id: 0x%x, service id: 0x%x, context 0x%x.",
 		g_session.session_id, g_session.service_id, g_session.context);
 	TEEC_Debug("TEEC init OK.");
 	return result;
@@ -190,7 +190,7 @@ DataSealingReadFile(IN const char* path, IN const uint32_t mode, OUT char* readB
 		TEEC_Error("DataSealing read file failed, Please Init Storage Service.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
-	/* Then, Invoke Command. */
+	/* Invoke Command. */
 	operation.started = 1;
 	operation.cancel_flag = 0;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
@@ -244,7 +244,7 @@ DataSealingWriteFile(IN const char* path, IN const uint32_t mode, IN const char*
 		TEEC_Error("DataSealing write file failed, Please Init Storage Service.\n");
 		return TEEC_ERROR_BAD_STATE;
 	}
-	/* Then, Invoke Command. */
+	/* Invoke Command. */
 	operation.started = 1;
 	operation.cancel_flag = 0;
 	operation.paramTypes = TEEC_PARAM_TYPES(TEEC_MEMREF_TEMP_INPUT,
