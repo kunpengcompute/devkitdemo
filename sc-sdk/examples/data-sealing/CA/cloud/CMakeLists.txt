@@ -1,4 +1,4 @@
-# Copyright 2020 Huawei Technologies Co., Ltd
+# Copyright 2022 Huawei Technologies Co., Ltd
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel-1.0.0)
 
 # Add source files
 set(
-    SRCS ../data_sealing_ca.c
+        SRCS ../data_sealing_ca.c
 )
 
 # Add header file include directories
 include_directories(
-    /usr/include/itrustee_sdk/CA
-    ${iTrustee_SDK_PATH}/source/libboundscheck/include
+        /usr/include/itrustee_sdk/CA
+        ${iTrustee_SDK_PATH}/source/libboundscheck/include
 )
 
 # Set options
@@ -47,6 +47,6 @@ set_target_properties(data-sealing PROPERTIES LINK_FLAGS ${CMAKE_TEEC_LDFLAGS})
 
 # Clean output
 add_custom_target(clean
-    COMMAND rm -rf ${PROJECT_SOURCE_DIR}/data-sealing
-    COMMAND @echo "clean up"
-)
+        COMMAND rm -rf ${PROJECT_SOURCE_DIR}/data-sealing
+        COMMAND @echo "clean up"
+        )
