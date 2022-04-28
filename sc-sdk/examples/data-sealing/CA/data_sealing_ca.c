@@ -406,6 +406,26 @@ static void CheckKey(char* key)
 }
 
 /*************************************************
+Function: CheckFilePath
+Description: Verify the file path validity.
+Calls: none
+Called By: Encrypt(), Decrypt()
+Input: key: File path character string specified during encryption or decryption.
+       optionID: Option parameter identifier.[ 'f' or 'o']
+Output: none
+Return: none
+Others: Continue if the requirements are met, otherwise exit directly.
+*************************************************/
+static void CheckFilePath(char* filePath, char optionID)
+{
+	if (filePath == NULL)
+	{
+		fprintf(stderr, "Please use the correct option -%c.\n", optionID);
+		Usage(EXIT_FAILURE);
+	}
+}
+
+/*************************************************
 Function: Encrypt
 Description: Perform an encryption operation.
 Calls: ReadFile(), DataSealingWriteFile(), TeecClose(), fprintf(), Usage(), exit()
@@ -419,6 +439,7 @@ Others: none
 static void Encrypt(char* key, const char* filePath)
 {
 	CheckKey(key);
+	CheckFilePath(filePath, 'f');
 	TEEC_Result result;
 	char fileContent[FILE_SIZE_MAX + 1];
 	int fileSize = ReadFile(filePath, fileContent);
@@ -460,6 +481,7 @@ Others: none
 static void Decrypt(char* key, const char* outputFilePath)
 {
 	CheckKey(key);
+	CheckFilePath(outputFilePath, 'o');
 	TEEC_Result result;
 	char fileContent[FILE_SIZE_MAX];
 	size_t readSize = sizeof(fileContent);
