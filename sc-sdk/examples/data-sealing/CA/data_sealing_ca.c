@@ -597,6 +597,10 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 	{
 		Usage(EXIT_SUCCESS);
 	}
+	if (argc != 6)
+	{
+		Usage(EXIT_FAILURE);
+	}
 	// Determine the operation type based on the input non-option elements.
 	// [If the operation type is unknown or multiple repeated non-option elements are input, the operation type is UNKNOWN.]
 	if ((argc - optind) == 1)
@@ -624,10 +628,6 @@ ParameterT parameterT;
 
 int main(int argc, char** argv)
 {
-	if (argc != 6)
-	{
-		Usage(EXIT_FAILURE);
-	}
 	GetParameter(argc, argv, &parameterT);
 	PerformAction(parameterT);
 }
