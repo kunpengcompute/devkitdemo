@@ -22,7 +22,7 @@
 2. 切入到项目根路径
 
    ```shell
-   cd ./devkitdemo/devkitdemo-main/sc-sdk/examples/data-sealing/
+   cd ./devkitdemo/sc-sdk/examples/data-sealing/
    ```
 
 3. 修改./TA/cloud/config_cloud.ini中的开发者私钥和config的绝对路径

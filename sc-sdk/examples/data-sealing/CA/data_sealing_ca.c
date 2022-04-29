@@ -297,21 +297,6 @@ static bool ValidateString(const char* str, const char* baseStr)
 }
 
 /*************************************************
-Function: CheckKey
-Description: Verify the key validity.
-Calls: ValidateString()
-Called By: GetParameter()
-Input: key: Key character string specified during encryption or decryption.
-Output: none
-Return: ‘true’ is returned if the requirements are met. Otherwise, ‘false’ is returned.
-Others: A valid key string consists of only letters and digits, and the length is: 0 < KEY_LENGTH <= 128.
-*************************************************/
-static bool CheckKey(char* key)
-{
-	return (key != NULL && strlen(key) <= KEY_LENGTH_MAX && ValidateString(key, BASE_STR));
-}
-
-/*************************************************
 Function: ReadFile
 Description: Read a file.
 Calls: fopen(), fread(), fclose()
@@ -400,6 +385,47 @@ static void Usage(int status)
 }
 
 /*************************************************
+Function: CheckKey
+Description: Verify the key validity.
+Calls: ValidateString()
+Called By: Encrypt(), Decrypt()
+Input: key: Key character string specified during encryption or decryption.
+Output: none
+Return: none
+Others: Continue if the requirements are met, otherwise exit directly.
+        A valid key string consists of only letters and digits, and the length is: 0 < KEY_LENGTH <= 128.
+*************************************************/
+static void CheckKey(char* key)
+{
+	if (!(key != NULL && strlen(key) <= KEY_LENGTH_MAX && ValidateString(key, BASE_STR)))
+	{
+		TeecClose();
+		fprintf(stderr, "Check if the key is valid.\n");
+		Usage(EXIT_FAILURE);
+	}
+}
+
+/*************************************************
+Function: CheckFilePath
+Description: Verify the file path validity.
+Calls: none
+Called By: Encrypt(), Decrypt()
+Input: key: File path character string specified during encryption or decryption.
+       optionID: Option parameter identifier.[ 'f' or 'o']
+Output: none
+Return: none
+Others: Continue if the requirements are met, otherwise exit directly.
+*************************************************/
+static void CheckFilePath(char* filePath, char optionID)
+{
+	if (filePath == NULL)
+	{
+		fprintf(stderr, "Please use the correct option -%c.\n", optionID);
+		Usage(EXIT_FAILURE);
+	}
+}
+
+/*************************************************
 Function: Encrypt
 Description: Perform an encryption operation.
 Calls: ReadFile(), DataSealingWriteFile(), TeecClose(), fprintf(), Usage(), exit()
@@ -410,8 +436,10 @@ Output: none
 Return: none
 Others: none
 *************************************************/
-static void Encrypt(const char* key, const char* filePath)
+static void Encrypt(char* key, const char* filePath)
 {
+	CheckKey(key);
+	CheckFilePath(filePath, 'f');
 	TEEC_Result result;
 	char fileContent[FILE_SIZE_MAX + 1];
 	int fileSize = ReadFile(filePath, fileContent);
@@ -450,8 +478,10 @@ Output: none
 Return: none
 Others: none
 *************************************************/
-static void Decrypt(const char* key, const char* outputFilePath)
+static void Decrypt(char* key, const char* outputFilePath)
 {
+	CheckKey(key);
+	CheckFilePath(outputFilePath, 'o');
 	TEEC_Result result;
 	char fileContent[FILE_SIZE_MAX];
 	size_t readSize = sizeof(fileContent);
@@ -547,11 +577,6 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 		switch (c)
 		{
 		case 'k':
-			if (!CheckKey(optarg))
-			{
-				fprintf(stderr, "Check if the key is valid.\n");
-				Usage(EXIT_FAILURE);
-			}
 			parameterT->key = optarg;
 			break;
 		case 'f':
@@ -599,6 +624,10 @@ ParameterT parameterT;
 
 int main(int argc, char** argv)
 {
+	if (argc != 6)
+	{
+		Usage(EXIT_FAILURE);
+	}
 	GetParameter(argc, argv, &parameterT);
 	PerformAction(parameterT);
 }
