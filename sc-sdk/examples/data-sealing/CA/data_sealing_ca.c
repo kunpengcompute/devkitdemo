@@ -395,7 +395,7 @@ Return: none
 Others: Continue if the requirements are met, otherwise exit directly.
         A valid key string consists of only letters and digits, and the length is: 0 < KEY_LENGTH <= 128.
 *************************************************/
-static void CheckKey(char* key)
+static void CheckKey(const char* key)
 {
 	if (!(key != NULL && strlen(key) <= KEY_LENGTH_MAX && ValidateString(key, BASE_STR)))
 	{
@@ -416,7 +416,7 @@ Output: none
 Return: none
 Others: Continue if the requirements are met, otherwise exit directly.
 *************************************************/
-static void CheckFilePath(char* filePath, char optionID)
+static void CheckFilePath(const char* filePath, const char optionID)
 {
 	if (filePath == NULL)
 	{
@@ -436,7 +436,7 @@ Output: none
 Return: none
 Others: none
 *************************************************/
-static void Encrypt(char* key, const char* filePath)
+static void Encrypt(char* key, char* filePath)
 {
 	CheckKey(key);
 	CheckFilePath(filePath, 'f');
@@ -478,7 +478,7 @@ Output: none
 Return: none
 Others: none
 *************************************************/
-static void Decrypt(char* key, const char* outputFilePath)
+static void Decrypt(char* key, char* outputFilePath)
 {
 	CheckKey(key);
 	CheckFilePath(outputFilePath, 'o');
@@ -597,6 +597,10 @@ static void GetParameter(int argc, char** argv, ParameterT* parameterT)
 	{
 		Usage(EXIT_SUCCESS);
 	}
+	if (argc != 6)
+	{
+		Usage(EXIT_FAILURE);
+	}
 	// Determine the operation type based on the input non-option elements.
 	// [If the operation type is unknown or multiple repeated non-option elements are input, the operation type is UNKNOWN.]
 	if ((argc - optind) == 1)
@@ -624,10 +628,6 @@ ParameterT parameterT;
 
 int main(int argc, char** argv)
 {
-	if (argc != 6)
-	{
-		Usage(EXIT_FAILURE);
-	}
 	GetParameter(argc, argv, &parameterT);
 	PerformAction(parameterT);
 }
