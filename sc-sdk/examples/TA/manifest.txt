@@ -1,0 +1,7 @@
+gpd.ta.appID:   		f68fd704-6eb1-4d14-b218-722850eb3ef0
+gpd.ta.service_name:		rsa-demo
+gpd.ta.singleInstance:		true
+gpd.ta.multiSession: 		false
+gpd.ta.instanceKeepAlive:	false
+gpd.ta.dataSize:		67928064
+gpd.ta.stackSize:		40960
