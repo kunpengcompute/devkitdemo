@@ -27,7 +27,7 @@ if [ ! -d "/data" ]; then
   mkdir -p /data
 fi
 
-ta_uuid=$(grep appID manifest.txt | awk -F' ' '{print $2}')
+ta_uuid=$(grep appID manifest.txt | awk -F' ' '{print $2}' | tr -d '\r')
 if [ ! -f "/data/${ta_uuid}.sec" ]; then
   rm -rf /data/${ta_uuid}.sec
 fi
