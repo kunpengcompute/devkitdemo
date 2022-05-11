@@ -8,7 +8,6 @@ set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel)
 set(iTrustee_SDK_HEADER_PATH /usr/include/itrustee_sdk)
 set(SIGNTOOL_DIR ${iTrustee_SDK_PATH}/utils/signtools)
 set(LIBC ${iTrustee_SDK_HEADER_PATH}/thirdparty/musl)
-# set(LIBSECURE ${iTrustee_SDK_PATH}/include/liboundscheck) 
 
 # Add source files
 file(GLOB SRCS "./*.c")
