@@ -17,8 +17,8 @@ project(data-sealing-ca)
 cmake_policy(SET CMP0037 OLD)
 
 # Set variable
-# kunpeng-sc-devel-1.0.0 path set
-set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel-1.0.0)
+# kunpeng-sc-devel path set
+set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel)
 
 # Add source files
 set(
