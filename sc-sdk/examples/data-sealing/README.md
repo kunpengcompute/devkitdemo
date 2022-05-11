@@ -7,7 +7,7 @@
 
 ## 使用依赖
 
-1. 确保已安装 **kunpeng-sc-devel**
+1. 确保已安装 **kunpeng-sc-devel-1.0.0**
 2. 确保 **tzdriver** 正常加载，执行 **lsmod | grep tzdriver**
 3. 确保守护进程正常启动，执行 **ps -ef | grep teecd**
 
