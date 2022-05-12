@@ -13,27 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd cloud
-
-# build
-mkdir build
-cd build
-cmake ..
-make
-cd ..
-
-# install
-if [ ! -d "/data" ]; then
-  mkdir -p /data
-fi
-
 ta_uuid=$(grep appID manifest.txt | awk -F ' ' '{print $2}' | tr -d '\r')
 if [ -f "/data/${ta_uuid}.sec" ]; then
   rm -rf /data/${ta_uuid}.sec
 fi
-
-cp ${ta_uuid}.sec /data
-
-# clean temp file
-rm -rf build *.sec libcombine.so manifest.txt
-cd ..
