@@ -27,7 +27,7 @@ if [ ! -d "/vendor/bin" ]; then
   mkdir -p /vendor/bin
 fi
 
-rm -rf /vendor/bin/rsa-demo
+rm -rf /vendor/bin/rsa_demo
 cp rsa_demo /vendor/bin
 
 # clean
