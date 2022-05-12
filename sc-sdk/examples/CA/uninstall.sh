@@ -13,6 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ -f "/vendor/bin/rsa-demo" ]; then
-  rm -rf /vendor/bin/rsa-demo
+if [ -f "/vendor/bin/rsa_demo" ]; then
+  rm -rf /vendor/bin/rsa_demo
 fi
