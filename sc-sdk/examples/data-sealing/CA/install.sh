@@ -31,6 +31,5 @@ rm -rf /vendor/bin/data-sealing
 cp data-sealing /vendor/bin
 
 # clean
-rm -rf data-sealing
-rm -rf build
+rm -rf data-sealing build
 cd ..

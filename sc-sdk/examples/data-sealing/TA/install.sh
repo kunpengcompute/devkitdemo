@@ -27,16 +27,13 @@ if [ ! -d "/data" ]; then
   mkdir -p /data
 fi
 
-ta_uuid=$(grep appID manifest.txt | awk -F' ' '{print $2}' | tr -d '\r')
-if [ ! -f "/data/${ta_uuid}.sec" ]; then
+ta_uuid=$(grep appID manifest.txt | awk -F ' ' '{print $2}' | tr -d '\r')
+if [ -f "/data/${ta_uuid}.sec" ]; then
   rm -rf /data/${ta_uuid}.sec
 fi
 
 cp ${ta_uuid}.sec /data
 
 # clean temp file
-rm -rf build
-rm -rf *.sec
-rm -rf libcombine.so
-rm -rf manifest.txt
+rm -rf build *.sec libcombine.so manifest.txt
 cd ..
