@@ -71,7 +71,7 @@ int main()
 	// 主要用于记录矩阵 A(m*m) 中从左到右从上到下的非零元素(values)的值, 数组的长度为 NNZ [Values 数组]
 	float a[9] = { 2.0F, -3.0F, 7.0F, 1.0F, -6.0F, 8.0F, -4.0F, 5.0F, 9.0F };
 	// 表示矩阵 A(m*m) 中非零元素所在的列索引(column indices), 数组的长度为 NNZ [ColumnIndices 数组]
-	KML_INT ja[9] = { 1, 2, 4, 3, 4, 1, 3, 4, 1 }
+	KML_INT ja[9] = { 1, 2, 4, 3, 4, 1, 3, 4, 1 };
 	// 表示矩阵 A(m*m) 的偏移量(row offsets), 数组中前m个元素分别代表矩阵 A(m*m) 中每一行的第一个非零元素在Values数组中的下标，最后一项的数值为 NNZ, 数组长度为 m+1 [RowOffsets 数组]
 	KML_INT ia[5] = { 1, 4, 6, 9, 10 };
 
