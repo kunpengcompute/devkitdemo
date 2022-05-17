@@ -39,7 +39,7 @@ void Print_CSR_To_Matrix(int m, float* values, int values_length,
 	                     KML_INT* row_offsets, int row_offsets_length,
 	                     KML_INT* column_indices)
 {
-	for (int i = 0, i < row_offsets_length; ++i)
+	for (int i = 0; i < row_offsets_length; ++i)
 	{
 		if (row_offsets[i] >= values_length)
 		{
