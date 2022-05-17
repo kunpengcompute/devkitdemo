@@ -51,17 +51,17 @@ int TestDgetrf(double* a, int* ipiv, const int m, const int n, const int lda)
 			       "an error of dividing by zero occurs when a system of linear equations is solved.", info);
 		}
 	}
-	retuen info;
+	return info;
 }
 
-int TestDgetri(double* a, const init* ipiv, const int n, const int lda)
+int TestDgetri(double* a, const int* ipiv, const int n, const int lda)
 {
 	int info = 0;
 	double* work = NULL;
 	double qwork;
 	int lwork = -1;
 	/* Query optimal work size */
-	dgetri_(&n, a, &lda, &ipiv, &qwork, &lwork, &info);
+	dgetri_(&n, a, &lda, ipiv, &qwork, &lwork, &info);
 	if (info != 0)
 	{
 		if (info > 0)
