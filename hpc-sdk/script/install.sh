@@ -36,7 +36,7 @@ set_soft_status(){
     done
 }
 
-get_nmpi_package_name(){
+get_hmpi_package_name(){
     # 获取hmpi包名
     if [[ "${os_name}" =~ "KylinLinux" ]]; then
         if [[ ${select_result} =~ "HMPI_GCC" ]]; then
@@ -345,7 +345,7 @@ install_compiler(){
 
 install_math_kml(){
     # 安装数学库
-    check_avail_space /usr/local
+    check_space /usr/local
     if [[ ${install_package_kind} == "rpm" ]]; then
         $install_package_kind -ivh ${install_package_dir}/boostkit_kml/${boost_math_rpm_name}.rpm
     else
@@ -391,7 +391,7 @@ change_modules(){
             
             # 要添加用户自定义目录下有同名modules的情况
             old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/hmpi_modulefiles)
-            if [[ "${os_name}" =~ "KylinLinux" ]]； then
+            if [[ "${os_name}" =~ "KylinLinux" ]]; then
                 sed -i s"#${old_msg}#set prefix $(cd ${install_hmpi_path};pwd)/${kylinv10_hmpi_gcc_name}#" ${module_file_dir}/hmpi_modulefiles
             elif [[ "${os_name}" =~ "CentOSLinux" ]]; then
                 sed -i s"#${old_msg}#set prefix $(cd ${install_hmpi_path};pwd)/${centos7_6_linux_hmpi_gcc_name}#" ${module_file_dir}/hmpi_modulefiles  

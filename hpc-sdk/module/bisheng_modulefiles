@@ -19,5 +19,5 @@ set prefix
 setenv BISHENG_DIR $prefix
 
 prepend-path    PATH    $prefix/bin
-prepend-path    LD_LIBRARY_PATH $prefix/lib64
+prepend-path    LD_LIBRARY_PATH $prefix/lib
 prepend-path    MODULEPATH    $prefix

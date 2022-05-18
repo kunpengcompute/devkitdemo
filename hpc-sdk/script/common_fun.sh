@@ -18,8 +18,9 @@ time_stamp=$(date +%s)
 # 安装/升级日志文件名称
 LOG_FILE_NAME="install_hpc_${time_stamp}.log"
 # 日志文件的绝对路径
-log_file_of_abspath=${current_dir}/../$LOG_FILE_NAME
+log_file_of_abspath=${current_dir}/../log/$LOG_FILE_NAME
 # 创建日志文件
+mkdir -p ${current_dir}/../log
 touch ${log_file_of_abspath}
 # ctrl+c异常
 onCtrlC(){
@@ -114,7 +115,7 @@ user_customize_path(){
             break
         fi
     done
-    check_avail_space ${customize_path}
+    check_space ${customize_path}
 }
 
 get_install_kml_way(){
@@ -155,7 +156,7 @@ check_customize_path(){
     mkdir -p ${customize_path}
 }
 
-check_avail_space(){
+check_space(){
     # 检查磁盘大小
     customize_path="$1"
     space_flag=1
@@ -230,8 +231,8 @@ show_soft_support_list(){
     if [[ ${soft_support_list} =~ "KML" ]]; then
         logger "The KML corresponds to a specific compiler. Install the matched compiler for the KML. For example, the compiler corresponding to KML is GCC." ${TIP_COLOR_ECHO}
     fi 
-    printf "%-16s %-29s %-14s %-20s\n" "SequenceNumber" "Soft" "Support" >> ${log_file_of_abspath}
-    printf "%-16s %-29s %-14s %-20s\n" "SequenceNumber" "Soft" "Support"
+    printf "%-16s %-29s %-14s %-20s\n" "SequenceNumber" "Software" "Support" >> ${log_file_of_abspath}
+    printf "%-16s %-29s %-14s %-20s\n" "SequenceNumber" "Software" "Support"
     soft_support_list=($(echo ${soft_support_list} | tr ' ' ' '))
     for ((1=0;i<${#soft_support_list[@]};i++)); do
         printf "%-16s %-29s %-20s\n" "$((i+1))" "${soft_support_list[i]}" "${check_result_list[i]}" >> ${log_file_of_abspath}
@@ -287,7 +288,7 @@ hand_precondition_mpi(){
         read_anser "The corresponding ${miss_package[@]} is missing or the version is incorrect. Are you sure you want to continue the installation?"
         if [[ $? == 1 ]]; then
             if [[ ${hmpi_install_status} == ${SUCCESS} ]]; then
-                del_hmpi
+                del_hyper_mpi
             fi
             install_hyper_mpi
         else
@@ -359,7 +360,7 @@ del_math_kml(){
     fi
 }
 
-del_hmpi(){
+del_hyper_mpi(){
     # 删除原有的hmpi的环境变量
     logger 'del hmpi' ${TIP_COLOR_ECHO}
     local keys=(hwmpi ompi ucx)
