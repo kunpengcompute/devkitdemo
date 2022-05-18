@@ -22,12 +22,12 @@
 
 static int InputParamParse(int argc, char** argv)
 {
-	if (1 == argc)
+	if (argc == 1)
 	{
 		return 0;
 	}
 	// Parameter must be 1
-	printf("Argv is not NULL");
+	printf("Invalid parameter.");
 	return -1;
 }
 
@@ -65,7 +65,7 @@ int main(int argc, char** argv)
 	int data = 10000;
 	MPI_Comm_rank(MPI_COMM_WORLD, &rankNum);
 
-	if (0 == rankNum)
+	if (rankNum == 0)
 	{
 		printf("Process 0 send data %d\n", data);
 		BcastSend(&data, 1, MPI_INT, 0, MPI_COMM_WORLD);
