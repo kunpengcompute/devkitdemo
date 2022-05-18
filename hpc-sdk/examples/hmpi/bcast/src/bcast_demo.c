@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <mpi.h>
 
-static int InputParamParse(int argc, char** argv)
+int InputParamParse(int argc, char** argv)
 {
 	if (argc == 1)
 	{
