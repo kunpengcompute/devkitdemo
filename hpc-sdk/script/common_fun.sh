@@ -240,7 +240,7 @@ show_soft_support_list(){
     done
 }
 
-read_anser(){
+read_anwser(){
     # 处理用户交互相关操作
     ask_question="$*"
     ask_flag=1
@@ -285,7 +285,7 @@ hand_precondition_mpi(){
     # 处理环境中依赖不足导致安装异常
     if [[ ${#miss_package[@]} -gt 0 ]]; then
         logger "The ${miss_package[@]} dependency is not detected in the environment." ${TIP_COLOR_WARNING}
-        read_anser "The corresponding ${miss_package[@]} is missing or the version is incorrect. Are you sure you want to continue the installation?"
+        read_anwser "The corresponding ${miss_package[@]} is missing or the version is incorrect. Are you sure you want to continue the installation?"
         if [[ $? == 1 ]]; then
             if [[ ${hmpi_install_status} == ${SUCCESS} ]]; then
                 del_hyper_mpi
@@ -319,7 +319,7 @@ check_precondition_kml(){
 hand_precondition_kml(){
     if [[ ${#miss_package_kml[@]} -gt 0 ]]; then
         logger "The ${miss_package_kml[@]} dependency is not detected in the environment." ${TIP_COLOR_WARNING}
-        read_anser "The system does not have dependencies such as ${miss_package_kml[@]} or the version does not meet the requirements. Are you sure you want to continue the installing the HMPI-GCC?"
+        read_anwser "The system does not have dependencies such as ${miss_package_kml[@]} or the version does not meet the requirements. Are you sure you want to continue the installing the HMPI-GCC?"
         if [[ $? == 1 ]]; then
             if [[ ${kml_install_status} == ${SUCCESS} ]]; then
                 del_math_kml

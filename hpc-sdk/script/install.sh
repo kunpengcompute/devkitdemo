@@ -149,7 +149,7 @@ install_hmpi_env_check(){
     if [[ ${hmpi_gcc_choose_status} == ${SUCCESS} ]] && [[ ${compiler_choose_status} == ${SUCCESS} ]]; then 
         if [[ ${hmpi_gcc_install_status} == ${SUCCESS} ]]; then
             logger "HMPI-${hmpi_type} is installed in this system" ${TIP_COLOR_WARNING}
-            read_anser "The HMPI-${hmpi_type} already exists. Are you sure you want to continue installing the HPMI-GCC?"
+            read_anwser "The HMPI-${hmpi_type} already exists. Are you sure you want to continue installing the HPMI-GCC?"
             if [[ $? == 1 ]]; then
                 # 此时可认为gcc 符合安装要求
                 hand_precondition_mpi
@@ -163,7 +163,7 @@ install_hmpi_env_check(){
     elif [[ ${hmpi_gcc_choose_status} == ${SUCCESS} ]] && [[ ${gcc_choose_status} == ${FAILED} ]]; then
         if [[ ${hmpi_gcc_install_status} == ${SUCCESS} ]]; then
             logger "Hmpi_${hmpi_type} is installed in this system" ${TIP_COLOR_WARNING}
-            read_anser "The Hmpi-${hmpi_type} already exists. Are you sure you want to continue installing the HPMI-GCC?"
+            read_anwser "The Hmpi-${hmpi_type} already exists. Are you sure you want to continue installing the HPMI-GCC?"
             if [[ $? == 1 ]]; then
                 if [[ ${compiler_hmpi_check_status} == ${SUCCESS} ]]; then
                     hand_precondition_mpi
@@ -201,7 +201,7 @@ install_kml_env_check(){
     fi
     if [[ ${kml_choose_status} == ${SUCCESS} ]] && [[ ${gcc_choose_status} == ${SUCCESS} ]]; then
         if [[ ${kml_install_status} == ${SUCCESS} ]]; then
-            read_anser "The KML already exists. Are you sure you want to continue installing the KML?"
+            read_anwser "The KML already exists. Are you sure you want to continue installing the KML?"
             if [[ $? == 1 ]]; then
                hand_precondition_kml
             else
@@ -213,7 +213,7 @@ install_kml_env_check(){
     elif [[ ${kml_choose_status} == ${SUCCESS} ]] && [[ ${gcc_choose_status} == ${FAILED} ]]; then
         if [[ ${kml_install_status} == ${SUCCESS} ]]; then
             logger "The KML already exists. Are you sure you want to continue installing the KML?"
-            read_anser "The KML already exists. Are you sure you want to continue installing the KML?"
+            read_anwser "The KML already exists. Are you sure you want to continue installing the KML?"
             if [[ $? == 1 ]]; then
                 logger "The KML already exists. Are you sure you want to continue installing the KML? Y"
                 if [[ ${gcc_kml_check_status} == ${SUCCESS} ]]; then
@@ -251,7 +251,7 @@ install_compiler_env_check(){
         # 判断gcc是否有安装
         if [[ ${compiler_install_status} == ${SUCCESS} ]]; then
             logger "The ${compiler_type^^} already exists. Are you sure you want to continue installing the ${compiler_type^^}?"
-            read_anser "The ${compiler_type^^} already exists. Are you sure you want to continue installing the ${compiler_type^^}?"
+            read_anwser "The ${compiler_type^^} already exists. Are you sure you want to continue installing the ${compiler_type^^}?"
             if [[ $? == 1 ]]; then
                 [[ ${compiler_type} == "gcc" ]] && del_compiler "gcc" || del_compiler "bisheng"
                 [[ ${compiler_type} == "gcc" ]] && install_compiler "gcc" || install_compiler "bisheng"
