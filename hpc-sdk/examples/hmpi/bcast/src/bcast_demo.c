@@ -54,7 +54,7 @@ void BcastRecv(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm 
 
 int main(int argc, char** argv)
 {
-	if (0 != InputParamParse(argc, argv))
+	if (InputParamParse(argc, argv) != 0)
 	{
 		return -1;
 	}
