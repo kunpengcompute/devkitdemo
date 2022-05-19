@@ -95,7 +95,7 @@ int main()
 	/*
 	 * Create a plan for the there-dimensional C2C transform of a single contiguous data sequence.
 	 */
-	plan = kml_fft_plan_dft(n[0], n[1], 1, in, out, KML_FFT_FORWARD, KML_FFT_ESTIMATE);
+	plan = kml_fft_plan_dft_3d(n[0], n[1], 1, in, out, KML_FFT_FORWARD, KML_FFT_ESTIMATE);
 	kml_fft_execute_dft(plan, in, out);
 
 	printf("kml_fft_plan_dft_3d --> OutPut complex:\n");
