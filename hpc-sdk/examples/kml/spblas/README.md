@@ -6,7 +6,7 @@
 
 1. [KML_SPBLAS](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0067.html)
    库是稀疏矩阵（Sparse Matrix）的基础代数运算库，稀疏矩阵是指大部分矩阵元素为零的矩阵。
-2. **KML_SPBLAS library functions demo** 展示使用KML_SPBLAS库函数的代码示例。
+2. **KML_SPBLAS library functions demo** 展示使用KML_SPBLAS库函数的代码示例，演示系数矩阵与向量计算函数的使用流程。
 
 ## 使用依赖
 

@@ -6,7 +6,7 @@
 
 1. [KML_FFT](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0122.html)
    是一个快速傅里叶变换(FFT)的数学库。
-2. **KML_FFT library functions demo** 展示使用KML_FFT库函数的代码示例。
+2. **KML_FFT library functions demo** 展示使用KML_FFT库函数的代码示例，演示C2C变换等函数的使用流程。
 
 ## 使用依赖
 

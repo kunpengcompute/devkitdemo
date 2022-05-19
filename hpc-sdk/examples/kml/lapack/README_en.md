@@ -7,7 +7,7 @@ English | [简体中文](README.md)
 1. [KML_LAPACK](https://www.hikunpeng.com/document/detail/en/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0203.html)
    optimizes the Linear Algebra PACKage (LAPACK) computing efficiency based on the Kunpeng architecture by means of
    block division, algorithm combination, multi-thread, and BLAS interface optimization.
-2. The **KML_LAPACK library functions demo** shows a code example for KML_LAPACK library functions.
+2. The **KML_LAPACK library functions demo** shows a code example for KML_LAPACK library functions, demonstrates the use process of matrix factorization, matrix inversion, etc functions.
 
 ## Dependencies
 

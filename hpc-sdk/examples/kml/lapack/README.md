@@ -6,7 +6,7 @@
 
 1. [KML_LAPACK](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0203.html)
    通过分块、求解算法组合、多线程、BLAS接口优化等手段，基于鲲鹏架构对线性代数运算库（Linear Algebra PACKage）的计算效率进行了优化。
-2. **KML_LAPACK library functions demo** 展示使用KML_LAPACK库函数的代码示例。
+2. **KML_LAPACK library functions demo** 展示使用KML_LAPACK库函数的代码示例，演示矩阵分解、矩阵求逆等函数的使用流程。
 
 ## 使用依赖
 
