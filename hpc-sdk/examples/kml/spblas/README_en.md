@@ -10,7 +10,7 @@ The [KML_SPBLAS](https://www.hikunpeng.com/document/detail/en/kunpengaccel/math-
 library is a basic algebraic operation library of a sparse matrix. The majority of the elements in a sparse matrix are
 zero.
 
-2. The **KML_SPBLAS library functions demo** shows a code example for KML_SPBLAS library functions.
+2. The **KML_SPBLAS library functions demo** shows a code example for KML_SPBLAS library functions, demonstrates the use process of sparse matrix and vector calculation function.
 
 ## Dependencies
 

@@ -9,7 +9,7 @@ English | [简体中文](README.md)
    has been widely used in industry and scientific computing, and has become an industry standard.
    The [KML_BLAS](https://www.hikunpeng.com/document/detail/en/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0012.html)
    library provides the C language interface for BLAS functions.
-2. The **KML_BLAS library functions demo** shows a code example for KML_BLAS library functions.
+2. The **KML_BLAS library functions demo** shows a code example for KML_BLAS library functions, demonstrates   the use process of matrix multiplication, symmetric matrix multiplication, update the rank of sysmmetric matrix, etc functions.
 
 ## Dependencies
 

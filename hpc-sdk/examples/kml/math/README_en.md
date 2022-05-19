@@ -6,7 +6,7 @@ English | [简体中文](README.md)
 
 1. [KML_MATH](https://www.hikunpeng.com/document/detail/en/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0111.html)
    is a basic math function library implemented by the C language.
-2. The **KML_MATH library functions demo** shows a code example for KML_MATH library functions.
+2. The **KML_MATH library functions demo** shows a code example for KML_MATH library functions, demonstrates the use process of trigonometric functions.
 
 ## Dependencies
 

@@ -6,7 +6,7 @@ English | [简体中文](README.md)
 
 1. [KML_FFT](https://www.hikunpeng.com/document/detail/en/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0122.html)
    is a math library of fast Fourier transform (FFT).
-2. The **KML_FFT library functions demo** shows a code example for KML_FFT library functions.
+2. The **KML_FFT library functions demo** shows a code example for KML_FFT library functions, demonstrates the use process of C2C transforms, etc functions.
 
 ## Dependencies
 

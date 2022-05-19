@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * Description: KML spblas library demo
+ * Description: 
+ * 		KML_SPBLAS library functions demo demonstrates the use process of sparse matrix and vector calculation function.
  * Create: 2022-05-15
  */
 

@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * Description: KML fft library demo
+ * Description: 
+ * 		KML_FFT library functions demo demonstrates the use process of C2C transforms, etc functions.
  * Create: 2022-05-15
  */
 
@@ -39,7 +40,10 @@ void PrintComplex(kml_fft_complex* complex, const int length)
 
 int main()
 {
+	// Dimension of FFT. The constraint is 1 ≤ rank ≤ 3.
 	int rank = 2;
+	// Indicates an array whose dimension is rank, including the size of each dimension in the FFT sequence. 
+	// The constraint is n[i] ≥ 1, for i in 0 to rank - 1.
 	int* n;
 	n = (int*)kml_fft_malloc(sizeof(int) * rank);
 	n[0] = 2;
@@ -60,10 +64,41 @@ int main()
 	kml_fft_complex* out;
 	out = (kml_fft_complex*)kml_fft_malloc(sizeof(kml_fft_complex) * n[0] * n[1]);
 	kml_fft_plan plan;
+
+	/*
+	 * Create a plan for the n-dimensional complex-to-complex (C2C) transform of a single contiguous data sequence.
+	 */
 	plan = kml_fft_plan_dft(rank, n, in, out, KML_FFT_FORWARD, KML_FFT_ESTIMATE);
 	kml_fft_execute_dft(plan, in, out);
 
 	printf("kml_fft_plan_dft --> OutPut complex:\n");
+	PrintComplex(out, n[0] * n[1]);
+
+	/*
+	 * Create a plan for the one-dimensional C2C transform of a single contiguous data sequence.
+	 */
+	plan = kml_fft_plan_dft_1d(n[0], in, out, KML_FFT_FORWARD, KML_FFT_ESTIMATE);
+	kml_fft_execute_dft(plan, in, out);
+
+	printf("kml_fft_plan_dft_1d --> OutPut complex:\n");
+	PrintComplex(out, n[0] * n[1]);
+
+	/*
+	 * Create a plan for the two-dimensional C2C transform of a single contiguous data sequence.
+	 */
+	plan = kml_fft_plan_dft_2d(n[0], n[1], in, out, KML_FFT_FORWARD, KML_FFT_ESTIMATE);
+	kml_fft_execute_dft(plan, in, out);
+
+	printf("kml_fft_plan_dft_2d --> OutPut complex:\n");
+	PrintComplex(out, n[0] * n[1]);
+
+	/*
+	 * Create a plan for the there-dimensional C2C transform of a single contiguous data sequence.
+	 */
+	plan = kml_fft_plan_dft(n[0], n[1], 1, in, out, KML_FFT_FORWARD, KML_FFT_ESTIMATE);
+	kml_fft_execute_dft(plan, in, out);
+
+	printf("kml_fft_plan_dft_3d --> OutPut complex:\n");
 	PrintComplex(out, n[0] * n[1]);
 
 	kml_fft_destroy_plan(plan);

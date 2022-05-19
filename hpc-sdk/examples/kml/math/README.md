@@ -6,7 +6,7 @@
 
 1. [KML_MATH](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/math-lib/devg-kml/kunpengaccel_kml_16_0111.html)
    是C语言实现的基本数学函数库。
-2. **KML_MATH library functions demo** 展示使用KML_MATH库函数的代码示例。
+2. **KML_MATH library functions demo** 展示使用KML_MATH库函数的代码示例，演示三角函数的使用流程。
 
 ## 使用依赖
 

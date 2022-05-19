@@ -12,7 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * Description: KML lapack library demo
+ * Description: 
+ * 		KML_LAPACK library functions demo demonstrates the use process of matrix factorization, 
+ * 		matrix inversion, etc functions
  * Create: 2022-05-15
  */
 
@@ -37,6 +39,11 @@ void PrintArray(const double* array, const int row, const int column)
 int TestDgetrf(double* a, int* ipiv, const int m, const int n, const int lda)
 {
 	int info = 0;
+	/*
+	 * Compute the LU factorization of matrix A. This function uses partial pivoting, allowing row interchanges. 
+	 * The operation is defined as A = PLU, where P is a permutation matrix, L is a lower triangular matrix or 
+	 * a lower echelon matrix and the diagonal is 1, and U is an upper triangular matrix or an upper echelon matrix.
+	 */
 	dgetrf_(&m, &n, a, &lda, ipiv, &info);
 	if (info != 0)
 	{
@@ -56,9 +63,14 @@ int TestDgetrf(double* a, int* ipiv, const int m, const int n, const int lda)
 
 int TestDgetri(double* a, const int* ipiv, const int n, const int lda)
 {
+	/*
+	 * Compute the inverse matrix based on the LU factorization result obtained using ?getrf. 
+	 */
 	int info = 0;
+	// Temporary storage space. After lwork=-1 is called, work[0] is the optimal lwork value.
 	double* work = NULL;
 	double qwork;
+	// Length of the work array
 	int lwork = -1;
 	/* Query optimal work size */
 	dgetri_(&n, a, &lda, ipiv, &qwork, &lwork, &info);
@@ -96,7 +108,14 @@ int TestDgetri(double* a, const int* ipiv, const int n, const int lda)
 
 int main()
 {
-	int m = 4, n = 4, lda = 4;
+	// Number of rows in matrix A
+	int m = 4;
+	// Number of columns in matrix A
+	int n = 4;
+	// Leading dimension of the matrix A. lda >= max(1, n).
+	int lda = 4;
+	// An array containing pivot indices obtained from ?getrf. Its length is min(m, n). 
+	// For 1 <= ipiv <= min(m, n), row i and row ipiv[i-1] of the matrix are interchanged during factorization.
 	int ipiv[4];
 
 	/*
