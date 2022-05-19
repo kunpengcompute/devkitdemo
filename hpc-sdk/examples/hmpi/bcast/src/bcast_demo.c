@@ -20,61 +20,69 @@
 #include <stdlib.h>
 #include <mpi.h>
 
-int InputParamParse(int argc, char** argv)
+int InputParameterParse(int argc, char** argv)
 {
 	if (argc == 1)
 	{
 		return 0;
 	}
 	// Parameter must be 1
-	printf("Invalid parameter.");
-	return -1;
+	printf("Invalid parameter.\n");
 }
 
-void BcastSend(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm communicator)
+double BcastData(int trialsNum, int elementsNum, int* sendData)
 {
-	int worldRank;
-	int worldSize;
-	MPI_Comm_rank(communicator, &worldRank);
-	MPI_Comm_size(communicator, &worldSize);
-
-	for (int i = 0; i < worldSize; i++)
+	if (trialsNum == 0)
 	{
-		if (i != worldRank)
-		{
-			MPI_Send(data, count, datatype, i, 0, communicator);
-		}
+		return 0;
 	}
-}
-
-void BcastRecv(void* data, int count, MPI_Datatype datatype, int root, MPI_Comm communicator)
-{
-	MPI_Recv(data, count, datatype, root, 0, communicator, MPI_STATUS_IGNORE);
+	double totalMPIBcastTime = 0.0;
+	for (int i = 0; i < trialsNum; i++)
+	{
+		// An MPI barrier completes after all group members have entered the barrier.
+		MPI_Barrier(MPI_COMM_WORLD);
+		// MPI_Wtime returns a floating-point number of seconds, representing elapsed wall-clock time since some time in the past.
+		totalMPIBcastTime -= MPI_Wtime();
+		// MPI_Bcast broadcasts a message from the process with rank root to all processes of the group, itself included.
+		MPI_Bcast(sendData, elementsNum, MPI_INT, 0, MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM_WORLD);
+		totalMPIBcastTime += MPI_Wtime;
+	}
+	return totalMPIBcastTime;
 }
 
 int main(int argc, char** argv)
 {
-	if (InputParamParse(argc, argv) != 0)
+	if (InputParameterParse(argc, argv) != 0)
 	{
 		return -1;
 	}
-
-	MPI_Init(NULL, NULL);
-
+	// Send data numbers.
+	int elementsNum = 10000;
+	int trialsNum = 10;
 	int rankNum;
-	int data = 10000;
+	int sizeOfInt = sizeof(int);
+	double totalMPIBcastTime = 0.0;
+	int* sendData = (int*)malloc(sizeof(int) * elementsNum);
+	if (sendData == NULL)
+	{
+		printf("Out of memory.\n");
+		return -1;
+	}
+	memset(sendData, 0, elementsNum);
+
+	// Init.
+	MPI_Init(NULL, NULL);
+	// This function gives the rank of the process in the particular communicator’s group.
 	MPI_Comm_rank(MPI_COMM_WORLD, &rankNum);
+
+	totalMPIBcastTime = BcastData(trialsNum, elementsNum, sendData);
 
 	if (rankNum == 0)
 	{
-		printf("Process 0 send data %d\n", data);
-		BcastSend(&data, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		printf("Data size = %d, Trials = %d\n", elementsNum * sizeOfInt, trialsNum);
+		printf("Average of MPI_Bcast time = %lf\n", totalMPIBcastTime / trialsNum);
 	}
-	else
-	{
-		BcastRecv(&data, 1, MPI_INT, 0, MPI_COMM_WORLD);
-		printf("Process %d received data %d from root process\n", rankNum, data);
-	}
-
+	free(sendData);
 	MPI_Finalize();
 }
