@@ -46,7 +46,7 @@ double BcastData(int trialsNum, int elementsNum, int* sendData)
 		// MPI_Bcast broadcasts a message from the process with rank root to all processes of the group, itself included.
 		MPI_Bcast(sendData, elementsNum, MPI_INT, 0, MPI_COMM_WORLD);
 		MPI_Barrier(MPI_COMM_WORLD);
-		totalMPIBcastTime += MPI_Wtime;
+		totalMPIBcastTime += MPI_Wtime();
 	}
 	return totalMPIBcastTime;
 }
