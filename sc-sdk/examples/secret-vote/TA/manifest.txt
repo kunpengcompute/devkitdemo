@@ -1,0 +1,7 @@
+gpd.ta.appID:                53648059-2257-485e-a940-2482b65a21da
+gpd.ta.service_name:         secret-vote
+gpd.ta.singleInstance:       true
+gpd.ta.multiSession:         false
+gpd.ta.instanceKeepAlive:    false
+gpd.ta.dataSize:             67928064
+gpd.ta.stackSize:            40960
