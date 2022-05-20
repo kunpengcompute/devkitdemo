@@ -16,7 +16,6 @@ from django.core.management import BaseCommand
 from vote.models import User, VoteOption
 from vote.utils import CA_PATH, KEY_DIRECTORY_PATH, ROOT_KEY_STORAGE_PATH, USER_PUBLIC_KEY_DIRECTORY_PATH, \
     PRIVATE_KEY_PATH
-from service.settings import BASE_DIR
 
 LOGGER = logging.getLogger('vote')
 
@@ -28,10 +27,9 @@ def clean_data():
     if os.path.exists(PRIVATE_KEY_PATH):
         shutil.rmtree(PRIVATE_KEY_PATH)
 
-    os.makedirs(BASE_DIR, 'logs')
     os.makedirs(KEY_DIRECTORY_PATH)
     os.makedirs(PRIVATE_KEY_PATH)
-    os.makedirs(os.path.join(KEY_DIRECTORY_PATH, 'root_key'))
+    os.makedirs(os.path.join(KEY_DIRECTORY_PATH, 'root_pub_key'))
     os.makedirs(USER_PUBLIC_KEY_DIRECTORY_PATH)
 
 
