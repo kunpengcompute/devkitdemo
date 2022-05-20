@@ -71,7 +71,7 @@ def login_user(request, user):
         LOGGER.info('User logs in for the first time')
         gene_result, sign = generate_public_key_and_sign(user.get_username())
         if gene_result != 0:
-            LOGGER.error('Failed to call CA GetTaskPubKey method')
+            LOGGER.error('Failed to call CA CreateTaskPubKey method')
             return JsonResponse(status=403, data=new_generate_response_body('login_error'))
         user.set_public_key(os.path.join(USER_PUBLIC_KEY_DIRECTORY_PATH, user.get_username() + '.pub'))
         user.set_sign(sign.raw)
@@ -122,8 +122,8 @@ def generate_public_key_and_sign(username):
     :return: Public key and related sign
     """
     ca = cdll.LoadLibrary(CA_PATH)
-    ca.GetTaskPubKey.argtypes = [UserPubkey]
-    ca.GetTaskPubKey.restype = c_int
+    ca.CreateTaskPubKey.argtypes = [UserPubkey]
+    ca.CreateTaskPubKey.restype = c_int
 
     # Initialize UserPubkey instant
     key_inv = UserPubkey()

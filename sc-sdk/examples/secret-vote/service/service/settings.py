@@ -136,7 +136,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'vote_sys.log'),
+            'filename': os.path.join(BASE_DIR, 'vote_sys.log'),
             'formatter': 'verbose'
         },
     },
@@ -154,4 +154,4 @@ AUTH_USER_MODEL = 'vote.user'
 SESSION_COOKIE_AGE = 30 * 60
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+STATICFILES_DIRS = [os.path.join(os.path.dirname(BASE_DIR), 'static'), ]
