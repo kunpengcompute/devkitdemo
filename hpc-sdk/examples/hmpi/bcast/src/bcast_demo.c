@@ -18,6 +18,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <mpi.h>
 
 int InputParameterParse(int argc, char** argv)
