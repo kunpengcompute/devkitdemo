@@ -136,7 +136,7 @@ def generate_public_key_and_sign(username):
     key_inv.usernameLen = len(username)
 
     # Call CA method
-    result = ca.CreateTaskPubkey(key_inv)
+    result = ca.CreateTaskPubKey(key_inv)
     return result, sign_buf
 
 
