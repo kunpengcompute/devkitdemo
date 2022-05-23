@@ -13,16 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [ $# != 2 ]; then
-  echo "Parameter should contain signed_config and TA_cert."
-  exit 1
-fi
-
 cd cloud
-
-# copy signed_config and TA_cert
-cp -r $1 .
-cp -r $2 .
 
 # build
 mkdir build
@@ -44,5 +35,5 @@ fi
 cp ${ta_uuid}.sec /data
 
 # clean temp file
-rm -rf build *.sec libcombine.so manifest.txt signed_config TA_cert
+rm -rf build *.sec libcombine.so manifest.txt
 cd ..
