@@ -38,7 +38,9 @@ double BcastData(int trialsNum, int elementsNum, int* sendData)
 		return 0;
 	}
 	double totalMPIBcastTime = 0.0;
-	for (int i = 0; i < trialsNum; i++)
+
+	int i;
+	for (i = 0; i < trialsNum; i++)
 	{
 		// An MPI barrier completes after all group members have entered the barrier.
 		MPI_Barrier(MPI_COMM_WORLD);
