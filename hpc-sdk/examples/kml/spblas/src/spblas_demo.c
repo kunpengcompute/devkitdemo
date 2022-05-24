@@ -52,18 +52,21 @@ void Print_CSR_To_Matrix(int m, float* values, int values_length,
 		float x[m];
 		// Initialize the matrix row array
 		memset(x, 0, m * sizeof(float));
+
 		// Confirm the range of values for each row based on the offset
 		int j;
 		for (j = row_offsets[i]; j < row_offsets[i + 1]; ++j)
 		{
 			x[column_indices[j]] = values[j];
 		}
+
 		// print matrix row array
 		int y;
 		for (y = 0; y < m; ++y)
 		{
 			printf("%.6f\t", x[y]);
 		}
+
 		printf("\n");
 	}
 	printf("\n");
@@ -84,11 +87,13 @@ int main()
 	// Only used by functions that support 0-based matrix indexing [conforms to C indexing specification]
 	KML_INT scsrgemv_ja[9];
 	KML_INT scsrgemv_ia[5];
+
 	int ix;
 	for (ix = 0; ix < 9; ++ix)
 	{
 		scsrgemv_ja[ix] = ja[ix] - 1;
 	}
+
 	int iy;
 	for (iy = 0; iy < 5; ++iy)
 	{
