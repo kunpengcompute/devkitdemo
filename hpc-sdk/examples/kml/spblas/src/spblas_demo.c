@@ -25,9 +25,11 @@
 
 void PrintMatrix(int row, int column, const float* matrix)
 {
-	for (int i = 0; i < row; i++)
+	int i;
+	for (i = 0; i < row; i++)
 	{
-		for (int j = 0; j < column; j++)
+		int j;
+		for (j = 0; j < column; j++)
 		{
 			printf("%-12.6f", matrix[j * column + i]);
 		}
@@ -37,10 +39,11 @@ void PrintMatrix(int row, int column, const float* matrix)
 }
 
 void Print_CSR_To_Matrix(int m, float* values, int values_length,
-	                     KML_INT* row_offsets, int row_offsets_length,
-	                     KML_INT* column_indices)
+	KML_INT* row_offsets, int row_offsets_length,
+	KML_INT* column_indices)
 {
-	for (int i = 0; i < row_offsets_length; ++i)
+	int i;
+	for (i = 0; i < row_offsets_length; ++i)
 	{
 		if (row_offsets[i] >= values_length)
 		{
@@ -50,14 +53,16 @@ void Print_CSR_To_Matrix(int m, float* values, int values_length,
 		// Initialize the matrix row array
 		memset(x, 0, m * sizeof(float));
 		// Confirm the range of values for each row based on the offset
-		for (int j = row_offsets[i]; j < row_offsets[i + 1]; ++j)
+		int j;
+		for (j = row_offsets[i]; j < row_offsets[i + 1]; ++j)
 		{
 			x[column_indices[j]] = values[j];
 		}
 		// print matrix row array
-		for (int j = 0; j < m; ++j)
+		int y;
+		for (y = 0; y < m; ++y)
 		{
-			printf("%.6f\t", x[j]);
+			printf("%.6f\t", x[y]);
 		}
 		printf("\n");
 	}
@@ -79,13 +84,15 @@ int main()
 	// Only used by functions that support 0-based matrix indexing [conforms to C indexing specification]
 	KML_INT scsrgemv_ja[9];
 	KML_INT scsrgemv_ia[5];
-	for (int i = 0; i < 9; ++i)
+	int ix;
+	for (ix = 0; ix < 9; ++ix)
 	{
-		scsrgemv_ja[i] = ja[i] - 1;
+		scsrgemv_ja[ix] = ja[ix] - 1;
 	}
-	for (int i = 0; i < 5; ++i)
+	int iy;
+	for (iy = 0; iy < 5; ++iy)
 	{
-		scsrgemv_ia[i] = ia[i] - 1;
+		scsrgemv_ia[iy] = ia[iy] - 1;
 	}
 
 	// array of vectors x
