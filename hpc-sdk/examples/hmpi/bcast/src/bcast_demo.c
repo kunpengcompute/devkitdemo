@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 	if (rankNum == 0)
 	{
 		printf("Data size = %d, Trials = %d\n", elementsNum * sizeOfInt, trialsNum);
-		printf("Average of MPI_Bcast time = %lf\n", totalMPIBcastTime / trialsNum);
+		printf("Average of MPI_Bcast time = %lf seconds\n", totalMPIBcastTime / trialsNum);
 	}
 	free(sendData);
 	MPI_Finalize();
