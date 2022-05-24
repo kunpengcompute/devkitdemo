@@ -38,7 +38,9 @@ double BcastData(int trialsNum, int elementsNum, int* sendData)
 		return 0;
 	}
 	double totalMPIBcastTime = 0.0;
-	for (int i = 0; i < trialsNum; i++)
+
+	int i;
+	for (i = 0; i < trialsNum; i++)
 	{
 		// An MPI barrier completes after all group members have entered the barrier.
 		MPI_Barrier(MPI_COMM_WORLD);
@@ -82,7 +84,7 @@ int main(int argc, char** argv)
 	if (rankNum == 0)
 	{
 		printf("Data size = %d, Trials = %d\n", elementsNum * sizeOfInt, trialsNum);
-		printf("Average of MPI_Bcast time = %lf\n", totalMPIBcastTime / trialsNum);
+		printf("Average of MPI_Bcast time = %lf seconds\n", totalMPIBcastTime / trialsNum);
 	}
 	free(sendData);
 	MPI_Finalize();

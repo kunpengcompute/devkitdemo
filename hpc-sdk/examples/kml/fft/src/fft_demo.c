@@ -25,7 +25,8 @@
 void PrintComplex(kml_fft_complex* complex, const int length)
 {
 	printf("{\n");
-	for (int i = 0; i < length; i++)
+	int i;
+	for (i = 0; i < length; i++)
 	{
 		printf("    {%.6f, ", complex[i].r);
 		printf("%.6f}", complex[i].i);
@@ -52,7 +53,8 @@ int main()
 
 	kml_fft_complex* in;
 	in = (kml_fft_complex*)kml_fft_malloc(sizeof(kml_fft_complex) * n[0] * n[1]);
-	for (int i = 0; i < n[0] * n[1]; i++)
+	int i;
+	for (i = 0; i < n[0] * n[1]; i++)
 	{
 		in[i].r = init[i][0];
 		in[i].i = init[i][1];

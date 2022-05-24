@@ -26,9 +26,11 @@
 
 void PrintMatrix(int row, int column, const float* matrix)
 {
-	for (int i = 0; i < row; i++)
+	int i;
+	for (i = 0; i < row; i++)
 	{
-		for (int j = 0; j < column; j++)
+		int j;
+		for (j = 0; j < column; j++)
 		{
 			printf("%-12.6f", matrix[j * column + i]);
 		}

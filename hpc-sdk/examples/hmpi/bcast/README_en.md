@@ -19,6 +19,7 @@ English | [简体中文](README.md)
 ## Dependencies
 
 1. Ensure that **Hyper MPI 1.1.0** has been installed.
+2. Ensure that **GCC 9.3.0** or **BiSheng 2.1.0** has been installed.
 
 ## Guidance
 
