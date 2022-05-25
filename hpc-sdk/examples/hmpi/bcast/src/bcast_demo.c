@@ -29,6 +29,7 @@ int InputParameterParse(int argc, char** argv)
 	}
 	// Parameter must be 1
 	printf("Invalid parameter.\n");
+	return -1;
 }
 
 double BcastData(int trialsNum, int elementsNum, int* sendData)
