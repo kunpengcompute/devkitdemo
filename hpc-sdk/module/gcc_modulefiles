@@ -1,3 +1,4 @@
+#%Module1.0
 # Copyright 2022 Huawei Technologies Co., Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#%Module1.0
 #  Gcc module for use with 'environment-module' package:
 set version 10.3.1
 set prefix
