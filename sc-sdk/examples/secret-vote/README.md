@@ -19,7 +19,7 @@ CA和TA需要编译使用，CA需要使用openssl，Web服务需要依赖Python�
 | gcc     | 4.8.5   |
 | cmake   | 2.8     |
 | openssl | 1.1.1   |
-| Python  | 3.5     |
+| Python  | 3.7     |
 | sqlite3 | 3.8.3   |
 
 1. 确保环境上以安装机密计算SDK，需要同时安装`kunpeng-sc`和`kunpeng-sc-devel`，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
@@ -40,7 +40,7 @@ git clone https://github.com/kunpengcompute/devkitdemo.git
 cd devkitdemo/sc-sdk/examples/secret-vote/
 ```
 
-3. 将CA/secret_vote_ca.h中的SECRET_VOTE_TA_UUID修改为开发者申请证书的uuid
+3. 将CA/secret_vote_ca.h中的TA_UUID修改为开发者申请证书的uuid
 
 4. 编译CA
 

@@ -14,7 +14,9 @@
 # limitations under the License.
 
 # build
-cd ../TA
+current_dir=$(cd $(dirname $0); pwd)
+
+cd $current_dir/../TA
 mkdir build
 cd build
 cmake ..

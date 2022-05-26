@@ -57,7 +57,7 @@ typedef enum {
     CMD_CREATE_ROOT_KEYPAIR = 1,
     CMD_CREATE_USER_KEYPAIR,
     CMD_AES_KEY_EXCHANGE,
-    CMD_ENCRYPT_VOTE,
+    CMD_VOTE,
 } SecretVoteCMD;
 
 struct User {
