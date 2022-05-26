@@ -4,6 +4,11 @@ import UserLogin from '../views/UserLogin.vue'
 
 Vue.use(VueRouter)
 
+const originalPush = VueRouter.prototype.originalPush
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 const routes = [
   {
     path: '/',

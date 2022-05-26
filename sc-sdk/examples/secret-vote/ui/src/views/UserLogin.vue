@@ -32,6 +32,7 @@
           :title="loginErrorText"
           type="error"
           show-icon
+          @close="closeLoginError"
         ></el-alert>
         <el-form-item label="用户名" prop="username">
           <el-input v-model="loginInfo.username" :clearable="true"></el-input>
@@ -58,7 +59,12 @@
             {{ pwdInputError }}
           </div>
         </el-form-item>
-        <el-button class="login-button" @click="handleLogin">登录</el-button>
+        <el-button
+          :disabled="buttonDisabled"
+          class="login-button"
+          @click="handleLogin"
+          >登录</el-button
+        >
       </el-form>
     </div>
   </div>
@@ -106,6 +112,7 @@ export default {
       pwdInputError: "",
       showLoginErrorInfo: false,
       loginErrorText: "",
+      buttonDisabled: false,
       loginInfo: {
         username: "",
         password: "",
@@ -135,13 +142,18 @@ export default {
     changePasswdShow() {
       this.showPasswd = !this.showPasswd;
     },
+    closeLoginError() {
+      this.showLoginErrorInfo = false;
+    },
     handleLogin() {
       this.$refs["validateLoginForm"].validate((valid) => {
         if (valid) {
+          this.buttonDisabled = true;
           doLogin(this.loginInfo)
             .then((res) => {
               const cookie = document.cookie.substring(10);
               const { status, data } = res;
+              this.buttonDisabled = false;
               if (status === 200) {
                 setUserInfo(data);
                 setToken(cookie);
@@ -149,9 +161,15 @@ export default {
               }
             })
             .catch((error) => {
-              const { data } = error.response;
-              this.showLoginErrorInfo = true;
-              this.loginErrorText = data.info_chinese || data.detail;
+              this.buttonDisabled = false;
+              if (error.response) {
+                const { status } = error.response;
+                if (status === 403) {
+                  const { data } = error.response;
+                  this.showLoginErrorInfo = true;
+                  this.loginErrorText = data.info_chinese || data.detail;
+                }
+              }
             });
         }
       });
@@ -237,7 +255,9 @@ export default {
 .login-form >>> .el-input__inner:-webkit-autofill:hover,
 .login-form >>> .el-input__inner:-webkit-autofill:focus,
 .login-form >>> .el-input__inner:-webkit-autofill:active {
+  transition-delay: 99999s;
   -webkit-transition-delay: 99999s;
+  transition: color 99999s ease-out, background-color 99999s ease-out;
   -webkit-transition: color 99999s ease-out, background-color 99999s ease-out;
 }
 
@@ -269,6 +289,15 @@ export default {
   background-color: transparent;
   border: 1px solid #0067ff;
   color: #0067ff;
+}
+
+.login-button.el-button.is-disabled,
+.login-button.el-button.is-disabled:focus,
+.login-button.el-button.is-disabled:hover {
+  color: #aaa;
+  background-color: rgba(6, 11, 21, 0.85);
+  border: 1px solid #979797;
+  cursor: default;
 }
 
 .login-form >>> .el-form-item.is-error .el-input__inner {

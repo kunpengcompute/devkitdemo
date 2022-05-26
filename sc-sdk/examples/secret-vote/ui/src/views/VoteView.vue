@@ -25,8 +25,9 @@
         v-if="showVoteErrorInfo"
         class="vote-error-info"
         :title="voteErrorText"
-        type="warning"
+        type="error"
         show-icon
+        @close="closeVoteError"
       ></el-alert>
     </div>
 
@@ -64,13 +65,16 @@
     <el-button
       v-if="!voteStatus"
       class="vote-button"
+      :disabled="buttonDisabled"
       :class="voteSelectId !== '' ? '' : 'disable-button'"
       @click="handleVote()"
       :title="voteSelectId !== '' ? '' : '请选择一个选项'"
       >投票</el-button
     >
 
-    <div v-if="voteStatus" class="vote-sum">现有{{ voteCount }}人参与投票</div>
+    <div v-if="voteStatus" class="vote-sum">
+      您已投票，现有{{ voteCount }}人参与投票
+    </div>
   </div>
 </template>
 
@@ -90,6 +94,7 @@ export default {
       showVoteErrorInfo: false,
       voteErrorText: "",
       voteOption: [],
+      buttonDisabled: false,
     };
   },
   created() {
@@ -108,6 +113,9 @@ export default {
     },
   },
   methods: {
+    closeVoteError() {
+      this.showVoteErrorInfo = false;
+    },
     getVoteInfo() {
       getVoteData().then((res) => {
         const { data } = res.data;
@@ -140,15 +148,23 @@ export default {
           id: this.userInfo.id,
           vote_id: this.voteSelectId,
         };
+        this.buttonDisabled = true;
         doVote(voteInfo)
           .then(() => {
             this.getVoteInfo();
+            this.buttonDisabled = false;
           })
           .catch((error) => {
-            const { data } = error.response;
-            this.showVoteErrorInfo = true;
-            this.voteErrorText = data.info_chinese;
-            this.getVoteInfo();
+            if (error.response) {
+              const { status } = error.response;
+              if (status === 403) {
+                const { data } = error.response;
+                this.showVoteErrorInfo = true;
+                this.voteErrorText = data.info_chinese;
+                this.getVoteInfo();
+                this.buttonDisabled = false;
+              }
+            }
           });
       }
     },
@@ -244,22 +260,22 @@ export default {
   transform: translate(340px, 25px);
   width: 400px;
   border-radius: 2px;
-  border: 1px solid #ff9b00;
+  border: 1px solid #ed4b4b;
 }
 
-.vote-error-info.el-alert--warning.is-light {
-  background-color: #2b2111;
+.vote-error-info.el-alert--error.is-light {
+  background-color: #2a1215;
 }
 
-.vote-error-info.el-alert--warning.is-light >>> .el-alert__title {
+.vote-error-info.el-alert--error.is-light >>> .el-alert__title {
   font-size: 12px;
   color: #e8e8e8;
 }
 
-.vote-error-info.el-alert--warning.is-light >>> .el-alert__closebtn {
+.vote-error-info.el-alert--error.is-light >>> .el-alert__closebtn {
   font-size: 16px;
   top: 10px;
-  color: #ff9b00;
+  color: #ed4b4b;
 }
 
 .vote-radio-group {
@@ -321,8 +337,8 @@ export default {
   color: #e8e8e8;
 }
 
-.vote-radio-group >>> .el-radio__input.is-checked+.el-radio__label {
-    color: #e8e8e8;
+.vote-radio-group >>> .el-radio__input.is-checked + .el-radio__label {
+  color: #e8e8e8;
 }
 
 .vote-radio-group >>> .el-radio__inner::after {
@@ -348,6 +364,15 @@ export default {
 .vote-view .vote-button.disable-button {
   border: 1px solid #979797;
   color: #aaa;
+  cursor: default;
+}
+
+.vote-button.el-button.is-disabled,
+.vote-button.el-button.is-disabled:focus,
+.vote-button.el-button.is-disabled:hover {
+  color: #aaa;
+  background-color: rgba(6, 11, 21, 0.85);
+  border: 1px solid #979797;
   cursor: default;
 }
 
