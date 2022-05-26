@@ -26,7 +26,9 @@ SHOW_MSG = {
     'query_success': '查询投票结果成功',
     'vote_success': '投票成功',
     'vote_failed': '投票失败',
-    'duplicate_vote': '用户已投票，请勿重复投票'
+    'duplicate_vote': '用户已投票，请勿重复投票',
+    'verify_sign_failed': '签名验证失败',
+    'decrypt_failed': '解密失败'
 }
 
 # CA file location
@@ -121,7 +123,12 @@ def generate_public_key_and_sign(username):
     This method is only called when the user logs in for the first time
     :return: Public key and related sign
     """
-    ca = cdll.LoadLibrary(CA_PATH)
+    try:
+        ca = cdll.LoadLibrary(CA_PATH)
+    except OSError as err:
+        print(err)
+        LOGGER.error("Cannot open shared object file. except: %s", err)
+        return 1, ""
     ca.CreateTaskPubKey.argtypes = [UserPubkey]
     ca.CreateTaskPubKey.restype = c_int
 
@@ -198,11 +205,16 @@ def send_vote_msg(user, vote_id):
     vote_info.voteResLen = pointer(c_int(vote_info.voteDataLen))
 
     # Call CA vote method
-    ca = cdll.LoadLibrary(CA_PATH)
+    try:
+        ca = cdll.LoadLibrary(CA_PATH)
+    except OSError as err:
+        print(err)
+        LOGGER.error("Cannot open shared object file. except: %s", err)
+        return 1, -1
     ca.Vote.argtypes = [c_char_p, c_int, UserPubkey, VoteInfo]
     ca.Vote.restype = c_int
     root_key_path = ROOT_KEY_STORAGE_PATH.encode()
     result = ca.Vote(root_key_path, len(root_key_path), key_inv, vote_info)
     if result != 0:
-        vote_info.voteRes = -1
-    return int(vote_info.voteRes)
+        return result, -1
+    return result, int(vote_info.voteRes)

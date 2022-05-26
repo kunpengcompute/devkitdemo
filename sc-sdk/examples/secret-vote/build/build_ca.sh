@@ -14,7 +14,9 @@
 # limitations under the License.
 
 # compile
-cd ../CA
+current_dir=$(cd $(dirname $0); pwd)
+
+cd $current_dir/../CA
 mkdir build
 cd build
 cmake ..

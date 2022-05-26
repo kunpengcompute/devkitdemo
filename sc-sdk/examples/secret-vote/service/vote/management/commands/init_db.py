@@ -67,7 +67,12 @@ def init_vote_option_db():
 def get_root_pub_key():
     """ Get root key from CA """
     # Call CA method to get the root public key
-    ca = cdll.LoadLibrary(CA_PATH)
+    try:
+        ca = cdll.LoadLibrary(CA_PATH)
+    except OSError as err:
+        print(err)
+        LOGGER.error("Cannot open shared object file. except: %s", err)
+        return
     ca.CreateRootPubKey.argtypes = [c_char_p, c_int]
     ca.CreateRootPubKey.restype = c_int
     root_key_path = ROOT_KEY_STORAGE_PATH.encode()

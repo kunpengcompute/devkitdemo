@@ -12,8 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+current_dir=$(cd $(dirname $0); pwd)
 
-cd ../TA
+cd $current_dir/../TA
 ta_uuid=$(grep appID manifest.txt | awk -F ' ' '{print $2}' | tr -d '\r')
 if [ -f "/data/${ta_uuid}.sec" ]; then
   rm -rf /data/${ta_uuid}.sec

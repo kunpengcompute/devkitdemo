@@ -18,6 +18,7 @@
 #ifndef __SECRET_VOTE_CA_H
 #define __SECRET_VOTE_CA_H
 
+// debug
 #define TEEC_DEBUG
 
 #define PARAMS_IDX0                0            // Subscript index 0 of the params parameter.
@@ -25,12 +26,12 @@
 #define PARAMS_IDX2                2            // Subscript index 2 of the params parameter.
 #define PARAMS_IDX3                3            // Subscript index 3 of the params parameter.
 
-#ifndef SECRET_VOTE_TA_UUID
-    #define SECRET_VOTE_TA_UUID    "53648059-2257-485e-a940-2482b65a21da"    // Developer certificate UUID. [Change it based on the site requirements.]
+#ifndef TA_UUID
+    #define TA_UUID                "53648059-2257-485e-a940-2482b65a21da"    // Developer certificate UUID. [Change it based on the site requirements.]
 #endif
 
-#define SECRET_VOTE_TA_DIR_NAME    "/data/"
-#define SECRET_VOTE_TA_SUFFIX      ".sec"
+#define TA_DIR_NAME                "/data/"
+#define TA_SUFFIX                  ".sec"
 
 #define SUCCESS                    0
 #define GENERIC_ERROR              1
@@ -48,12 +49,20 @@
 
 #define VOTE_DATA_LEN              32
 
+#define ROOT_USERNAME              "root"
+
 typedef enum {
     CMD_CREATE_ROOT_KEYPAIR = 1,
     CMD_CREATE_USER_KEYPAIR,
     CMD_AES_KEY_EXCHANGE,
-    CMD_ENCRYPT_VOTE
+    CMD_VOTE
 } SecretVoteCMD;
+
+typedef enum {
+    VOTE_GENERIC_ERROR = 1,
+    VOTE_VERIFY_SIGN_FAILED,
+    VOTE_DECRYPT_FAILED
+} VoteErrorCode;
 
 typedef struct AESParam {
     char key[AES_KEY_LEN];

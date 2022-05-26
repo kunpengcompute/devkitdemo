@@ -26,6 +26,27 @@
 #include "tee_ext_api.h"
 #include "secret_vote_ta.h"
 
+void DumpBuff(const char *buffer, const size_t bufferLen, const char *name)
+{
+    if (buffer == NULL || bufferLen == 0) {
+        return;
+    }
+    SLog("-----------------------");
+    SLog("%s len: %d", name, bufferLen);
+    size_t size = 8;
+    size_t i;
+    for (i = 0; i < bufferLen / size * size; i += size) {
+        SLog("%02x %02x %02x %02x %02x %02x %02x %02x",
+             *(buffer + i), *(buffer + i + 1), *(buffer + i + 2), *(buffer + i + 3),
+             *(buffer + i + 4), *(buffer + i + 5), *(buffer + i + 6), *(buffer + i + 7));
+    }
+    for (i = bufferLen /  size * size; i < bufferLen; i++) {
+        SLog("%02x", *(buffer + i));
+    }
+    SLog("-----------------------\n");
+    return;
+}
+
 static int GetStoragePath(char *prefix, size_t prefixLen, char *username, size_t usernameLen, char *storagePath)
 {
     if (prefix == NULL || username == NULL || storagePath == NULL) {
@@ -59,15 +80,14 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t paramTypes, TEE_Param params[PARAMS
     struct User *user = NULL;
     uint32_t nameLen;
     SLogTrace("Open session entry point.");
-    if (!(TEE_PARAM_TYPE_MEMREF_INPUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)
-          || TEE_PARAM_TYPE_MEMREF_OUTPUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)
-          || TEE_PARAM_TYPE_MEMREF_INOUT == TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3))) {
-        SLogError("Bad parameters (ParamTypes, 3)");
+    if (TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX2)
+        || TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)) {
+        SLogError("Invalid parameters.");
         return TEE_ERROR_BAD_PARAMETERS;
     }
     nameLen = params[PARAMS_IDX2].memref.size;
     if ((nameLen == 0) || (nameLen > 32)) {
-        SLogError("Invalid size of username len.");
+        SLogError("Invalid size of username.");
         return TEE_ERROR_BAD_PARAMETERS;
     }
     user = (struct User*)TEE_Malloc(sizeof(struct User), 0);
@@ -83,110 +103,67 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t paramTypes, TEE_Param params[PARAMS
     return TEE_SUCCESS;
 }
 
-void DumpBuff(char *buffer, size_t bufLen)
-{
-    if (buffer == NULL || bufLen == 0) {
-        return;
-    }
-    SLogError("-----------------------");
-    SLogError("bufLen = %d", bufLen);
-    size_t size = 8;
-    size_t i;
-    for (i = 0; i < bufLen / size; i++) {
-        SLogError("%02x %02x %02x %02x %02x %02x %02x %02x",
-                  *(buffer + i * size), *(buffer + i * size + 1), *(buffer + i * size + 2), *(buffer + i * size + 3),
-                  *(buffer + i * size + 4), *(buffer + i * size + 5), *(buffer + i * size + 6), *(buffer + i * size + 7));
-    }
-    for (i = bufLen /  size * size; i < bufLen; i++) {
-        SLogError("%02x", *(buffer + i));
-    }
-    SLogError("-----------------------\n");
-    return;
-}
-
 TEE_Result AESDecrypt(AESParam *param, AESOutput *output, char *plain, size_t *plainLen)
 {
     TEE_ObjectHandle key = NULL;
     TEE_OperationHandle operation = NULL;
     TEE_Result ret = TEE_SUCCESS;
 
-    void *aad = TEE_Malloc(param->aadLen, 0);
-    void *nonce = TEE_Malloc(param->nonceLen, 0);
-    void *cipher = TEE_Malloc(output->cipherLen, 0);
-    void *tag = TEE_Malloc(output->tagLen, 0);
-
-    if (!nonce || !cipher || !aad || !tag) {
-        SLogError("Out of memory");
-        ret = TEE_ERROR_GENERIC;
-        goto err;
-    }
-    TEE_MemMove(cipher, output->cipher, output->cipherLen);
-    TEE_MemMove(nonce, param->nonce, param->nonceLen);
-    TEE_MemMove(tag, output->tag, output->tagLen);
-    TEE_MemMove(aad, param->aad, param->aadLen);
-
     // AES key
-    TEE_Attribute aesKey = {0};
-    aesKey.attributeID = TEE_ATTR_SECRET_VALUE;
-    aesKey.content.ref.length = param->keyLen;
-    aesKey.content.ref.buffer = (void *)param->key;
+    TEE_Attribute attr = {0};
+    attr.attributeID = TEE_ATTR_SECRET_VALUE;
+    attr.content.ref.length = param->keyLen;
+    attr.content.ref.buffer = (void *)param->key;
 
     ret = TEE_AllocateTransientObject(TEE_TYPE_AES, RSA_KEY_SIZE, &key);
     if (ret != TEE_SUCCESS) {
-        SLogError("Failed to alloc transient object handle: 0x%x", ret);
-        goto err;
+        SLogError("AESDecrypt: Failed to invoke TEE_AllocateTransientObject. ret: 0x%x", ret);
+        return ret;
     }
 
-    ret = TEE_PopulateTransientObject(key, &aesKey, 1);
+    ret = TEE_PopulateTransientObject(key, &attr, 1);
     if (ret != TEE_SUCCESS) {
-        SLogError("TEE_PopulateTransientObject failure: 0x%x", ret);
+        SLogError("AESDecrypt: Failed to invoke TEE_PopulateTransientObject. ret: 0x%x", ret);
         TEE_FreeTransientObject(key);
-        goto err;
+        return ret;
     }
 
     ret = TEE_AllocateOperation(&operation, TEE_ALG_AES_GCM, TEE_MODE_DECRYPT, RSA_KEY_SIZE);
     if (ret != TEE_SUCCESS) {
-        SLogError("Cant alloc first handler");
+        SLogError("AESDecrypt: Failed to invoke TEE_AllocateOperation.");
         TEE_FreeTransientObject(key);
-        goto err;
+        return ret;
     }
 
+    // set AES key
     ret = TEE_SetOperationKey(operation, key);
     if (ret != TEE_SUCCESS) {
-        SLogError("Failed to set first operation key: 0x%x", ret);
-        TEE_FreeTransientObject(key);
-        TEE_FreeOperation(operation);
+        SLogError("AESDecrypt: Failed to invoke TEE_SetOperationKey. ret: 0x%x", ret);
         goto err;
     }
 
-    ret = TEE_AEInit(operation, nonce, param->nonceLen, output->tagLen * 8, 0, 0);
+    // AES decrypt
+    ret = TEE_AEInit(operation, param->nonce, param->nonceLen, output->tagLen * 8, 0, 0);
     if (ret != TEE_SUCCESS) {
-        SLogError("Failed TEE_AEInit: 0x%x", ret);
-        TEE_FreeTransientObject(key);
-        TEE_FreeOperation(operation);
+        SLogError("AESDecrypt. Failed to invoke TEE_AEInit. ret: 0x%x", ret);
         goto err;
     }
 
-    TEE_AEUpdateAAD(operation, aad, param->aadLen);
-
-    ret = TEE_AEDecryptFinal(operation, cipher, output->cipherLen, plain, plainLen, tag, output->tagLen);
+    // When API_LEVEL is set to 1, this function is null, which affects the output tag value.
+    TEE_AEUpdateAAD(operation, param->aad, param->aadLen);
+    ret = TEE_AEDecryptFinal(operation, output->cipher, output->cipherLen, plain, plainLen, output->tag, output->tagLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("Failed to TEE_AEDecryptFinal: 0x%x", ret);
-        TEE_FreeTransientObject(key);
-        TEE_FreeOperation(operation);
+        SLogError("AESDecrypt: Failed to invoke TEE_AEDecryptFinal. ret: 0x%x", ret);
         goto err;
     }
-    SLogError("plain len: %d", *plainLen);
-    DumpBuff(plain, *plainLen);
-    SLogError("tag TEE_AEDecryptFinal");
-    DumpBuff(tag, output->tagLen);
+
+    DumpBuff(plain, *plainLen, "AES decrypt plain");
+    DumpBuff(output->tag, output->tagLen, "AES decrypt tag");
     ret = TEE_SUCCESS;
 
 err:
-    TEE_Free(cipher);
-    TEE_Free(aad);
-    TEE_Free(nonce);
-    TEE_Free(tag);
+    TEE_FreeTransientObject(key);
+    TEE_FreeOperation(operation);
     return ret;
 }
 
@@ -197,20 +174,20 @@ TEE_Result GenerateRSAKeyPair(TEE_ObjectHandle *tmpObj, uint32_t keySize, char *
     TEE_ObjectHandle obj = NULL;
     ret = TEE_AllocateTransientObject(TEE_TYPE_RSA_KEYPAIR, keySize, tmpObj);
     if (ret != TEE_SUCCESS) {
-        SLogError("GenerateRSAKeyPair: TEE_AllocateTransientObject fail. ret: %x", ret);
+        SLogError("GenerateRSAKeyPair: Failed to invoke TEE_AllocateTransientObject. ret: %x", ret);
         return ret;
     }
 
     ret = TEE_GenerateKey(*tmpObj, keySize, NULL, 0);
     if (ret != TEE_SUCCESS) {
-        SLogError("GenerateRSAKeyPair: TEE_GenerateKey failed.");
+        SLogError("GenerateRSAKeyPair: Failed to invoke TEE_GenerateKey.");
         return ret;
     }
 
     ret = TEE_CreatePersistentObject(TEE_OBJECT_STORAGE_PRIVATE, path, pathLen, TEE_DATA_FLAG_ACCESS_WRITE,
                                      *tmpObj, NULL, 0, &obj);
     if (ret != TEE_SUCCESS) {
-        SLogError("GenerateRSAKeyPair: TEE_CreatePersistentObject failed. ret=%x", ret);
+        SLogError("GenerateRSAKeyPair: Failed to invoke TEE_CreatePersistentObject. ret: %x", ret);
     }
     if (obj) {
         TEE_CloseObject(obj);
@@ -238,6 +215,11 @@ TEE_Result GetPubkeyParam(TEE_ObjectHandle obj, uint8_t *modulusBuffer, size_t *
 TEE_Result GenerateRootKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
     SLogTrace("GenerateRootKeyPair.");
+    if (TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)
+        || TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
+    }
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
     if (GetStoragePath(ROOT_RSA_KEY_PREFIX, strlen(ROOT_RSA_KEY_PREFIX), ROOT_USERNAME, strlen(ROOT_USERNAME), rootKeyPath) != SUCCESS) {
         return TEE_ERROR_GENERIC;
@@ -247,7 +229,7 @@ TEE_Result GenerateRootKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE
     TEE_ObjectHandle obj = NULL;
     ret = GenerateRSAKeyPair(&obj, RSA_KEY_BITS, rootKeyPath, strlen(rootKeyPath));
     if (ret != TEE_SUCCESS) {
-        SLogError("GenerateRootKeyPair: Failed to GenerateRSAKeyPair. ret: %x", ret);
+        SLogError("GenerateRootKeyPair: Failed to invoke GenerateRSAKeyPair. ret: %x", ret);
         if (obj) {
             TEE_FreeTransientObject(obj);
         }
@@ -260,12 +242,12 @@ TEE_Result GenerateRootKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE
     size_t pubexpBufferLen = RSA_KEY_SIZE;
     ret = GetPubkeyParam(obj, modulusBuffer, &modulusBufferLen, pubexpBuffer, &pubexpBufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("TEE_GetObjectBufferAttribute: Failed to get pubkey param. ret: %x", ret);
+        SLogError("GenerateRootKeyPair: Failed to get pubkey param. ret: %x", ret);
         TEE_FreeTransientObject(obj);
         return ret;
     }
-    DumpBuff((char *)modulusBuffer, modulusBufferLen);
-    DumpBuff((char *)pubexpBuffer, pubexpBufferLen);
+    DumpBuff((char *)modulusBuffer, modulusBufferLen, "modulusBuffer");
+    DumpBuff((char *)pubexpBuffer, pubexpBufferLen, "pubexpBuffer");
 
     TEE_MemMove(params[PARAMS_IDX0].memref.buffer, modulusBuffer, modulusBufferLen);
     params[PARAMS_IDX0].memref.size = modulusBufferLen;
@@ -275,44 +257,65 @@ TEE_Result GenerateRootKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE
     return ret;
 }
 
-TEE_Result RSASign(TEE_ObjectHandle *rootKeyObj, void *buffer, size_t bufferLen, char *sign, size_t signLen)
+TEE_Result RSASign(const char *rootKeyPath, void *buffer, size_t bufferLen, char *sign, size_t signLen)
 {
     SLogTrace("RSASign.");
     TEE_Result ret;
+
+    // Read RSA key
+    TEE_ObjectHandle rootKeyObj = NULL;
+    TEE_ObjectHandle tmpRootKeyObj = NULL;
+    ret = TEE_AllocateTransientObject(TEE_TYPE_RSA_KEYPAIR, RSA_KEY_BITS, &tmpRootKeyObj);
+    if (ret != TEE_SUCCESS) {
+        SLogError("RSASign: Failed to invoke TEE_AllocateTransientObject. ret: %x", ret);
+        return ret;
+    }
+    ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, rootKeyPath, strlen(rootKeyPath), TEE_DATA_FLAG_ACCESS_READ, &rootKeyObj);
+    if (ret != TEE_SUCCESS) {
+        SLogError("RSASign: Failed to invoke TEE_OpenPersistentObject.");
+        TEE_FreeTransientObject(tmpRootKeyObj);
+        return ret;
+    }
+    TEE_CopyObjectAttributes(tmpRootKeyObj, rootKeyObj);
+
+    // hash
     char bufferDigest[SHA256_SIZE] = {0};
     size_t bufferDigestLen = SHA256_SIZE;
     TEE_OperationHandle hashOperation = NULL;
     TEE_AllocateOperation(&hashOperation, TEE_ALG_SHA256, TEE_MODE_DIGEST, 0);
     TEE_DigestDoFinal(hashOperation, buffer, bufferLen, bufferDigest, &bufferDigestLen);
-    if (hashOperation) {
-        TEE_FreeOperation(hashOperation);
-    }
+    TEE_FreeOperation(hashOperation);
 
     TEE_OperationHandle operation = NULL;
     TEE_AllocateOperation(&operation, TEE_ALG_RSASSA_PKCS1_V1_5_SHA256, TEE_MODE_SIGN, RSA_KEY_BITS);
-    ret = TEE_SetOperationKey(operation, *rootKeyObj);
+    ret = TEE_SetOperationKey(operation, tmpRootKeyObj);
     if (ret != TEE_SUCCESS) {
-        SLogError("TEE_SetOperationKey: Failed to set RSA key.");
+        SLogError("RSASign: Failed to invoke TEE_SetOperationKey.");
+        TEE_CloseObject(rootKeyObj);
+        TEE_FreeTransientObject(tmpRootKeyObj);
         return ret;
     }
 
+    // sign
     ret = TEE_AsymmetricSignDigest(operation, NULL, 0, bufferDigest, bufferDigestLen, sign, &signLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("TEE_AsymmetricSignDigest: Failed to sign digest.");
-        return ret;
+        SLogError("RSASign: Failed to invoke TEE_AsymmetricSignDigest.");
     }
-    if (operation) {
-        TEE_FreeOperation(operation);
-    }
+    TEE_FreeOperation(operation);
+    TEE_CloseObject(rootKeyObj);
+    TEE_FreeTransientObject(tmpRootKeyObj);
     return ret;
 }
 
 TEE_Result GenerateTaskKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
     SLogTrace("GenerateTaskKeyPair.");
-    char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
-    if (GetStoragePath(ROOT_RSA_KEY_PREFIX, strlen(ROOT_RSA_KEY_PREFIX), ROOT_USERNAME, strlen(ROOT_USERNAME), rootKeyPath) != SUCCESS) {
-        return TEE_ERROR_GENERIC;
+    if (TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)
+        || TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)
+        || TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX2)
+        || TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
     }
     TEE_Result ret;
     TEE_ObjectHandle obj = NULL;
@@ -321,7 +324,7 @@ TEE_Result GenerateTaskKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE
     size_t usernameLen = params[PARAMS_IDX3].memref.size;
     ret = GenerateRSAKeyPair(&obj, RSA_KEY_BITS, username, usernameLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("GenerateRSAKeyPair: Failed to GenerateRSAKeyPair. ret= %x", ret);
+        SLogError("GenerateTaskKeyPair: Failed to invoke GenerateRSAKeyPair. ret= %x", ret);
         if (obj) {
             TEE_FreeTransientObject(obj);
         }
@@ -334,7 +337,7 @@ TEE_Result GenerateTaskKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE
     size_t pubexpBufferLen = RSA_KEY_SIZE;
     ret = GetPubkeyParam(obj, modulusBuffer, &modulusBufferLen, pubexpBuffer, &pubexpBufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("TEE_GetObjectBufferAttribute: Failed to get pubkey param. ret: %x", ret);
+        SLogError("GenerateTaskKeyPair: Failed to get pubkey param. ret: %x", ret);
         TEE_FreeTransientObject(obj);
         return ret;
     }
@@ -344,95 +347,90 @@ TEE_Result GenerateTaskKeyPair(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE
     TEE_MemMove(params[PARAMS_IDX1].memref.buffer, pubexpBuffer, pubexpBufferLen);
     params[PARAMS_IDX1].memref.size = pubexpBufferLen;
     struct PubkeyParam *pubkeyParam = (struct PubkeyParam *)TEE_Malloc(sizeof(struct PubkeyParam), 0);
+    if (pubkeyParam == NULL) {
+        SLogError("GenerateTaskKeyPair: Failed to allocate mem for PubkeyParam.");
+        return TEE_ERROR_GENERIC;
+    }
     TEE_MemMove(pubkeyParam->modulusBuffer, modulusBuffer, modulusBufferLen);
     pubkeyParam->modulusBufferLen = modulusBufferLen;
     TEE_MemMove(pubkeyParam->pubexpBuffer, pubexpBuffer, pubexpBufferLen);
     pubkeyParam->pubexpBufferLen = pubexpBufferLen;
 
-    TEE_ObjectHandle rootKeyObj = NULL;
-    TEE_ObjectHandle tmpRootKeyObj = NULL;
-    ret = TEE_AllocateTransientObject(TEE_TYPE_RSA_KEYPAIR, RSA_KEY_BITS, &tmpRootKeyObj);
-    if (ret != TEE_SUCCESS) {
-        SLogError("GenerateRootKeyPair: TEE_AllocateTransientObject failed. ret: %x", ret);
+    char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
+    if (GetStoragePath(ROOT_RSA_KEY_PREFIX, strlen(ROOT_RSA_KEY_PREFIX), ROOT_USERNAME, strlen(ROOT_USERNAME), rootKeyPath) != SUCCESS) {
         TEE_Free(pubkeyParam);
-        return ret;
+        return TEE_ERROR_GENERIC;
     }
-    ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, rootKeyPath, strlen(rootKeyPath), TEE_DATA_FLAG_ACCESS_READ, &rootKeyObj);
-    if (ret != TEE_SUCCESS) {
-        SLogError("TEE_OpenPersistentObject: Failed to read root key.");
-        TEE_FreeTransientObject(rootKeyObj);
-        TEE_FreeTransientObject(tmpRootKeyObj);
-        TEE_Free(pubkeyParam);
-        return ret;
-    }
-    TEE_CopyObjectAttributes(tmpRootKeyObj, rootKeyObj);
 
     char sign[RSA_KEY_SIZE] = {0};
-    ret = RSASign(&tmpRootKeyObj, (void *)pubkeyParam, sizeof(struct PubkeyParam), sign, RSA_KEY_BITS);
+    ret = RSASign(rootKeyPath, (void *)pubkeyParam, sizeof(struct PubkeyParam), sign, RSA_KEY_BITS);
     if (ret != TEE_SUCCESS) {
-        SLogError("RSASign: Failed to sign.");
-        TEE_FreeTransientObject(tmpRootKeyObj);
+        SLogError("GenerateTaskKeyPair: Failed to invoke RSASign.");
         TEE_Free(pubkeyParam);
         return ret;
     }
-    DumpBuff(sign, RSA_KEY_SIZE);
+    DumpBuff(sign, RSA_KEY_SIZE, "sign");
 
     TEE_MemMove(params[PARAMS_IDX2].memref.buffer, sign, RSA_KEY_SIZE);
     params[PARAMS_IDX2].memref.size = RSA_KEY_SIZE;
     TEE_Free(pubkeyParam);
-    if (rootKeyObj) {
-        TEE_CloseObject(rootKeyObj);
-    }
-    if (tmpRootKeyObj) {
-        TEE_FreeTransientObject(tmpRootKeyObj);
-    }
     return ret;
 }
 
 TEE_Result SaveAESKey(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
     SLogTrace("SaveAESKey.");
+    if (TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)
+        || TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
+    }
     TEE_Result ret;
     char *username = params[PARAMS_IDX0].memref.buffer;
     size_t usernameLen = params[PARAMS_IDX0].memref.size;
     char *cipherParam = params[PARAMS_IDX1].memref.buffer;
     size_t cipherParamLen = params[PARAMS_IDX1].memref.size;
-    DumpBuff(cipherParam, cipherParamLen);
+    DumpBuff(cipherParam, cipherParamLen, "cipherParam");
 
+    // Read RSA key
     TEE_ObjectHandle rootKeyObj = NULL;
     TEE_ObjectHandle tmpRootKeyObj = NULL;
     ret = TEE_AllocateTransientObject(TEE_TYPE_RSA_KEYPAIR, RSA_KEY_BITS, &tmpRootKeyObj);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey: TEE_AllocateTransientObject failed.");
+        SLogError("SaveAESKey: Failed to invoke TEE_AllocateTransientObject.");
         return ret;
     }
     ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, username, usernameLen, TEE_DATA_FLAG_ACCESS_READ, &rootKeyObj);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey: Failed to TEE_OpenPersistentObject.");
+        SLogError("SaveAESKey: Failed to invoke TEE_OpenPersistentObject.");
         return ret;
     }
     TEE_CopyObjectAttributes(tmpRootKeyObj, rootKeyObj);
 
+    // set RSA key
     TEE_OperationHandle operation = NULL;
     ret = TEE_AllocateOperation(&operation, TEE_ALG_RSAES_PKCS1_OAEP_MGF1_SHA1, TEE_MODE_DECRYPT, RSA_KEY_BITS);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey TEE_AllocateOperation failed.");
+        SLogError("SaveAESKey: Failed to invoke TEE_AllocateOperation.");
         return ret;
     }
     ret = TEE_SetOperationKey(operation, tmpRootKeyObj);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey: Failed to set operation key.");
+        SLogError("SaveAESKey: Failed to invoke TEE_SetOperationKey.");
         TEE_FreeOperation(operation);
         return ret;
     }
 
+    // RSA decrypt
     char paramBuffer[RSA_KEY_SIZE] = {0};
     size_t paramBufferLen = RSA_KEY_SIZE;
     ret = TEE_AsymmetricDecrypt(operation, NULL, 0, cipherParam, cipherParamLen, paramBuffer, &paramBufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey: Failed to decrypt. ret %x", ret);
+        SLogError("SaveAESKey: Failed to invoke TEE_AsymmetricDecrypt. ret: %x", ret);
         return TEE_ERROR_GENERIC;
     }
+
+    // save AES key
     char userAESKeyPath[SEC_STORAGE_PATH_MAX] = {0};
     if (GetStoragePath(USER_AES_KEY_PREFIX, strlen(USER_AES_KEY_PREFIX), username, usernameLen, userAESKeyPath) != SUCCESS) {
         return TEE_ERROR_GENERIC;
@@ -441,12 +439,12 @@ TEE_Result SaveAESKey(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
     ret = TEE_CreatePersistentObject(TEE_OBJECT_STORAGE_PRIVATE, userAESKeyPath, strlen(userAESKeyPath), TEE_DATA_FLAG_ACCESS_WRITE,
                                      TEE_HANDLE_NULL, NULL, 0, &object);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey: Failed to create persistent object. ret= %x", ret);
+        SLogError("SaveAESKey: Failed to invoke TEE_CreatePersistentObject. ret: %x", ret);
         return TEE_ERROR_GENERIC;
     }
     ret = TEE_WriteObjectData(object, (void*)paramBuffer, paramBufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveAESKey: Failed to write data. ret= %x", ret);
+        SLogError("SaveAESKey: Failed to invoke TEE_WriteObjectData. ret: %x", ret);
         TEE_CloseObject(object);
         return TEE_ERROR_GENERIC;
     }
@@ -457,6 +455,12 @@ TEE_Result SaveAESKey(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 TEE_Result DecryptVote(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
     SLogTrace("DecryptVote.");
+    if (TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)
+        || TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX2)
+        || TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX3)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
+    }
     TEE_Result ret;
     char *username = params[PARAMS_IDX0].memref.buffer;
     size_t usernameLen = params[PARAMS_IDX0].memref.size;
@@ -464,37 +468,44 @@ TEE_Result DecryptVote(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
     size_t cipherLen = params[PARAMS_IDX1].memref.size;
     char *tag = params[PARAMS_IDX2].memref.buffer;
     size_t tagLen = params[PARAMS_IDX2].memref.size;
+
+    // Read AES key
     char userAESKeyPath[SEC_STORAGE_PATH_MAX] = {0};
     if (GetStoragePath(USER_AES_KEY_PREFIX, strlen(USER_AES_KEY_PREFIX), username, usernameLen, userAESKeyPath) != SUCCESS) {
         return TEE_ERROR_GENERIC;
     }
-
     TEE_ObjectHandle object = NULL;
     ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, userAESKeyPath, strlen(userAESKeyPath), TEE_DATA_FLAG_ACCESS_READ, &object);
     if (ret != TEE_SUCCESS) {
-        SLogError("DecryptVote: Failed to open persistent object. ret= %x", ret);
+        SLogError("DecryptVote: Failed to invoke TEE_OpenPersistentObject. ret: %x", ret);
         return TEE_ERROR_GENERIC;
     }
     char paramBuffer[RSA_KEY_SIZE] = {0};
     uint32_t paramBufferLen = RSA_KEY_SIZE;
     ret = TEE_ReadObjectData(object, (void *)paramBuffer, RSA_KEY_SIZE, &paramBufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("DecryptVote: Failed to read data. ret= %x", ret);
+        SLogError("DecryptVote: Failed to invoke TEE_ReadObjectData. ret: %x", ret);
         return TEE_ERROR_GENERIC;
     }
+    DumpBuff(paramBuffer, paramBufferLen, "paramBuffer");
+
+    // AES decrypt
     char voteResBuffer[RSA_KEY_SIZE] = {0};
     size_t voteResBufferLen = RSA_KEY_SIZE;
-    DumpBuff(paramBuffer, paramBufferLen);
-
     AESParam *param = (AESParam *)paramBuffer;
     AESOutput *output = TEE_Malloc(sizeof(AESOutput), 0);
+    if (output == NULL) {
+        SLogError("DecryptVote: Failed to allocate mem for output.");
+        TEE_CloseObject(object);
+        return TEE_ERROR_GENERIC;
+    }
     output->cipher = cipher;
     output->cipherLen = cipherLen;
     output->tag = tag;
     output->tagLen = tagLen;
     ret = AESDecrypt(param, output, voteResBuffer, &voteResBufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("DecryptVote: Failed to AESDecrypt. ret= %x", ret);
+        SLogError("DecryptVote: Failed to invoke AESDecrypt. ret: %x", ret);
         TEE_CloseObject(object);
         TEE_Free(output);
         return TEE_ERROR_GENERIC;
@@ -508,10 +519,10 @@ TEE_Result DecryptVote(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 }
 
 TEE_Result TA_InvokeCommandEntryPoint(void *sessionContext, uint32_t cmdId,
-uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
+                                      uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
     TEE_Result ret;
-    SLogTrace("---- TA_InvokeCommandEntryPoint ----cmdid: %d------", cmdId);
+    SLog("---- TA_InvokeCommandEntryPoint ----cmdid: %d------", cmdId);
     (void)sessionContext;
     switch (cmdId) {
         case CMD_CREATE_ROOT_KEYPAIR:
@@ -523,7 +534,7 @@ uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
         case CMD_AES_KEY_EXCHANGE:
             ret = SaveAESKey(paramTypes, params);
             break;
-        case CMD_ENCRYPT_VOTE:
+        case CMD_VOTE:
             ret = DecryptVote(paramTypes, params);
             break;
     
@@ -545,4 +556,3 @@ void TA_DestroryEntryPoint(void)
 {
     SLogTrace("---- TA_DestroryEntryPoint ---- ");
 }
-

@@ -10,6 +10,7 @@ import logging
 
 from django.contrib.auth import authenticate, logout
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 
@@ -19,6 +20,15 @@ from vote.utils import new_generate_response_body, login_user, check_if_user_log
     send_vote_msg
 
 LOGGER = logging.getLogger('vote')
+VOTE_ERROR_CODE = {
+    1: "vote_failed",
+    2: "verify_sign_failed",
+    3: "decrypt_failed",
+}
+
+
+def index(request):
+    return redirect("/static/index.html")
 
 
 @api_view(['POST'])
@@ -102,10 +112,11 @@ def vote(request):
         return JsonResponse(status=403, data=new_generate_response_body('vote_failed'))
 
     # Send vote message to CA
-    vote_result = send_vote_msg(user, int(vote_id))
-    if vote_result == -1:
+    ret, vote_result = send_vote_msg(user, int(vote_id))
+    if ret != 0:
         LOGGER.error('Failed to call CA vote method')
-        return JsonResponse(status=403, data=new_generate_response_body('vote_failed'))
+        error_key = VOTE_ERROR_CODE.get(ret, 'vote_failed')
+        return JsonResponse(status=403, data=new_generate_response_body(error_key))
 
     # Update vote result
     vote_option = VoteOption.objects.get(option_id=int(vote_result))
