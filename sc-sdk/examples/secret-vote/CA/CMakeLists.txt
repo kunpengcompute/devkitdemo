@@ -38,12 +38,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Generate shared lib
 add_library(secret-vote-ca SHARED ${SRCS})
-target_link_libraries(secret-vote-ca teec_adaptor dl pthread crypto)
+target_link_libraries(secret-vote-ca teec_adaptor dl pthread crypto boundscheck)
 set_target_properties(secret-vote-ca PROPERTIES COMPILE_FLAGS ${CMAKE_FLAGS})
 set_target_properties(secret-vote-ca PROPERTIES LINK_FLAGS ${CMAKE_LDFLAGS})
-
-# Clean output
-add_custom_target(clean
-    COMMAND rm -rf ${PROJECT_SOURCE_DIR}/libsecret-vote-ca.so
-    COMMAND @echo "clean up"
-)

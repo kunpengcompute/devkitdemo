@@ -58,9 +58,3 @@ add_custom_command(TARGET combine
     POST_BUILD
     COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --config ${PROJECT_SOURCE_DIR}/config_cloud.ini
 )
-
-# Clean output
-add_custom_target(clean
-    COMMAND rm -rf ${PROJECT_SOURCE_DIR}/libcombine.so ${PROJECT_SOURCE_DIR}/*.sec
-    COMMAND @echo "clean up"
-)

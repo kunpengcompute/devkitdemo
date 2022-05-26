@@ -36,17 +36,17 @@ TEEC_Session g_session;
 
 #define PRINTF_SIZE 8
 
-void DumpBuff(const char *buffer, size_t bufLen)
+void DumpBuff(const char *buffer, const size_t bufferLen, const char *name)
 {
     #ifdef TEEC_DEBUG
     size_t i;
-    if (buffer == NULL || bufLen == 0) {
+    if (buffer == NULL || bufferLen == 0) {
         return;
     }
 
     printf("-----------------------\n");
-    printf("bufLen = %d", bufLen);
-    for (i = 0; i < bufLen; i++) {
+    printf("%s len: %d", name, bufferLen);
+    for (i = 0; i < bufferLen; i++) {
         if (i % PRINTF_SIZE == 0) {
             printf("\n");
         }
@@ -71,12 +71,11 @@ static errno_t HexStrToLong(const char* src, int count, long int* res)
     return EOK;
 }
 
-static errno_t GetUUID(TEEC_UUID* taUUID)
+static errno_t GetUUID(TEEC_UUID* taUUID, char *src)
 {
     errno_t err;
     long int res;
     int i;
-    char* src = SECRET_VOTE_TA_UUID;
     err = HexStrToLong(src, 8, &res);
     if (err != EOK)
     {
@@ -142,32 +141,31 @@ static TEEC_Result TeecInit(char *username, size_t usernameLen)
     operation.params[PARAMS_IDX2].tmpref.buffer = username;
     operation.params[PARAMS_IDX2].tmpref.size = usernameLen;
 
-    char secretVoteTAPath[PATH_MAX] = {0};
-    int ret = sprintf(secretVoteTAPath, "%s%s%s", SECRET_VOTE_TA_DIR_NAME, SECRET_VOTE_TA_UUID, SECRET_VOTE_TA_SUFFIX);
+    char taPath[PATH_MAX] = {0};
+    int ret = sprintf(taPath, "%s%s%s", TA_DIR_NAME, TA_UUID, TA_SUFFIX);
     if (ret <= 0) {
-        printf("LOG: Failed to get TA path.\n");
+        printf("Failed to get TA path.\n");
         TEEC_FinalizeContext(&g_context);
         return TEEC_ERROR_GENERIC;
     }
-    g_context.ta_path = (uint8_t*)secretVoteTAPath;
+    g_context.ta_path = (uint8_t*)taPath;
 
-    TEEC_UUID secretVoteUUID;
-    if (GetUUID(&secretVoteUUID) != EOK)
+    TEEC_UUID taUUID;
+    if (GetUUID(&taUUID, TA_UUID) != EOK)
     {
-        printf("LOG: Failed to get UUID.\n");
+        printf("Failed to get UUID.\n");
         TEEC_FinalizeContext(&g_context);
         return TEEC_ERROR_GENERIC;
     }
-    g_context.ta_path = (uint8_t*)secretVoteTAPath;
 
-    result = TEEC_OpenSession(&g_context, &g_session, &secretVoteUUID, TEEC_LOGIN_IDENTIFY, NULL, &operation, &origin);
+    result = TEEC_OpenSession(&g_context, &g_session, &taUUID, TEEC_LOGIN_IDENTIFY, NULL, &operation, &origin);
     if (result != TEEC_SUCCESS)
     {
-        printf("LOG: Open session failed: result:%d, orgin: %d.\n", result, origin);
+        printf("Open session failed: result: %d, orgin: %d.\n", result, origin);
         TEEC_FinalizeContext(&g_context);
         return result;
     }
-    TEEC_Debug("TEEC initialize context and open session success, session id: 0x%x, service id:0x%x, context 0x%x.",
+    TEEC_Debug("TEEC initialize context and open session success, session id: 0x%x, service id: 0x%x, context: 0x%x.",
         g_session.session_id, g_session.service_id, g_session.context);
     TEEC_Debug("TEEC_OpenSession OK.");
     return result;
@@ -183,10 +181,11 @@ static void TeecClose(void)
 static int AESEncrypt(AESParam *param, char *data, size_t dataLen, AESOutput *output)
 {
     printf("AESEncrypt.\n");
+    int outputLen = 0;
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     if (ctx == NULL) {
         printf("Failed to init ctx.\n");
-        return 1;
+        return CRYPTO_ERROR;
     }
     /* Set cipher type and mode */
     EVP_EncryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL);
@@ -195,24 +194,47 @@ static int AESEncrypt(AESParam *param, char *data, size_t dataLen, AESOutput *ou
     /* Initialise key and IV */
     EVP_EncryptInit_ex(ctx, NULL, NULL, param->key, param->nonce);
     /* Zero or more calls to specify any AAD */
-    EVP_EncryptUpdate(ctx, NULL, &(output->cipherLen), param->aad, param->aadLen);
+    EVP_EncryptUpdate(ctx, NULL, &outputLen, param->aad, param->aadLen);
     /* Encrypt plaintext */
-    EVP_EncryptUpdate(ctx, output->cipher, &(output->cipherLen), data, dataLen);
-    printf("data:\n");
-    DumpBuff(data, dataLen);
-    printf("cipher:\n");
-    DumpBuff(output->cipher, output->cipherLen);
+    EVP_EncryptUpdate(ctx, output->cipher, &outputLen, data, dataLen);
+    output->cipherLen = (size_t)outputLen;
+    DumpBuff(data, dataLen, "data");
+    DumpBuff(output->cipher, output->cipherLen, "cipher");
     int len = 0;
     EVP_EncryptFinal_ex(ctx, NULL, &len);
     /* Get tag */
     EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, output->tagLen, output->tag);
-    printf("EVP_CTRL_GCM_GET_TAG:\n");
-    DumpBuff(output->tag, output->tagLen);
+    DumpBuff(output->tag, output->tagLen, "EVP_CTRL_GCM_GET_TAG");
     EVP_CIPHER_CTX_free(ctx);
-    return 0;
+    return CRYPTO_SUCCESS;
 }
 
-TEEC_Result CreateRootKeyPair(char *modulusBuffer,size_t *modulusBufferLen, char *pubexpBuffer, size_t *pubexpBufferLen)
+static int SaveRSAPubkey(const char *path, char *modulusBuffer, size_t modulusBufferLen, char *pubexpBuffer, size_t pubexpBufferLen)
+{
+    int ret = SUCCESS;
+    RSA *rsa = RSA_new();
+    if (rsa == NULL) {
+        printf("Failed to init rsa.\n");
+        return GENERIC_ERROR;
+    }
+    BIGNUM *modulus = BN_bin2bn(modulusBuffer, modulusBufferLen, NULL);
+    BIGNUM *pubexp = BN_bin2bn(pubexpBuffer, pubexpBufferLen, NULL);
+    RSA_set0_key(rsa, modulus, pubexp, NULL);
+    FILE *fp = fopen(path, "w");
+    if (fp == NULL) {
+        RSA_free(rsa);
+        return GENERIC_ERROR;
+    }
+    if (PEM_write_RSA_PUBKEY(fp, rsa) == 0) {
+        printf("Failed to write RSA pubkey.\n");
+        ret = GENERIC_ERROR;
+    }
+    fclose(fp);
+    RSA_free(rsa);
+    return ret;
+}
+
+TEEC_Result CreateRootKeyPair(char *modulusBuffer, size_t *modulusBufferLen, char *pubexpBuffer, size_t *pubexpBufferLen)
 {
     printf("GenerateRootKeyPair.\n");
     TEEC_Operation operation;
@@ -236,8 +258,8 @@ TEEC_Result CreateRootKeyPair(char *modulusBuffer,size_t *modulusBufferLen, char
         printf("Failed to invoke command: CMD_CREATE_ROOT_KEYPAIR, result: 0x%x, origin: 0x%x.\n", result, origin);
         return result;
     }
-    DumpBuff(modulusBuffer, operation.params[PARAMS_IDX0].tmpref.size);
-    DumpBuff(pubexpBuffer, operation.params[PARAMS_IDX1].tmpref.size);
+    DumpBuff(modulusBuffer, operation.params[PARAMS_IDX0].tmpref.size, "modulusBuffer");
+    DumpBuff(pubexpBuffer, operation.params[PARAMS_IDX1].tmpref.size, "pubexpBuffer");
     *modulusBufferLen = operation.params[PARAMS_IDX0].tmpref.size;
     *pubexpBufferLen = operation.params[PARAMS_IDX1].tmpref.size;
     return TEEC_SUCCESS;
@@ -246,13 +268,12 @@ TEEC_Result CreateRootKeyPair(char *modulusBuffer,size_t *modulusBufferLen, char
 int CreateRootPubKey(const char *path, const size_t pathLen)
 {
     if (path == NULL || pathLen ==0) {
-        printf("params error.");
+        printf("Invalid parameters.");
         return 1;
     }
 
-    char username[] = "admin";
-    int ret = 0;
-    if (TEEC_SUCCESS != TeecInit(username, strlen(username))) {
+    int ret = SUCCESS;
+    if (TEEC_SUCCESS != TeecInit(ROOT_USERNAME, strlen(ROOT_USERNAME))) {
         printf("Failed to TeecInit.\n");
         return GENERIC_ERROR;
     }
@@ -264,26 +285,14 @@ int CreateRootPubKey(const char *path, const size_t pathLen)
     if (CreateRootKeyPair(modulusBuffer, &modulusBufferLen, pubexpBuffer, &pubexpBufferLen) != TEEC_SUCCESS) {
         printf("Failed to CreateRootKeyPair.\n");
         TeecClose();
-        return 1;
+        return GENERIC_ERROR;
     }
     printf("modulusBufferLen: %d, pubexpBufferLen: %d\n", modulusBufferLen, pubexpBufferLen);
 
-    RSA *rsa = RSA_new();
-    BIGNUM *modulus = BN_bin2bn(modulusBuffer, modulusBufferLen, NULL);
-    BIGNUM *pubexp = BN_bin2bn(pubexpBuffer, pubexpBufferLen, NULL);
-    RSA_set0_key(rsa, modulus, pubexp, NULL);
-    FILE *fp = fopen(path, "w");
-    if (fp == NULL) {
-        RSA_free(rsa);
-        TeecClose();
-        return 1;
+    ret = SaveRSAPubkey(path, modulusBuffer, modulusBufferLen, pubexpBuffer, pubexpBufferLen);
+    if (ret != SUCCESS) {
+        printf("Failed to save RSA pubkey.\n");
     }
-    if (PEM_write_RSA_PUBKEY(fp, rsa) == 0) {
-        printf("Failed to write RSA pubkey.\n");
-        ret = 1;
-    }
-    fclose(fp);
-    RSA_free(rsa);
     TeecClose();
     return ret;
 }
@@ -322,15 +331,17 @@ TEEC_Result CreateTaskKeyPair(char *username, size_t usernameLen,
     }
     *modulusBufferLen = operation.params[PARAMS_IDX0].tmpref.size;
     *pubexpBufferLen = operation.params[PARAMS_IDX1].tmpref.size;
-    printf("sign: \n");
-    DumpBuff(operation.params[PARAMS_IDX2].tmpref.buffer, operation.params[PARAMS_IDX2].tmpref.size);
     return TEEC_SUCCESS;
 }
  
 int CreateTaskPubKey(struct UserPubkey *userPubkey)
 {
     printf("CreateTaskPubKey\n");
-    int ret = 0;
+    if (userPubkey == NULL) {
+        printf("Invalid parameters.\n");
+        return GENERIC_ERROR;
+    }
+    int ret = SUCCESS;
     if (TEEC_SUCCESS != TeecInit(userPubkey->username, userPubkey->usernameLen)) {
         printf("Failed to TeecInit.\n");
         return GENERIC_ERROR;
@@ -344,51 +355,65 @@ int CreateTaskPubKey(struct UserPubkey *userPubkey)
                           modulusBuffer, &modulusBufferLen,
                           pubexpBuffer, &pubexpBufferLen,
                           userPubkey->sign, userPubkey->signLen) != TEEC_SUCCESS) {
-        printf("Failed to GenerateRootKeyPair.\n");
-        ret = 1;
+        printf("Failed to CreateTaskKeyPair.\n");
+        TeecClose();
+        return GENERIC_ERROR;
+    }
+    DumpBuff(userPubkey->sign, userPubkey->signLen, "sign");
+
+    ret = SaveRSAPubkey(userPubkey->pubkeyPath, modulusBuffer, modulusBufferLen, pubexpBuffer, pubexpBufferLen);
+    if (ret != SUCCESS) {
+        printf("Failed to save RSA pubkey.\n");
+    }
+    TeecClose();
+    return ret;
+}
+
+static int ReadRSAPubkey(const char *pubkeyPath, RSA **rsa)
+{
+    int ret = SUCCESS;
+    FILE *fp = fopen(pubkeyPath, "r");
+    if (fp == NULL) {
+        printf("Failed to open pubkey.\n");
+        return GENERIC_ERROR;
     }
 
-    RSA *rsa = RSA_new();
-    BIGNUM *modulus = BN_bin2bn(modulusBuffer, modulusBufferLen, NULL);
-    BIGNUM *pubexp = BN_bin2bn(pubexpBuffer, pubexpBufferLen, NULL);
-    RSA_set0_key(rsa, modulus, pubexp, NULL);
-    FILE *fp = fopen(userPubkey->pubkeyPath, "w");
-    if (fp == NULL) {
-        RSA_free(rsa);
-        TeecClose();
-        return 1;
-    }
-    if (PEM_write_RSA_PUBKEY(fp, rsa) == 0) {
-        printf("Failed to write RSA pubkey.\n");
-        ret = 1;
+    PEM_read_RSA_PUBKEY(fp, rsa, NULL, NULL);
+    if (rsa == NULL) {
+        printf("Failed to read pubkey.\n");
+        ret = GENERIC_ERROR;
     }
     fclose(fp);
-    RSA_free(rsa);
-    TeecClose();
     return ret;
 }
 
 int VerifySign(RSA *rsa, const char *rootPubkeyPath, const size_t rootPubkeyPathLen, const char *sign, const size_t signLen)
 {
+    printf("VerifySign.\n");
     int ret;
-    printf("rootPubkeyPath: %s\n", rootPubkeyPath);
-    DumpBuff(sign, signLen);
-    FILE *fp = fopen(rootPubkeyPath, "r");
-    if (fp == NULL) {
-        printf("Failed to open root pubkey.\n");
-        return 0;
-    }
+    DumpBuff(sign, signLen, "sign");
 
     RSA *rootRSA = RSA_new();
-    rootRSA = PEM_read_RSA_PUBKEY(fp, NULL, NULL, NULL);
     if (rootRSA == NULL) {
-        printf("Failed to read root pubkey.\n");
-        return 0;
+        printf("Failed to init rsa.\n");
+        return GENERIC_ERROR;
     }
+    ret = ReadRSAPubkey(rootPubkeyPath, &rootRSA);
+    if (ret != SUCCESS) {
+        printf("Failed to read root pubkey.\n");
+        RSA_free(rootRSA);
+        return GENERIC_ERROR;
+    }
+
     const BIGNUM *modulus;
     const BIGNUM *pubexp;
     RSA_get0_key(rsa, &modulus, &pubexp, NULL);
     struct PubkeyParam *pubkeyParam = (struct PubkeyParam *)calloc(1, sizeof(struct PubkeyParam));
+    if (pubkeyParam == NULL) {
+        printf("Failed to calloc memory for pubkeyParam.\n");
+        RSA_free(rootRSA);
+        return GENERIC_ERROR;
+    }
     char modulusBuffer[RSA_KEY_SIZE] = {0};
     char pubexpBuffer[RSA_KEY_SIZE] = {0};
     size_t modulusBufferLen = BN_bn2bin(modulus, modulusBuffer);
@@ -401,15 +426,14 @@ int VerifySign(RSA *rsa, const char *rootPubkeyPath, const size_t rootPubkeyPath
 
     unsigned char msgDigest[SHA256_DIGEST_LENGTH] = {0};
     SHA256((void *)pubkeyParam, sizeof(struct PubkeyParam), msgDigest);
+    free(pubkeyParam);
 
     ret = RSA_verify(NID_sha256, msgDigest, SHA256_DIGEST_LENGTH, sign, signLen, rootRSA);
-    if (ret == 1) {
-        printf("verify ok.\n");
-    } else {
-        printf("verify fail.\n");
-    }
     RSA_free(rootRSA);
-    return ret;
+    if (ret != CRYPTO_SUCCESS) {
+        return VOTE_VERIFY_SIGN_FAILED;
+    }
+    return SUCCESS;
 }
 
 TEEC_Result AESKeyExchange(char *username, size_t usernameLen, char *paramBuffer, size_t paramBufferLen)
@@ -451,10 +475,8 @@ TEEC_Result EncryptVote(char *username, size_t usernameLen, AESOutput *output, c
         TEEC_MEMREF_TEMP_INPUT,
         TEEC_MEMREF_TEMP_INPUT,
         TEEC_MEMREF_TEMP_OUTPUT);
-    printf("output->cipher: \n");
-    DumpBuff(output->cipher, output->cipherLen);
-    printf("output->tag: \n");
-    DumpBuff(output->tag, output->tagLen);
+    DumpBuff(output->cipher, output->cipherLen, "output->cipher");
+    DumpBuff(output->tag, output->tagLen, "output->tag");
     operation.params[PARAMS_IDX0].tmpref.buffer = username;
     operation.params[PARAMS_IDX0].tmpref.size = usernameLen;
     operation.params[PARAMS_IDX1].tmpref.buffer = output->cipher;
@@ -464,121 +486,169 @@ TEEC_Result EncryptVote(char *username, size_t usernameLen, AESOutput *output, c
     operation.params[PARAMS_IDX3].tmpref.buffer = voteRes;
     operation.params[PARAMS_IDX3].tmpref.size = *voteResLen;
 
-    result = TEEC_InvokeCommand(&g_session, CMD_ENCRYPT_VOTE, &operation, &origin);
+    result = TEEC_InvokeCommand(&g_session, CMD_VOTE, &operation, &origin);
     if (result != TEEC_SUCCESS) {
-        printf("Failed to invoke command: CMD_ENCRYPT_VOTE, result: 0x%x, origin: 0x%x.\n", result, origin);
+        printf("Failed to invoke command: CMD_VOTE, result: 0x%x, origin: 0x%x.\n", result, origin);
         return result;
     }
     printf("voteRes: %s\n", operation.params[PARAMS_IDX3].tmpref.buffer);
     return TEEC_SUCCESS;
 }
 
+static int GenerateAESKeyParam(AESParam *param)
+{
+    errno_t ret;
+    char key[AES_KEY_LEN] = {0};
+    RAND_priv_bytes(key, AES_KEY_LEN);
+    DumpBuff(key, AES_KEY_LEN, "AES key");
+    char nonce[AES_NONCE_LEN] = {0};
+    RAND_priv_bytes(nonce, AES_NONCE_LEN);
+    DumpBuff(nonce, AES_NONCE_LEN, "AES nonce");
+    char aad[AES_AAD_LEN] = {0};
+    RAND_priv_bytes(aad, AES_AAD_LEN);
+    DumpBuff(aad, AES_AAD_LEN, "AES aad");
+
+    ret = memcpy_s(param->key, AES_KEY_LEN, key, AES_KEY_LEN);
+    if (ret != EOK) {
+        return ret;
+    }
+    param->keyLen = AES_KEY_LEN;
+    ret = memcpy_s(param->nonce, AES_NONCE_LEN, nonce, AES_NONCE_LEN);
+    if (ret != EOK) {
+        return ret;
+    }
+    param->nonceLen = AES_NONCE_LEN;
+    ret = memcpy_s(param->aad, AES_AAD_LEN, aad, AES_AAD_LEN);
+    if (ret != EOK) {
+        return ret;
+    }
+    param->aadLen = AES_AAD_LEN;
+    return EOK;
+}
+
 int Vote(const char *rootPubkeyPath, const size_t rootPubkeyPathLen,
          struct UserPubkey *userPubkey, struct VoteInfo *voteInfo)
 {
     printf("Vote\n");
+    if (rootPubkeyPath == NULL || userPubkey == NULL || voteInfo == NULL) {
+        printf("Invalid parameters.\n");
+        return GENERIC_ERROR;
+    }
     int ret = 0;
     if (TEEC_SUCCESS != TeecInit(userPubkey->username, userPubkey->usernameLen)) {
         printf("Failed to TeecInit.\n");
-        return ret;
+        return GENERIC_ERROR;
     }
 
-    printf("userPubkey->pubkeyPath: %s\n", userPubkey->pubkeyPath);
-    FILE *fp = fopen(userPubkey->pubkeyPath, "r");
-    if (fp == NULL) {
-        printf("Failed to open pubkey.\n");
-        TeecClose();
-        return 1;
-    }
+    // Read user RSA pubkey
     RSA *rsa = RSA_new();
-    PEM_read_RSA_PUBKEY(fp, &rsa, NULL, NULL);
     if (rsa == NULL) {
-        printf("Failed to read pubkey.\n");
+        printf("Failed to init rsa.\n");
         TeecClose();
-        return ret;
+        return GENERIC_ERROR;
+    }
+    ret = ReadRSAPubkey(userPubkey->pubkeyPath, &rsa);
+    if (ret != SUCCESS) {
+        printf("Failed to read root RSA pubkey.\n");
+        return GENERIC_ERROR;
     }
 
-    printf("VerifySign\n");
+    // verify sign
     ret = VerifySign(rsa, rootPubkeyPath, rootPubkeyPathLen, userPubkey->sign, userPubkey->signLen);
-    if (ret != 1){
+    if (ret != SUCCESS){
         printf("Failed to verify sign.\n");
         RSA_free(rsa);
         TeecClose();
         return ret;
     }
 
-    char key[AES_KEY_LEN] = {0};
-    RAND_priv_bytes(key, AES_KEY_LEN);
-    printf("key\n");
-    DumpBuff(key, AES_KEY_LEN);
-    char nonce[AES_NONCE_LEN] = {0};
-    RAND_priv_bytes(nonce, AES_NONCE_LEN);
-    printf("nonce\n");
-    DumpBuff(nonce, AES_NONCE_LEN);
-    char aad[AES_AAD_LEN] = {0};
-    RAND_priv_bytes(aad, AES_AAD_LEN);
-    printf("aad\n");
-    DumpBuff(aad, AES_AAD_LEN);
+    // Generate random AES param
     AESParam *param = (AESParam *)calloc(1, sizeof(AESParam));
-    memcpy_s(param->key, AES_KEY_LEN, key, AES_KEY_LEN);
-    param->keyLen = AES_KEY_LEN;
-    memcpy_s(param->nonce, AES_NONCE_LEN, nonce, AES_NONCE_LEN);
-    param->nonceLen = AES_NONCE_LEN;
-    memcpy_s(param->aad, AES_AAD_LEN, aad, AES_AAD_LEN);
-    param->aadLen = AES_AAD_LEN;
-    char cipherParam[RSA_KEY_SIZE] = {0};
-    printf("RSA_public_encrypt\n");
+    if (param == NULL) {
+        printf("Failed to calloc memory.\n");
+        RSA_free(rsa);
+        TeecClose();
+        return GENERIC_ERROR;
+    }
+    if (GenerateAESKeyParam(param) != EOK) {
+        printf("Failed to generate AES key.\n");
+        free(param);
+        RSA_free(rsa);
+        TeecClose();
+        return GENERIC_ERROR;
+    }
 
+    // encrypt AES param
+    char cipherParam[RSA_KEY_SIZE] = {0};
     if (RSA_public_encrypt(sizeof(AESParam), (char *)param, cipherParam, rsa, RSA_PKCS1_OAEP_PADDING) <= 0) {
         printf("RSA_public_encrypt failed.\n");
         RSA_free(rsa);
+        free(param);
         TeecClose();
-        return TEEC_ERROR_GENERIC;
+        return GENERIC_ERROR;
     }
     RSA_free(rsa);
-    printf("cipherParam\n");
-    DumpBuff(cipherParam, RSA_KEY_SIZE);
+    DumpBuff(cipherParam, RSA_KEY_SIZE, "cipherParam");
 
-    printf("AESKeyExchange\n");
+    // send AES key
     ret = AESKeyExchange(userPubkey->username, userPubkey->usernameLen, cipherParam, RSA_KEY_SIZE);
     if (ret != TEEC_SUCCESS) {
         printf("Failed to AES key exchange.\n");
+        free(param);
         TeecClose();
-        return ret;
+        return VOTE_DECRYPT_FAILED;
     }
     char *cipher = calloc(1, voteInfo->voteDataLen);
+    if (cipher == NULL) {
+        printf("Failed to calloc memory.\n");
+        free(param);
+        TeecClose();
+        return GENERIC_ERROR;
+    }
     char tag[AES_TAG_LEN] = {0};
     AESOutput *output = (AESOutput *)calloc(1, sizeof(AESOutput));
+    if (output == NULL) {
+        printf("Failed to calloc memory.\n");
+        free(param);
+        free(cipher);
+        TeecClose();
+        return GENERIC_ERROR;
+    }
     output->cipher = cipher;
     output->cipherLen = voteInfo->voteDataLen;
     output->tag = tag;
     output->tagLen = AES_TAG_LEN;
-    printf("AESEncrypt\n");
 
-    AESEncrypt(param, voteInfo->voteData, voteInfo->voteDataLen, output);
-    printf("output->cipher: \n");
-    DumpBuff(output->cipher, output->cipherLen);
+    // AES encrypt
+    ret = AESEncrypt(param, voteInfo->voteData, voteInfo->voteDataLen, output);
+    if (ret != CRYPTO_SUCCESS) {
+        printf("Failed to encrypt vote.\n");
+        free(cipher);
+        free(param);
+        free(output);
+        TeecClose();
+        return GENERIC_ERROR;
+    }
+    free(param);
+    DumpBuff(output->cipher, output->cipherLen, "output->cipher");
 
-    printf("EncryptVote\n");
+    // send encrypted data
     ret = EncryptVote(userPubkey->username, userPubkey->usernameLen, output, voteInfo->voteRes, voteInfo->voteResLen);
     free(output);
     if (ret != TEEC_SUCCESS) {
         printf("Failed to encrypt vote.\n");
-        free(cipher);
-        TeecClose();
-        return ret;
     }
     free(cipher);
     TeecClose();
     return ret;
 }
 
-int test(void)
+int Test(void)
 {
     int ret;
     char rootPubkeyPath[] = "root_pubkey.pem";
     ret = CreateRootPubKey(rootPubkeyPath, strlen(rootPubkeyPath));
-    if (ret != 0) {
+    if (ret != SUCCESS) {
         return ret;
     }
 
@@ -588,21 +658,20 @@ int test(void)
     size_t signLen = RSA_KEY_SIZE;
     struct UserPubkey userPubkey = {username, strlen(username), pubkeyPath, strlen(pubkeyPath), sign, signLen};
     ret = CreateTaskPubKey(&userPubkey);
-    if (ret != 0) {
+    if (ret != SUCCESS) {
         return ret;
     }
-    DumpBuff(sign, RSA_KEY_SIZE);
+    DumpBuff(sign, RSA_KEY_SIZE, "sign");
 
     char voteRes[VOTE_DATA_LEN] = {0};
     size_t voteResLen = VOTE_DATA_LEN;
     char voteData[] = "4";
     struct VoteInfo voteInfo = {voteData, strlen(voteData), voteRes, &voteResLen};
     ret = Vote(rootPubkeyPath, strlen(rootPubkeyPath), &userPubkey, &voteInfo);
-    if (ret != 0) {
+    if (ret != SUCCESS) {
         return ret;
     }
-    printf("voteID: %s\n", voteData);
+    printf("voteData: %s\n", voteData);
     printf("voteRes: %s\n", voteRes);
     return ret;
 }
-
