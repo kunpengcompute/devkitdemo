@@ -503,6 +503,7 @@ TEE_Result DecryptVote(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
     output->cipherLen = cipherLen;
     output->tag = tag;
     output->tagLen = tagLen;
+    // After decryption, it is returned to the TA, and if necessary, it can be saved to secure storage.
     ret = AESDecrypt(param, output, voteResBuffer, &voteResBufferLen);
     if (ret != TEE_SUCCESS) {
         SLogError("DecryptVote: Failed to invoke AESDecrypt. ret: %x", ret);
