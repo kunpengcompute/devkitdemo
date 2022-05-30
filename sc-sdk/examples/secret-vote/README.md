@@ -10,7 +10,7 @@ secret-vote demo是使用鲲鹏机密计算特性开发的匿名投票系统的�
 项目主要分为4个模块：
 - CA Client Application，客户端应用程序，编译生成libsecret-vote-ca.so供Web服务调用
 - TA Trusted Application，可信应用程序，运行在安全操作系统，使用GP接口（GlobalPlatform，机密计算标准规范）完成加解密和数据保存
-- service Web服务，使用Python的Django框架开发的Web服务，提供REST API，需要调用CA编译生成的libsecret-vote-ca.so实现公私钥对的申请和投票数据的加解密
+- Service Web服务，使用Python的Django框架开发的Web服务，提供REST API，需要调用CA编译生成的libsecret-vote-ca.so实现公私钥对的申请和投票数据的加解密
 - UI 前端，使用vue和element-ui开发的投票UI，支持用户登录、退出、投票、投票结果展示
 
 ## 主要目录说明
@@ -84,34 +84,34 @@ cd devkitdemo/sc-sdk/examples/secret-vote/
 
 3. 将CA/secret_vote_ca.h中的TA_UUID修改为开发者申请证书的uuid
 
-4. 编译CA
-
-```
-bash build/build_ca.sh
-```
-
-5. 将 ./TA/ 目录下的manifest.txt 文件替换成，申请开发者证书时使用的manifest.txt文件
-
-6. 修改TA/config_cloud.ini中的开发者私钥和config文件路径
-
-7. 编译TA
-
-**TA会校验CA的可执行程序路径，需要修改TA/secret_vote_ta.h中的PYTHON3_PATH为虚拟环境中python3的绝对路径**
-
-```
-bash build/install_ta.sh
-```
-
-8. 创建Python虚拟环境
+4. 创建Python虚拟环境
 
 ```
 python3 -m venv venv
 ```
 
-9. 激活虚拟环境
+5. 激活虚拟环境
 
 ```
 source venv/bin/activate
+```
+
+6. 编译CA
+
+```
+bash build/build_ca.sh
+```
+
+7. 将 ./TA/ 目录下的manifest.txt 文件替换成，申请开发者证书时使用的manifest.txt文件
+
+8. 修改TA/config_cloud.ini中的开发者私钥和config文件路径
+
+9. 编译TA
+
+**TA会校验CA的可执行程序路径，需要修改TA/secret_vote_ta.h中的PYTHON3_PATH为虚拟环境中python3的绝对路径**
+
+```
+bash build/install_ta.sh
 ```
 
 10. 安装运行DEMO需要的依赖
