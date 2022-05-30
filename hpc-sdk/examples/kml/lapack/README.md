@@ -13,6 +13,7 @@
 1. 确保已安装 **boostkit-kml-1.4.0**
 2. 确保已从 **lapack3.9.1** 生成 **lapack_adapt.a**
 3. 确保环境变量正常加载，执行 **env | grep LD_LIBRARY_PATH**
+4. 确保已安装编译器版本 >= **GCC 7.3.0**
 
 ## 使用教程
 

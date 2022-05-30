@@ -15,6 +15,7 @@ English | [简体中文](README.md)
 
 1. Ensure that boostkit-kml-1.4.0 has been installed.
 2. Run the **env | grep LD_LIBRARY_PATH** command to ensure that the environment variable loaded.
+3. Ensure that compiler version >= **GCC 7.3.0** has been installed.
 
 ## Guidance
 

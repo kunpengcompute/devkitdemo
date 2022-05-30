@@ -14,6 +14,7 @@ English | [简体中文](README.md)
 1. Ensure that boostkit-kml-1.4.0 has been installed.
 2. Ensure that lapack_adapt.a has been generated from lapack3.9.1.
 3. Run the **env | grep LD_LIBRARY_PATH** command to ensure that the environment variable loaded.
+4. Ensure that compiler version >= **GCC 7.3.0** has been installed.
 
 ## Guidance
 
