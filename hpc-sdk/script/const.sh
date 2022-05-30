@@ -22,7 +22,7 @@ current_dir=$(
 # Supported OSs
 support_os_names=$(sed '/^SUPPORT_OS_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 
-declare -A soft_support_lists=(["openEuler20.03(LTS-SP1)"]="BISHENG GCC KML"
+declare -A software_support_lists=(["openEuler20.03(LTS-SP1)"]="BISHENG GCC KML"
   ["openEuler20.03(LTS-SP2)"]="BISHENG GCC KML"
   ["openEuler20.03(LTS-SP3)"]="BISHENG GCC KML"
   ["KylinLinuxAdvancedServerV10"]="HMPI-GCC HMPI-BISHENG BISHENG GCC"

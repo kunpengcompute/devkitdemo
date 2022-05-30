@@ -27,13 +27,13 @@ trap 'onCtrlC' INT
 trap 'onCtrlZ' SIGTSTP
 trap 'onDisconnect' HUP
 
-set_soft_status() {
+set_software_status() {
   # Obtain the installation status of supported software.
   check_result_list=()
   suggestion_list=()
-  soft_support_list=${soft_support_lists["$os_name"]}
-  for soft_support in $(echo $soft_support_list | tr ' ' ' '); do
-    if [[ ${soft_support} =~ ^HMPI-GCC$|^HMPI-BISHENG$|^BISHENG$|^GCC$|^KML$ ]]; then
+  software_support_list=${software_support_lists["$os_name"]}
+  for software_support in $(echo $software_support_list | tr ' ' ' '); do
+    if [[ ${software_support} =~ ^HMPI-GCC$|^HMPI-BISHENG$|^BISHENG$|^GCC$|^KML$ ]]; then
       check_result_list[${#check_result_list[*]}]='Y'
     fi
   done
@@ -56,7 +56,7 @@ get_hyper_mpi_package_name() {
   fi
 }
 
-check_soft_installed() {
+check_software_installed() {
   # Check the installed software
   case $1 in
   "HMPI-GCC")
@@ -136,7 +136,7 @@ check_system_bisheng_status() {
 
 }
 
-set_soft_choose_status() {
+set_software_choose_status() {
   # Set the status of the software selected by the user.
   [[ "${select_result}" =~ ^GCC*$|,GCC* ]] && gcc_choose_status=${SUCCESS} || gcc_choose_status=${FAILED}
   [[ "${select_result}" =~ ^BISHENG*$|,BISHENG* ]] && bisheng_choose_status=${SUCCESS} || bisheng_choose_status=${FAILED}
@@ -396,8 +396,8 @@ nm_math_kml() {
 
 change_modules() {
   # Modify 'modules file'
-  install_soft=$1
-  case $install_soft in
+  install_software=$1
+  case $install_software in
   "HMPI-GCC")
     logger "Set modules for HMPI-GCC." ${TIP_COLOR_ECHO}
     # Original module content
@@ -481,15 +481,15 @@ install_main() {
   logger "Do not press Ctrl+Z or Ctrl+C or restart the system during the installation." ${TIP_COLOR_WARNING}
   check_os_architecture
   check_os_name
-  get_install_kml_way
-  set_soft_status
-  show_soft_support_list
+  get_install_kml_mode
+  set_software_status
+  show_software_support_list
   user_choose
   get_hyper_mpi_package_name
   for result in $(echo ${select_result} | tr ',' ' '); do
-    check_soft_installed $result
+    check_software_installed $result
   done
-  set_soft_choose_status
+  set_software_choose_status
   install_compiler_env_check "gcc"
   install_compiler_env_check "bisheng"
   install_hyper_mpi_env_check "gcc"

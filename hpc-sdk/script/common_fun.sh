@@ -72,7 +72,6 @@ logger() {
 
 get_os_name() {
   # Obtain the os name
-  os_name="other-os"
   os_name=$(cat /etc/os-release | grep "PRETTY_NAME" | awk -F '"' '{print $2}')
   os_name_del_space=${os_name// /}
   if [[ ${os_name_del_space} =~ "KylinLinuxAdvancedServerV10" ]]; then
@@ -124,7 +123,7 @@ user_customize_path() {
   check_space ${customize_path}
 }
 
-get_install_kml_way() {
+get_install_kml_mode() {
   # Obtain the dpkg or rpm installation mode of the math library
   if [[ "${os_name}" =~ "Ubuntu" ]]; then
     install_package_kind='dpkg'
@@ -215,7 +214,7 @@ check_space() {
 user_choose() {
   while_flag=1
   while [[ ${while_flag} == 1 ]]; do
-    num=${#soft_support_list[@]}
+    num=${#software_support_list[@]}
     # Install the software according to the sequence selected by the user.
     echo -n -e "\e[1;33mEnter the serial number of the software that can be installed. Format: a single digit or 'digits+commas', for example, (1,2,3). To exit the installation, enter no:\e[0m"
     read -r choose_install
@@ -246,32 +245,32 @@ user_choose() {
   if [[ ${length_number} -eq 1 ]]; then
     # Only one is selected by the user.
     # Display the item that the user selects to install.
-    select_result=${soft_support_list[((${choose_install} - 1))]}
+    select_result=${software_support_list[((${choose_install} - 1))]}
   else
     # Display repeated user input.
     choose_install=$(echo ${choose_install} | tr ',' ' ' | xargs -n 1 | sort -u)
     for i in ${choose_install}; do
-      select_result="$select_result,${soft_support_list[(($i - 1))]}"
+      select_result="$select_result,${software_support_list[(($i - 1))]}"
     done
   fi
   logger "The software you select to install is ${select_result#,}." ${TIP_COLOR_SUCCESS}
 }
 
-show_soft_support_list() {
+show_software_support_list() {
   # Display the software supported by the current system user.
   logger "Installation environment check result:" ${TIP_COLOR_CHECKING}
-  if [[ "${soft_support_list}" =~ "HMPI" ]]; then
+  if [[ "${software_support_list}" =~ "HMPI" ]]; then
     logger "The hyper-mpi corresponds to a specific compiler. Install the matched compiler for the hyper-mpi. For example, the compiler corresponding to HMPI-BISHENG is BISHENG." ${TIP_COLOR_ECHO}
   fi
-  if [[ "${soft_support_list}" =~ "KML" ]]; then
+  if [[ "${software_support_list}" =~ "KML" ]]; then
     logger "The KML corresponds to a specific compiler. Install the matched compiler for the KML. For example, the compiler corresponding to KML is GCC." ${TIP_COLOR_ECHO}
   fi
   printf "%-16s %-29s %-14s %-20s\n" "SequenceNumber" "Software" "Support" >>${log_file_of_abspath}
   printf "%-16s %-29s %-14s %-20s\n" "SequenceNumber" "Software" "Support"
-  soft_support_list=($(echo ${soft_support_list} | tr ' ' ' '))
-  for ((i = 0; i < ${#soft_support_list[@]}; i++)); do
-    printf "%-16s %-29s %-20s\n" "$((i + 1))" "${soft_support_list[i]}" "${check_result_list[i]}" >>${log_file_of_abspath}
-    printf "%-16s %-29s \033[1;32m%-20s\033[0m\n" "$((i + 1))" "${soft_support_list[i]}" "${check_result_list[i]}"
+  software_support_list=($(echo ${software_support_list} | tr ' ' ' '))
+  for ((i = 0; i < ${#software_support_list[@]}; i++)); do
+    printf "%-16s %-29s %-20s\n" "$((i + 1))" "${software_support_list[i]}" "${check_result_list[i]}" >>${log_file_of_abspath}
+    printf "%-16s %-29s \033[1;32m%-20s\033[0m\n" "$((i + 1))" "${software_support_list[i]}" "${check_result_list[i]}"
   done
 }
 
