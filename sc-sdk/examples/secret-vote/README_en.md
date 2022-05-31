@@ -84,34 +84,34 @@ cd devkitdemo/sc-sdk/examples/secret-vote/
 
 3. Change TA_UUID in CA/secret_vote_ca.h to the UUID used by the developer to apply for the certificate.
 
-4. Compile the CA.
-
-```
-bash build/build_ca.sh
-```
-
-5. Replace the manifest.txt file in the ./TA/ directory with the manifest.txt file used for applying for a developer certificate.
-
-6. Change the developer private key and config file path in TA/config_cloud.ini.
-
-7. Compile the TA.
-
-**The TA verifies the executable program path of the CA. You need to change PYTHON3_PATH in TA/secret_vote_ta.h to the absolute path of Python 3 in the virtual environment.**
-
-```
-bash build/install_ta.sh
-```
-
-8. Create a Python virtual environment.
+4. Create a Python virtual environment.
 
 ```
 python3 -m venv venv
 ```
 
-9. Activate the virtual environment.
+5. Activate the virtual environment.
 
 ```
 source venv/bin/activate
+```
+
+6. Compile the CA.
+
+```
+bash build/build_ca.sh
+```
+
+7. Replace the manifest.txt file in the ./TA/ directory with the manifest.txt file used for applying for a developer certificate.
+
+8. Change the developer private key and config file path in TA/config_cloud.ini.
+
+9. Compile the TA.
+
+**The TA verifies the executable program path of the CA. You need to change PYTHON3_PATH in TA/secret_vote_ta.h to the absolute path of Python 3 in the virtual environment.**
+
+```
+bash build/install_ta.sh
 ```
 
 10. Install the dependencies required for running the DEMO.
