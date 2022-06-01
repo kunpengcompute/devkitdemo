@@ -2,8 +2,6 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-import re
-import subprocess
 from ctypes import cdll
 
 
