@@ -1,6 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
 project (rsa_demo)
-cmake_policy (SET CMP0037 OLD)
 
 # Add source files
 set(SRCS

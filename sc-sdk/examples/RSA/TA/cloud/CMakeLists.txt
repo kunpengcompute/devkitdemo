@@ -1,6 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
 project (rsa_demo)
-cmake_policy (SET CMP0037 OLD)
 
 # Set variable
 # kunpeng-sc-devel path set
@@ -29,7 +28,7 @@ include_directories(
 set(CMAKE_RSA_FLAGS "-DAPI_LEVEL=1 -O -W -Wall -Werror -fno-short-enums -fno-omit-frame-pointer -fstack-protector-strong")
 set(CMAKE_RSA_FLAGS "${CMAKE_RSA_FLAGS} -Wextra -nostdinc -nodefaultlibs -march=armv8-a -Os -Wno-main -fPIC")
 set(CMAKE_RSA_FLAGS "${CMAKE_RSA_FLAGS} -Wno-error=unused-parameter -Wno-error=unused-but-set-variable")
-set(CMAKE_RSA_LD_FLAGS "-s -z text -z now -z relro -z noexecstack -shared")
+set(CMAKE_RSA_LD_FLAGS "-s -z text -z now -z relro -z noexecstack -shared -nodefaultlibs")
 set(CMAKE_RSA_LD_FLAGS "${CMAKE_RSA_LD_FLAGS} -T${iTrustee_SDK_PATH}/utils/tools/ta_link_64.ld")
 
 # Set output dir
@@ -40,7 +39,6 @@ add_library(tmp_object OBJECT ${SRCS})
 set_target_properties(tmp_object PROPERTIES COMPILE_FLAGS ${CMAKE_RSA_FLAGS})
 add_library(combine SHARED $<TARGET_OBJECTS:tmp_object>)
 set_target_properties(combine PROPERTIES LINK_FLAGS ${CMAKE_RSA_LD_FLAGS})
-target_link_options(combine PUBLIC -nodefaultlibs)
  
 add_custom_command(TARGET combine
     POST_BUILD
