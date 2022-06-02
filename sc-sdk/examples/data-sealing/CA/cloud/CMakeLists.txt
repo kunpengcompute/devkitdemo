@@ -14,7 +14,6 @@
 
 cmake_minimum_required(VERSION 2.8)
 project(data-sealing-ca)
-cmake_policy(SET CMP0037 OLD)
 
 # Set variable
 # kunpeng-sc-devel path set
