@@ -316,7 +316,7 @@ static int ReadFile(const char* filePath, char* fileContent)
 	int readSize = fread(fileContent, 1, FILE_SIZE_MAX + 1, pFile);
 	if (readSize > FILE_SIZE_MAX || readSize == 0)
 	{
-		printf("The maximum file size is 4096 byte.\n");
+		printf("The maximum file size is 4096 byte and cannot be empty.\n");
 		fclose(pFile);
 		return 0;
 	}
