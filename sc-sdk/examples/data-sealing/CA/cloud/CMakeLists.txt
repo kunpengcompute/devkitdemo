@@ -40,7 +40,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Generate execute file
 add_executable(data-sealing ${SRCS})
-target_link_libraries(data-sealing teec_adaptor dl pthread)
+target_link_libraries(data-sealing teec_adaptor dl pthread boundscheck)
 set_target_properties(data-sealing PROPERTIES COMPILE_FLAGS ${CMAKE_TEEC_FLAGS})
 set_target_properties(data-sealing PROPERTIES LINK_FLAGS ${CMAKE_TEEC_LDFLAGS})
 
