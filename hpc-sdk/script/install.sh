@@ -53,31 +53,31 @@ get_hyper_mpi_package_name() {
     elif [[ ${select_result} =~ "HMPI-BISHENG" ]]; then
       hmpi_package_name=${centos7_6_hmpi_bisheng_name}
     fi
+  elif [[ "${os_name}" =~ "openEuler20.03" ]]; then
+    if [[ ${select_result} =~ "HMPI-GCC" ]]; then
+      hmpi_package_name=${openeuler20_03_lts_hmpi_gcc_name}
+    elif [[ ${select_result} =~ "HMPI-BISHENG" ]]; then
+      hmpi_package_name=${openeuler20_03_lts_hmpi_bisheng_name}
+    fi
   fi
 }
 
 check_software_installed() {
   # Check the installed software
   case $1 in
-  "HMPI-GCC")
+  "HMPI-GCC"|"HMPI-BISHENG")
+    hmpi_gcc_install_status=${FAILED}
+    hmpi_bisheng_install_status=${FAILED}
+    hyper_install_status=${FAILED}
     which mpirun >/dev/null 2>&1
     if [[ $? == 0 ]]; then
-      hmpi_gcc_install_status=${SUCCESS}
-    else
-      hmpi_gcc_install_status=${FAILED}
-      if grep -q "ompi/lib" ~/.bashrc && grep -q "/ucx/lib" ~/.bashrc; then
-        hmpi_gcc_install_status=${SUCCESS}
+      hyper_install_status=${SUCCESS}
+      hmpi_name_string=$(which mpirun | awk -F "/ompi/bin/mpirun" '{print $1}')
+      if [[ "${hyper_mpi_gcc_package_names[@]}" =~ "${hmpi_name_string##*/}" ]];then
+          hmpi_gcc_install_status=${SUCCESS}
       fi
-    fi
-    ;;
-  "HMPI-BISHENG")
-    which mpirun >/dev/null 2>&1
-    if [[ $? == 0 ]]; then
-      hmpi_bisheng_install_status=${SUCCESS}
-    else
-      hmpi_bisheng_install_status=${FAILED}
-      if grep -q "ompi/lib" ~/.bashrc && grep -q "/ucx/lib" ~/.bashrc; then
-        hmpi_bisheng_install_status=${SUCCESS}
+      if [[ "${hyper_mpi_bisheng_package_names[@]}" =~ "${hmpi_name_string##*/}" ]];then
+          hmpi_bisheng_install_status=${SUCCESS}
       fi
     fi
     ;;
@@ -93,14 +93,7 @@ check_software_installed() {
     ;;
   "BISHENG")
     # clang -v Standard errot output 2>&1
-    if clang -v 2>&1 | grep -q "HUAWEI BiSheng Compiler 2.1.0.B010 clang version 12.0.0"; then
-      bisheng_install_status=${SUCCESS}
-    else
-      bisheng_install_status=${FAILED}
-      if grep -q "bisheng-compiler-2.1.0-aarch64-linux" /etc/profile; then
-        bisheng_install_status=${SUCCESS}
-      fi
-    fi
+    check_system_bisheng_status
     ;;
   "KML")
     [[ ${install_package_kind} == "rpm" ]] && result=$(${install_package_kind} -qa ${boostkit_math_name}) || result=$(${install_package_kind} -l ${boostkit_math_name})
@@ -118,7 +111,6 @@ check_system_gcc_status() {
     version_ge ${gcc_version} ${gcc_support_version}
     [[ "$?" == "0" ]] && gcc_kml_check_status=${SUCCESS} || gcc_kml_check_status=${FAILED}
   else
-
     [[ ${gcc_support_version} == ${gcc_version} ]] && gcc_hmpi_check_status=${SUCCESS} || gcc_hmpi_check_status=${FAILED}
   fi
 }
@@ -133,7 +125,6 @@ check_system_bisheng_status() {
       bisheng_check_status=${SUCCESS}
     fi
   fi
-
 }
 
 set_software_choose_status() {
@@ -157,28 +148,28 @@ install_hyper_mpi_env_check() {
   [[ ${hmpi_type} == "gcc" ]] && compiler_hmpi_check_status=${gcc_hmpi_check_status} || compiler_hmpi_check_status=${bisheng_check_status}
   logger "Start installing the HMPI-${hmpi_type^^}." ${TIP_COLOR_CHECKING}
   unset miss_package
-  check_precondition_mpi
   if [[ ! -f ${install_package_dir}/hyper_mpi/"${hmpi_package_name}.tar.gz" ]]; then
     logger "The installation package cannot be found." ${TIP_COLOR_SUCCESS}
     return 1
   fi
-  if [[ ${compiler_choose_status} == ${SUCCESS} ]]; then
-    if [[ ${hmpi_install_status} == ${SUCCESS} ]]; then
-      logger "Hyper-mpi is installed in this system" ${TIP_COLOR_WARNING}
-      read_answer "The hyper-mpi already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
-      if [[ $? != 1 ]]; then
-        logger "Do not install the hyper-mpi repeatedly." ${TIP_COLOR_ECHO}
-        return 1
-      fi
+  if [[ ${hyper_install_status} == ${SUCCESS} ]];then
+    if [[ ${hmpi_gcc_install_status} == ${SUCCESS} ]] && [[ ${hmpi_type} == "gcc" ]];then
+      answer_msg="The HPMI-${hmpi_type^^} already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
     fi
-  elif [[ ${compiler_choose_status} == ${FAILED} ]]; then
-    if [[ ${hmpi_install_status} == ${SUCCESS} ]]; then
-      logger "Hyper-mpi is installed in this system"
-      read_answer "The hyper-mpi already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
-      if [[ $? != 1 ]]; then
-        logger "Do not install the hyper-mpi repeatedly." ${TIP_COLOR_ECHO}
-        return 1
-      fi
+    if [[ ${hmpi_gcc_install_status} == ${SUCCESS} ]] && [[ ${hmpi_type} == "bisheng" ]];then
+      answer_msg="The HPMI-GCC already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
+    fi
+    if [[ ${hmpi_bisheng_install_status} == ${SUCCESS} ]] && [[ ${hmpi_type} == "gcc" ]];then
+      answer_msg="The HPMI-BISHNEG already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
+    fi
+    if [[ ${hmpi_bisheng_install_status} == ${SUCCESS} ]] && [[ ${hmpi_type} == "bisheng" ]];then
+      answer_msg="The HPMI-${hmpi_type^^} already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
+    fi
+    logger "Hyper-mpi is installed in this system"
+    read_answer "${answer_msg}"
+    if [[ $? != 1 ]]; then
+      logger "Do not install the hyper-mpi repeatedly." ${TIP_COLOR_ECHO}
+      return 1
     fi
   fi
   if [[ ${compiler_hmpi_check_status} == ${SUCCESS} ]]; then
@@ -186,7 +177,7 @@ install_hyper_mpi_env_check() {
     return 0
   fi
   [[ ${hmpi_type} == "gcc" ]] && logger "The gcc version must be 9.3.0 in the system where the hmpi-gcc is to be installed" ${TIP_COLOR_WARNING}
-  [[ ${hyper_mpi} == "gcc" ]] && miss_package[${#miss_package[*]}]="${hmpi_type}(9.3.0)"
+  [[ ${hmpi_type} == "gcc" ]] && miss_package[${#miss_package[*]}]="${hmpi_type}(9.3.0)"
   hand_precondition_mpi
 }
 
@@ -204,31 +195,20 @@ install_kml_env_check() {
     logger "The installation package cannot be found." ${TIP_COLOR_SUCCESS}
     return 1
   fi
-
-  if [[ ${gcc_choose_status} == ${SUCCESS} ]]; then
-    if [[ ${kml_install_status} == ${SUCCESS} ]]; then
-      read_answer "The KML already exists. Are you sure you want to continue installing the KML?"
-      if [[ $? != 1 ]]; then
-        logger "Do not install the KML repeatedly." ${TIP_COLOR_FAILED}
-        return 1
-      fi
-    fi
-  elif [[ ${gcc_choose_status} == ${FAILED} ]]; then
-    if [[ ${kml_install_status} == ${SUCCESS} ]]; then
-      logger "The KML already exists. Are you sure you want to continue installing the KML?"
-      read_answer "The KML already exists. Are you sure you want to continue installing the KML?"
-      if [[ $? != 1 ]]; then
-        logger "The KML already exists. Are you sure you want to continue installing the KML? N"
-        logger "Do not install the KML repeatedly." ${TIP_COLOR_FAILED}
-        return 1
-      fi
+  if [[ ${kml_install_status} == ${SUCCESS} ]]; then
+    logger "The KML already exists. Are you sure you want to continue installing the KML?"
+    read_answer "The KML already exists. Are you sure you want to continue installing the KML?"
+    if [[ $? != 1 ]]; then
+      logger "The KML already exists. Are you sure you want to continue installing the KML? N"
+      logger "Do not install the KML repeatedly." ${TIP_COLOR_FAILED}
+      return 1
     fi
   fi
   if [[ ${gcc_kml_check_status} == ${SUCCESS} ]]; then
     hand_precondition_kml
     return 0
   fi
-  miss_package_kml[${#miss_package_kml[*]}]='gcc'
+  miss_package_kml[${#miss_package_kml[*]}]='gcc(7.3.0)'
   hand_precondition_kml
 }
 
@@ -278,6 +258,11 @@ install_hyper_mpi() {
   cd ${install_package_dir}/hyper_mpi
   [[ ${hmpi_gcc_choose_status} == 1 ]] && install_hyper_mpi_name="hyper_mpi_gcc"
   [[ ${hmpi_bisheng_choose_status} == 1 ]] && install_hyper_mpi_name="hyper_mpi_bisheng"
+  del_hyper_mpi "${install_hyper_mpi_name}"
+  if [[ $? == 1 ]];then
+    return 1
+  fi
+  cd ${install_package_dir}/hyper_mpi
   install_hmpi_path=${customize_path}hyper_mpi/${install_hyper_mpi_name}
   if [ ! -d "${install_hmpi_path}" ]; then
     mkdir -p ${install_hmpi_path}
@@ -319,6 +304,10 @@ install_compiler() {
     cd ${customize_path}
     pwd
   )" ${TIP_COLOR_SUCCESS}
+  del_compiler "${compiler_type}"
+  if [[ $? == 1 ]];then
+    return 1
+  fi
   cd ${install_package_dir}/${compiler_type}
   install_compiler_path=${customize_path}${compiler_type}
   if [ ! -d ${install_compiler_path} ]; then
@@ -394,93 +383,73 @@ nm_math_kml() {
   done <comm.sym
 }
 
+change_modules_hmpi(){
+  local hmpi_type="$1"
+  logger "Set modules for HMPI-${hmpi_type^^}." ${TIP_COLOR_ECHO}
+  # Original module content
+  old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/hmpi_modulefiles)
+  sed -i s"#${old_msg}#set prefix $(
+      cd ${install_hmpi_path}
+      pwd
+    )/${hmpi_package_name}#" ${module_file_dir}/hmpi_modulefiles
+  if [ ! -d ${customize_path}/modules/hmpi_mpi_${hmpi_type} ]; then
+    mkdir -p ${customize_path}/modules/hmpi_mpi_${hmpi_type}
+  fi
+  cp -rf ${module_file_dir}/hmpi_modulefiles ${customize_path}/modules/hmpi_mpi_${hmpi_type}/
+  show_modulefile_path=${customize_path}modules/hmpi_mpi_${hmpi_type}/hmpi_modulefiles
+  logger "The path of HMPI-${hmpi_type^^} modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
+}
+
+change_modules_compiler(){
+  local compiler_type="$1"
+  logger "Set modules for ${compiler_type^^}." ${TIP_COLOR_ECHO}
+  old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/${compiler_type}_modulefiles)
+  sed -i s"#${old_msg}#set prefix $(
+    cd ${install_compiler_path}
+    pwd
+  )/${compiler_name}#" ${module_file_dir}/${compiler_type}_modulefiles
+  if [ ! -d ${customize_path}/modules/${compiler_type} ]; then
+    mkdir -p ${customize_path}/modules/${compiler_type}
+  fi
+  cp -rf ${module_file_dir}/${compiler_type}_modulefiles ${customize_path}/modules/${compiler_type}
+  show_modulefile_path=${customize_path}modules/${compiler_type}/${compiler_type}_modulefiles
+  logger "The path of ${compiler_type^^} modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
+}
+
 change_modules() {
   # Modify 'modules file'
   install_software=$1
   case $install_software in
   "HMPI-GCC")
-    logger "Set modules for HMPI-GCC." ${TIP_COLOR_ECHO}
-    # Original module content
-    old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/hmpi_modulefiles)
-    if [[ "${os_name}" =~ "KylinLinux" ]]; then
-      sed -i s"#${old_msg}#set prefix $(
-        cd ${install_hmpi_path}
-        pwd
-      )/${kylinv10_hmpi_gcc_name}#" ${module_file_dir}/hmpi_modulefiles
-    elif [[ "${os_name}" =~ "CentOSLinux" ]]; then
-      sed -i s"#${old_msg}#set prefix $(
-        cd ${install_hmpi_path}
-        pwd
-      )/${centos7_6_linux_hmpi_gcc_name}#" ${module_file_dir}/hmpi_modulefiles
-    fi
-    if [ ! -d ${customize_path}/modules/hmpi_gcc ]; then
-      mkdir -p ${customize_path}/modules/hmpi_gcc
-    fi
-    cp -rf ${module_file_dir}/hmpi_modulefiles ${customize_path}/modules/hmpi_gcc/
-    show_modulefile_path=${customize_path}modules/hmpi_gcc/hmpi_modulefiles
-    logger "The path of HMPI-GCC modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
+    change_modules_hmpi "gcc"
     ;;
   "HMPI-BISHENG")
-    logger "Set modules for HMPI-BISHENG." ${TIP_COLOR_ECHO}
-    old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/hmpi_modulefiles)
-    if [[ "${os_name}" =~ "KylinLinux" ]]; then
-      sed -i s"#${old_msg}#set prefix $(
-        cd ${install_hmpi_path}
-        pwd
-      )/${kylinv10_hmpi_bisheng_name}#" ${module_file_dir}/hmpi_modulefiles
-    elif [[ "${os_name}" =~ "CentOSLinux" ]]; then
-      sed -i s"#${old_msg}#set prefix $(
-        cd ${install_hmpi_path}
-        pwd
-      )/${centos7_6_linux_hmpi_bisheng_name}#" ${module_file_dir}/hmpi_modulefiles
-    fi
-    if [ ! -d ${customize_path}/modules/hmpi_bisheng ]; then
-      mkdir -p ${customize_path}/modules/hmpi_bisheng
-    fi
-    cp -rf ${module_file_dir}/hmpi_modulefiles ${customize_path}/modules/hmpi_bisheng
-    show_modulefile_path=${customize_path}modules/hmpi_bisheng/hmpi_modulefiles
-    logger "The path of HMPI-BISHENG modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
+    change_modules_hmpi "bisheng"
     ;;
   "BISHENG")
-    logger "Set modules for BISHENG." ${TIP_COLOR_ECHO}
-    old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/bisheng_modulefiles)
-    sed -i s"#${old_msg}#set prefix $(
-      cd ${install_compiler_path}
-      pwd
-    )/${bisheng_compiler_name}#" ${module_file_dir}/bisheng_modulefiles
-    if [ ! -d ${customize_path}/modules/bisheng ]; then
-      mkdir -p ${customize_path}/modules/bisheng
-    fi
-    cp -rf ${module_file_dir}/bisheng_modulefiles ${customize_path}/modules/bisheng
-    show_modulefile_path=${customize_path}modules/bisheng/bisheng_modulefiles
-    logger "The path of BISHENG modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
+    change_modules_compiler "bisheng"
     ;;
   "GCC")
-    logger "Set moudles for GCC." ${TIP_COLOR_ECHO}
-    old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/gcc_modulefiles)
-    sed -i s"#${old_msg}#set prefix $(
-      cd ${install_compiler_path}
-      pwd
-    )/${gcc_compiler_name}#" ${module_file_dir}/bisheng_modulefiles
-    if [ ! -d ${customize_path}/modules/gcc ]; then
-      mkdir -p ${customize_path}/modules/gcc
-    fi
-    cp -rf ${module_file_dir}/gcc_modulefiles ${customize_path}/modules/gcc
-    show_modulefile_path=${customize_path}modules/gcc/gcc_modulefiles
-    logger "The path of GCC modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
+    change_modules_compiler "gcc"
     ;;
   esac
   change_directory_owner "${customize_path}modules"
   change_directory_permissions "${customize_path}modules"
 }
 
-install_main() {
+check_environment(){
+  # Checking the Environment
   check_install_user
   create_log_file
   logger "Start installing the HPC software." ${TIP_COLOR_ECHO}
   logger "Do not press Ctrl+Z or Ctrl+C or restart the system during the installation." ${TIP_COLOR_WARNING}
   check_os_architecture
   check_os_name
+}
+
+install_main() {
+  check_environment
+  # Handles software support installation lists and user interacation.
   get_install_kml_mode
   set_software_status
   show_software_support_list
@@ -489,6 +458,8 @@ install_main() {
   for result in $(echo ${select_result} | tr ',' ' '); do
     check_software_installed $result
   done
+  
+  # Handle the software installation process. 
   set_software_choose_status
   install_compiler_env_check "gcc"
   install_compiler_env_check "bisheng"
