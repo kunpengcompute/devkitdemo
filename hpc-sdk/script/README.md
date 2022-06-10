@@ -43,7 +43,8 @@
 
 ## 3、使用教程
 
-####  1、获取kunpeng-hpc-xxx-aarc64-linux.tar.gz包  
+####  1、获取kunpeng-hpc-1.0.0-aarc64-linux.tar.gz包  
+[https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.0-aarch64-linux.tar.gz](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.0-aarch64-linux.tar.gz)
 ####  2、执行如下命令进行安装
 ```
 tar -xf kunpeng-hpc-xxx-aarch64-linux.tar.gz

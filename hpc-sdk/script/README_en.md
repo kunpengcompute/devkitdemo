@@ -1,6 +1,6 @@
 # **Kunpeng HPC SDK One-Click Installation Script**
 
-English | [简体中文](README_cn.md)
+English | [简体中文](README.md)
 
 ## 1、Introduction
 
@@ -44,6 +44,7 @@ Note: The preceding table lists the dependencies required for installing the Hyp
 ## 3、Usage Guide
 
 ####  1、Obtain the kunpeng-hpc-1.0.0-aarc64-linux.tar.gz package. 
+[https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.0-aarch64-linux.tar.gz](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.0-aarch64-linux.tar.gz)
 ####  2、Run the following commands to install the software:
 ```
 tar -xf kunpeng-hpc-1.0.0-aarch64-linux.tar.gz
