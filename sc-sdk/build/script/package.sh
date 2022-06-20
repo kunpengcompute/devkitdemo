@@ -261,7 +261,7 @@ function output() {
 }
 
 function clean_tmp_file() {
-    # rm -rf ${SrcPath}
+    rm -rf ${SrcPath}
     if [[ ${OsArch} =~ "Redhat" ]]; then
         if [ -d ${RpmBuild} ]; then
             echo "delete ${RpmBuild}"
