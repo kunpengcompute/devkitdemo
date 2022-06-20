@@ -291,48 +291,18 @@ read_answer() {
   done
 }
 
-check_precondition_mpi() {
-  local list_to_be_check=(perl-Data-Dumper autoconf automake libtool numactl binutils systemd-devel valgrind)
-  miss_package=()
-  for ((i = 0; i < ${#list_to_be_check[@]}; i++)); do
-    package=${list_to_be_check[$i]}
-    result=$(command -v "${package}")
-    if [[ -z $result ]]; then
-      if [[ ${package} == "libtool" ]]; then
-        miss_package[$i]="libtool-2.4.2"
-      else
-        miss_package[$i]=${package}
-      fi
-    else
-      if [[ ${package} == "libtool" ]]; then
-        version=$(libtool --version | head -n 1 | grep -Po "\d+\.\d+\.\d+")
-        if [[ "${version}" != "2.4.2" ]]; then
-          miss_package[$i]="libtool-2.4.2"
-        fi
-      fi
-    fi
-  done
-}
 
 hand_precondition_mpi() {
   # Handle the installation exception caused by insufficient environment dependency.
   if [[ ${#miss_package[@]} -gt 0 ]]; then
     logger "The $(echo ${miss_package[@]}) dependency is not detected in the environment." ${TIP_COLOR_WARNING}
     read_answer "The corresponding ${miss_package[@]} is missing or the version is incorrect. Are you sure you want to continue the installation?"
-    if [[ $? == 1 ]]; then
-      if [[ ${hmpi_install_status} == ${SUCCESS} ]]; then
-        del_hyper_mpi
-      fi
-      install_hyper_mpi
-    else
+    if [[ $? != 1 ]]; then
       logger "Exit the hyper-mpi installation." ${TIP_COLOR_FAILED}
+      return 1
     fi
-  else
-    if [[ ${hmpi_install_status} == ${SUCCESS} ]]; then
-      del_hyper_mpi
-    fi
-    install_hyper_mpi
   fi
+  install_hyper_mpi
 }
 
 check_precondition_kml() {
@@ -356,20 +326,18 @@ hand_precondition_kml() {
   if [[ ${#miss_package_kml[@]} -gt 0 ]]; then
     logger "The ${miss_package_kml[@]} dependency is not detected in the environment."
     read_answer "The system does not have dependencies such as ${miss_package_kml[@]} or the version does not meet the requirements. Are you sure you want to continue the installing the KML?"
-    if [[ $? == 1 ]]; then
-      if [[ ${kml_install_status} == ${SUCCESS} ]]; then
-        del_math_kml
-      fi
-      install_math_kml
-    else
+    if [[ $? != 1 ]]; then
       logger "Exit the KML installation." ${TIP_COLOR_FAILED}
+      return 1
     fi
-  else
-    if [[ ${kml_install_status} == ${SUCCESS} ]]; then
-      del_math_kml
-    fi
-    install_math_kml
   fi
+  if [[ ${kml_install_status} == ${SUCCESS} ]]; then
+    del_math_kml
+    if [[ $? == 1 ]]; then
+      return 1
+    fi
+  fi
+  install_math_kml
 }
 
 check_precondition_compiler() {
@@ -422,20 +390,12 @@ hand_precondition_compiler() {
   if [[ ${#miss_package_compiler[@]} -gt 0 ]]; then
     logger "The ${miss_package_compiler[@]} dependency is nit detected in the environment."
     read_answer "The system does not have dependencies such as ${miss_package_compiler[@]} or the version does not meet the requirements. Are you sure you want to continue the installing the ${compiler_type^^}?"
-    if [[ $? == 1 ]]; then
-      if [[ ${compiler_install_status} == ${SUCCESS} ]]; then
-        del_compiler ${compiler_type}
-      fi
-      install_compiler ${compiler_type}
-    else
+    if [[ $? != 1 ]]; then
       logger "Exit the ${compiler_type^^}  installation." ${TIP_COLOR_FAILED}
+      return 1
     fi
-  else
-    if [[ ${compiler_install_status} == ${SUCCESS} ]]; then
-      del_compiler ${compiler_type}
-    fi
-    install_compiler ${compiler_type}
   fi
+  install_compiler ${compiler_type}
 }
 
 check_install_user() {
@@ -490,7 +450,7 @@ change_directory_permissions() {
       local split_path=$(echo $directory | awk -F "^${valid_customize_path}/" '{print $2}')
     fi
   fi
-  [[ ${customize_path_special} ]] && chmod 744 -R ${customize_path_special} || chmod 744 -R ${split_path%%/*}
+  [[ ${customize_path_special} ]] && chmod 755 -R ${customize_path_special} || chmod 755 -R ${split_path%%/*}
   find ${directory} -type f | xargs chmod 644
   [[ ${software_ompi_bin} ]] && find ${software_ompi_bin} -type f | xargs chmod 755
   [[ ${software_ucx_bin} ]] && find ${software_ucx_bin} -type f | xargs chmod 755
@@ -500,46 +460,55 @@ change_directory_permissions() {
 }
 
 del_math_kml() {
+  # Delete the original kml environment variables
+  read_answer "Before the installation, the existing software will be uninstalled. Are you want to authorize the script to continue?"
+  if [[ $? != 1 ]];then 
+    logger "Do not install the kml repeatedly." ${TIP_COLOR_ECHO}
+    return 1
+  fi
   logger "Deleting kml" ${TIP_COLOR_ECHO}
   if [[ ${install_package_kind} == "rpm" ]]; then
     $install_package_kind -e "${boost_math_name}"
   else
     $install_package_kind -P "${boost_math_name}"
   fi
-  sed -i '/\/usr\/local\/kml\/lib/d' /etc/profile
+  logger "Deleting kml successfull" ${TIP_COLOR_ECHO}
 }
 
 del_hyper_mpi() {
   # Delete the original hyper mpi environment variables
-  logger 'Deleting hyper-mpi' ${TIP_COLOR_ECHO}
-  local keys=(hwmpi ompi ucx)
-  local hwmpi_path=$(grep -E '^hwmpi=' ~/.bashrc | awk -F "hwmpi=" '{print $2}')
-  local hyper_mpi=$(echo ${hwmpi_path} | awk -F "${hwmpi_package_name}" '{print $1}')
-  for key in ${keys[@]}; do
-    sed -i '/'"${key}"'/d' ~/.bashrc
-  done
-  if [ -d "${hyper_mpi}" ]; then
-    hyper_mpi_gcc_module="$(
-      cd ${hyper_mpi}/../../..
-      pwd
-    )/modules/hmpi_gcc/hmpi_modulefiles"
-    hyper_mpi_bisheng_module="$(
-      cd ${hyper_mpi}/../../..
-      pwd
-    )/modules/hmpi_bisheng/hmpi_modulefiles"
-    [[ ${hwmpi_path} =~ 'hyper_mpi_gcc' && -d "${hyper_mpi}" ]] && rm -rf $hyper_mpi
-    [[ ${hwmpi_path} =~ 'hyper_mpi_bisheng' && -d "${hyper_mpi}" ]] && rm -rf $hyper_mpi
-    [[ ${hwmpi_path} =~ 'hyper_mpi_gcc' && -f "${hyper_mpi_gcc_module}" ]] && rm -rf $hyper_mpi_gcc_module
-    [[ ${hwmpi_path} =~ 'hyper_mpi_bisheng' && -f "${hyper_mpi_bisheng_module}" ]] && rm -rf $hyper_mpi_bisheng_module
+  local hyper_mpi_type="$1"
+  install_hyper_mpi_path="${customize_path}hyper_mpi/${hyper_mpi_type}/${hmpi_package_name}"
+  hyper_mpi_modules_path="${customize_path}modules/${hyper_mpi_type}/hmpi_modulefiles"
+  if [[ -d "${install_hyper_mpi_path}" ]] || [[ -f "${hyper_mpi_modules_path}" ]];then
+    logger "${hyper_mpi_modules_path} file already exists." ${TIP_COLOR_WARNING}
+    logger "${install_hyper_mpi_path} directory is not empty." ${TIP_COLOR_WARNING}
+    read_answer "Are you sure you want to continue the instation? if yes, ${install_hyper_mpi_path} the directory or ${hyper_mpi_modules_path} file will be overwritten "
+    if [[ $? != 1 ]];then 
+      logger 'Do not install the hyper-mpi repeatedly.' ${TIP_COLOR_ECHO}
+      return 1
+    fi
+    rm -rf ${hyper_mpi_modules_path}
+    rm -rf ${install_hyper_mpi_path}
+    logger 'Deleting hyper-mpi' ${TIP_COLOR_ECHO}
   fi
+  
 }
 
 del_compiler() {
   local compiler_type=$1
-  logger "Deleting ${compiler_type} " ${TIP_COLOR_ECHO}
-  local compiler_path=$(grep -e "${compiler_name}" /etc/profile | hread -n 1 | awk -F "${compiler_name}" '{print $1}')
-  local compiler_install_path=$(echo $compiler_path | awk -F "=" '{print $2}')
-  sed -i '/'"${compiler_name}"'/d' /etc/profile
-  [[ -d "${compiler_install_path}/${compiler_name}" ]] && rm -rf ${compiler_install_path}/${compiler_name}
-
+  local compiler_path="${customize_path}${compiler_type}/${compiler_name}"
+  local compiler_modules_path="${customize_path}modules/${compiler_type}_modulefiles"
+  if [[ -d "${compiler_modules_path}" ]] || [[ -f "${compiler_path}" ]];then
+    logger "${compiler_modules_path} file already exists." ${TIP_COLOR_WARNING}
+    logger "${compiler_path} directory is not empty." ${TIP_COLOR_WARNING}
+    read_answer "Are you sure you want to continue the instation? if yes, ${compiler_path} the directory or ${compiler_modules_path} file will be overwritten "
+    if [[ $? != 1 ]];then 
+      logger "Do not install the ${compiler_type} repeatedly." ${TIP_COLOR_ECHO}
+      return 1
+    fi
+    rm -rf ${compiler_path}
+    rm -rf ${compiler_modules_path}
+    logger "Deleting ${compiler_type} " ${TIP_COLOR_ECHO}
+  fi
 }
