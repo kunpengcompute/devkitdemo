@@ -1,0 +1,12 @@
+Package: kunpeng-sc
+Version: 1.0.0
+Section: utils
+Priority: optional
+Depends: libssl-dev, zlib1g-dev
+Conflicts: tee-sdk, tee-devel-sdk
+Suggests:
+Architecture: arm64
+Installed-Size: 4096
+Maintainer: huawei
+Description: Kunpeng-sc Package for Secure Computing Application Development.
+
