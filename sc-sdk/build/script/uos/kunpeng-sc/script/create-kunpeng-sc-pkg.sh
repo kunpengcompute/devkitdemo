@@ -105,7 +105,6 @@ function install_software(){
 function create_pkg(){
     cd ${ScriptPath}
     dpkg-deb -b ../buildroot kunpeng-sc_1.0.0_arm64.deb
-    sha256sum kunpeng-sc_1.0.0_arm64.deb > kunpeng-sc_1.0.0_arm64.deb.sha256sum
 }
 
 function clean(){

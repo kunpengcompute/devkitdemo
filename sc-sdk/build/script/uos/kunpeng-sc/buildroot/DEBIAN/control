@@ -7,6 +7,6 @@ Conflicts: tee-sdk, tee-devel-sdk
 Suggests:
 Architecture: arm64
 Installed-Size: 4096
-Maintainer: huawei
+Maintainer: kunpengcompute
 Description: Kunpeng-sc Package for Secure Computing Application Development.
 
