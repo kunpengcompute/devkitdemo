@@ -1,0 +1,76 @@
+From 62053e3bdca182aa1c61e109505441e90d146908 Mon Sep 17 00:00:00 2001
+From: hyt <hyt3161@163.com>
+Date: Thu, 16 Jun 2022 17:28:33 +0800
+Subject: [PATCH] Add version info to dynamic library
+
+---
+ CMakeLists.txt | 35 +++++++++++++++++++++++++++++++++++
+ Makefile       |  6 ++++--
+ 2 files changed, 39 insertions(+), 2 deletions(-)
+ create mode 100644 CMakeLists.txt
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..b1d583e
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,35 @@
++cmake_minimum_required (VERSION 2.8)
++project (boundscheck)
++cmake_policy (SET CMP0037 OLD)
++
++# Set compiler
++#set(CMAKE_C_COMPILER gcc)
++
++# Add source files
++aux_source_directory(src DIR_SRCS)
++
++# Add header file include directories
++include_directories(${PROJECT_SOURCE_DIR}/include)
++
++# Set compile options
++set(CMAKE_BOUNDSCHECK_FLAGS "-Wall -DNDEBUG -O2 -fPIC -fstack-protector-all -D_FORTIFY_SOURCE=2 -O2 -Wformat=2 -Wfloat-equal -Wshadow")
++set(CMAKE_BOUNDSCHECK_FLAGS "${CMAKE_BOUNDSCHECK_FLAGS} -Wconversion -Wformat-security -Wextra --param ssp-buffer-size=4 -Warray-bounds -Wpointer-arith")
++set(CMAKE_BOUNDSCHECK_FLAGS "${CMAKE_BOUNDSCHECK_FLAGS} -Wcast-qual -Wstrict-prototypes -Wmissing-prototypes -Wstrict-overflow=1 -Wstrict-aliasing=2 -Wswitch -Wswitch-default")
++
++# Set link options
++set(CMAKE_BOUNDSCHECK_LINK_FLAGS "-fPIC -s -Wl,-z,relro,-z,now,-z,noexecstack -fstack-protector-all")
++
++# Set output dir
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
++
++# Generate .so file
++add_library(tmp_object OBJECT ${DIR_SRCS})
++set_target_properties(tmp_object PROPERTIES COMPILE_FLAGS ${CMAKE_BOUNDSCHECK_FLAGS})
++add_library(boundscheck SHARED $<TARGET_OBJECTS:tmp_object>)
++set_target_properties(boundscheck PROPERTIES LINK_FLAGS ${CMAKE_BOUNDSCHECK_LINK_FLAGS})
++ 
++# Clean output
++add_custom_target(clean
++    COMMAND -rm -rf ${PROJECT_SOURCE_DIR}/lib
++    COMMAND @echo "clean up"
++)
+diff --git a/Makefile b/Makefile
+index bdeee08..1a5f6e0 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,4 +1,5 @@
+-PROJECT=libboundscheck.so
++PROJECT=libboundscheck.so.1
++SO_NAME=libboundscheck.so
+ 
+ CC?=gcc
+ 
+@@ -32,7 +33,8 @@ LD_FLAG = -fPIC -s -Wl,-z,relro,-z,now,-z,noexecstack -fstack-protector-all
+ 
+ $(PROJECT): $(OBJECTS)
+ 	mkdir -p lib
+-	$(CC)  -shared -o lib/$@ $(patsubst %.o,obj/%.o,$(notdir $(OBJECTS))) $(LD_FLAG)
++	$(CC)  -shared -Wl,-soname,$(SO_NAME) -o lib/$@ $(patsubst %.o,obj/%.o,$(notdir $(OBJECTS))) $(LD_FLAG)
++	@ln -s libboundscheck.so.1 lib/libboundscheck.so
+ 	@echo "finish $(PROJECT)"
+ 
+ .c.o:
+-- 
+2.36.1.windows.1
+
