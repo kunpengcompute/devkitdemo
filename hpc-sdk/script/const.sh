@@ -22,7 +22,8 @@ current_dir=$(
 # Supported OSs
 support_os_names=$(sed '/^SUPPORT_OS_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 
-declare -A software_support_lists=(["openEuler20.03(LTS-SP1)"]="BISHENG GCC KML"
+declare -A software_support_lists=(["openEuler20.03(LTS)"]="HMPI-BISHENG BISHENG GCC KML"
+  ["openEuler20.03(LTS-SP1)"]="BISHENG GCC KML"
   ["openEuler20.03(LTS-SP2)"]="BISHENG GCC KML"
   ["openEuler20.03(LTS-SP3)"]="BISHENG GCC KML"
   ["KylinLinuxAdvancedServerV10"]="HMPI-GCC HMPI-BISHENG BISHENG GCC"
@@ -48,6 +49,9 @@ kylinv10_hmpi_gcc_name=$(sed '/^KYLINV10_LINUX_HMPI_GCC_NAME=/!d;s/.*=//;s/\r//'
 kylinv10_hmpi_bisheng_name=$(sed '/^KYLINV10_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 centos7_6_linux_hmpi_gcc_name=$(sed '/^CENTOS7.6_LINUX_HMPI_GCC_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 centos7_6_hmpi_bisheng_name=$(sed '/^CENTOS7.6_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
+openeuler20_03_lts_hmpi_bisheng_name=$(sed '/^OPENEULER20.03_LTS_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
+hyper_mpi_gcc_package_names=(${kylinv10_hmpi_gcc_name} ${centos7_6_linux_hmpi_gcc_name})
+hyper_mpi_bisheng_package_names=(${kylinv10_hmpi_bisheng_name} ${centos7_6_hmpi_bisheng_name} ${openeuler20_03_lts_hmpi_bisheng_name})
 # List of software to be installed
 software_to_be_installed=$(sed '/^SOFTWARE_TO_BE_INSTALLED=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 # User-defined path rule
@@ -56,9 +60,9 @@ ALLOW_STRING=$(sed '/^ALLOW_STRING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf
 SUCCESS=1
 FAILED=0
 # Color processing for terminal output
-TIP_COLOR_FAILED=$(sed '/^TIP_COLOR_FAILED=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)     # 红色
-TIP_COLOR_SUCCESS=$(sed '/^TIP_COLOR_SUCCESS=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # 绿色
-TIP_COLOR_WARNING=$(sed '/^TIP_COLOR_WARNING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # 黄色
-TIP_COLOR_COMMAND=$(sed '/^TIP_COLOR_COMMAND=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # 紫色
-TIP_COLOR_CHECKING=$(sed '/^TIP_COLOR_CHECKING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf) # 蓝色
-TIP_COLOR_ECHO=$(sed '/^TIP_COLOR_ECHO=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)         # 白色
+TIP_COLOR_FAILED=$(sed '/^TIP_COLOR_FAILED=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)     # red
+TIP_COLOR_SUCCESS=$(sed '/^TIP_COLOR_SUCCESS=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # green
+TIP_COLOR_WARNING=$(sed '/^TIP_COLOR_WARNING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # yellow
+TIP_COLOR_COMMAND=$(sed '/^TIP_COLOR_COMMAND=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # purple
+TIP_COLOR_CHECKING=$(sed '/^TIP_COLOR_CHECKING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf) # blue
+TIP_COLOR_ECHO=$(sed '/^TIP_COLOR_ECHO=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)         # white

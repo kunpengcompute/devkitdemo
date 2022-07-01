@@ -1,0 +1,35 @@
+From db8555fedf3c37bb9faf9a6d2c30f78cb4f357f2 Mon Sep 17 00:00:00 2001
+From: hyt <hyt3161@163.com>
+Date: Thu, 16 Jun 2022 17:21:00 +0800
+Subject: [PATCH] Add version info to dynamic library
+
+---
+ Makefile | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 0f5cdff..2ed9c1e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,13 +1,16 @@
+ CUR_DIR=$(shell pwd)
+ iTrustee_SDK_PATH=${CUR_DIR}
+-TARGET_APP := libteec_adaptor.so
++TARGET_APP := libteec_adaptor.so.1
++SO_NAME := libteec_adaptor.so
++
+ APP_SOURCES += $(iTrustee_SDK_PATH)/src/CA/cloud/libteec_adaptor.c
+ APP_CFLAGS += -fstack-protector-strong -fPIC -ftrapv -s -D_FORTIFY_SOURCE=2 -O2
+ APP_CFLAGS += -I$(iTrustee_SDK_PATH)/include/CA -I$(iTrustee_SDK_PATH)/thirdparty/open_source/libboundscheck/include
+ 
+ APP_LDFLAGS += -z text -z now -z relro -z noexecstack -pie -shared
+ $(TARGET_APP): $(APP_SOURCE)
+-	@$(CC) $(APP_CFLAGS) $(APP_LDFLAGS) $(APP_SOURCES) -o $@
++	@$(CC) $(APP_CFLAGS) $(APP_LDFLAGS) $(APP_SOURCES) -Wl,-soname,$(SO_NAME) -o $@
++	@ln -s libteec_adaptor.so.1 libteec_adaptor.so
+ 
+ install: $(TARGET_APP)
+ 	install -d /opt/itrustee_sdk
+-- 
+2.36.1.windows.1
+

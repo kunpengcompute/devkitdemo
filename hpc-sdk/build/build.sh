@@ -128,7 +128,8 @@ packing()
     find ${WORKSPACE}/${hpc_kunpeng_package_name}/package -type f | xargs chmod 644
     chmod 644 ${WORKSPACE}/${hpc_kunpeng_package_name}/README*.md 
     chmod 644 ${WORKSPACE}/${hpc_kunpeng_package_name}/module/* 
-    chmod 544 ${WORKSPACE}/${hpc_kunpeng_package_name}/script/* 
+    chmod 555 ${WORKSPACE}/${hpc_kunpeng_package_name}/script/*.sh
+    chmod 644 ${WORKSPACE}/${hpc_kunpeng_package_name}/script/*.conf
     cd ${WORKSPACE}
     find ${WORKSPACE}/${hpc_kunpeng_package_name} -type f | xargs dos2unix 
     tar -cvf ${hpc_kunpeng_package_name}.tar.gz ${hpc_kunpeng_package_name}
