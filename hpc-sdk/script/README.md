@@ -24,7 +24,7 @@
 | 麒麟V10 SP2  | Y (GCC = 9.3,毕昇) | Y | Y | N  |
 | unbuntu18.04  | N | Y | Y | Y (GCC >= 7.3)| 
 | unbuntu20.04  | N | Y | Y | Y (GCC >= 7.3) |
-| UOS 1020e | N | Y | Y | N  |   
+| UOS 1020e | N | Y | Y | N  |  
 
 说明：以上表中均为aarch64架构;小括号中为GCC、毕昇编译器的版本代表依赖最小版本，表中的Y代表系统支持安装，N代表不支持安装。
 
@@ -38,8 +38,9 @@
 | glibc-devel(libc-dev-bin) | N  | N | Y(>=2.17) | N  |
 | glibc  | N | Y(>=2.17)| Y(>=2.17) | N  |
 | libatomic  | N | Y(>=1.2.0) | N | N  |  
+| libgomp  | N | N | N | Y  |  
 
-说明：以上表中内容为hyper-mpi、数学库、GCC、毕昇编译器安装所需要的依赖，表中的Y代表系统依赖，N代表不依赖。
+说明：以上表中内容为hyper-mpi、数学库、GCC、毕昇编译器安装所需要的依赖，表中的Y代表系统依赖，N代表不依赖。redhat系安裝毕昇编译的rpm包时需确保系统已经安装libgomp。
 
 ## 3、使用教程
 

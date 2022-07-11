@@ -96,7 +96,7 @@ check_software_installed() {
     check_system_bisheng_status
     ;;
   "KML")
-    [[ ${install_package_kind} == "rpm" ]] && result=$(${install_package_kind} -qa ${boostkit_math_name}) || result=$(${install_package_kind} -l ${boostkit_math_name})
+    [[ ${install_package_kind} == "rpm" ]] && result=$(${install_package_kind} -qa ${boost_math_name}) || result=$(${install_package_kind} -l ${boost_math_name})
     [[ "${result}" ]] && kml_install_status=${SUCCESS} || kml_install_status=${FAILED}
     ;;
   esac
@@ -160,14 +160,14 @@ install_hyper_mpi_env_check() {
       answer_msg="The HPMI-GCC already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
     fi
     if [[ ${hmpi_bisheng_install_status} == ${SUCCESS} ]] && [[ ${hmpi_type} == "gcc" ]];then
-      answer_msg="The HPMI-BISHNEG already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
+      answer_msg="The HPMI-BISHENG already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
     fi
     if [[ ${hmpi_bisheng_install_status} == ${SUCCESS} ]] && [[ ${hmpi_type} == "bisheng" ]];then
       answer_msg="The HPMI-${hmpi_type^^} already exists. Are you sure you want to continue installing the HPMI-${hmpi_type^^}?"
     fi
-    logger "Hyper-mpi is installed in this system"
+    logger "Hyper-mpi is installed in this system" ${TIP_COLOR_WARNING}
     read_answer "${answer_msg}"
-    if [[ $? != 1 ]]; then
+    if [[ $? != 0 ]]; then
       logger "Do not install the hyper-mpi repeatedly." ${TIP_COLOR_ECHO}
       return 1
     fi
@@ -187,7 +187,7 @@ install_kml_env_check() {
     return 1
   fi
   logger "Start installing the KML." ${TIP_COLOR_CHECKING}
-  check_precondition_kml
+  check_precondition_kml ${install_package_kind}
   if [[ ${install_package_kind} == "rpm" ]] && [[ ! -f ${install_package_dir}/kml/${boost_math_rpm_name}.rpm ]]; then
     logger "The installation package cannot be found." ${TIP_COLOR_SUCCESS}
     return 1
@@ -198,7 +198,7 @@ install_kml_env_check() {
   if [[ ${kml_install_status} == ${SUCCESS} ]]; then
     logger "The KML already exists. Are you sure you want to continue installing the KML?"
     read_answer "The KML already exists. Are you sure you want to continue installing the KML?"
-    if [[ $? != 1 ]]; then
+    if [[ $? != 0 ]]; then
       logger "The KML already exists. Are you sure you want to continue installing the KML? N"
       logger "Do not install the KML repeatedly." ${TIP_COLOR_FAILED}
       return 1
@@ -208,7 +208,7 @@ install_kml_env_check() {
     hand_precondition_kml
     return 0
   fi
-  miss_package_kml[${#miss_package_kml[*]}]='gcc(7.3.0)'
+  miss_package_kml[${#miss_package_kml[*]}]='gcc(>=7.3.0)'
   hand_precondition_kml
 }
 
@@ -220,7 +220,7 @@ install_compiler_env_check() {
     [[ ${compiler_type} == "gcc" ]] && compiler_install_status=${gcc_install_status} || compiler_install_status=${bisheng_install_status}
     [[ ${compiler_type} == "gcc" ]] && compiler_name=${gcc_compiler_name} || compiler_name=${bisheng_compiler_name}
     check_precondition_compiler ${compiler_type}
-    logger "Start installing the ${compiler_type}." ${TIP_COLOR_CHECKING}
+    logger "Start installing the ${compiler_type^^}." ${TIP_COLOR_CHECKING}
     if [[ ! -f ${install_package_dir}/${compiler_type}/"${compiler_name}.tar.gz" ]]; then
       logger "The installation package cannot be found." ${TIP_COLOR_SUCCESS}
       return 1
@@ -229,15 +229,17 @@ install_compiler_env_check() {
     if [[ ${compiler_install_status} == ${SUCCESS} ]]; then
       logger "The ${compiler_type^^} already exists. Are you sure you want to continue installing the ${compiler_type^^}?"
       read_answer "The ${compiler_type^^} already exists. Are you sure you want to continue installing the ${compiler_type^^}?"
-      if [[ $? == 1 ]]; then
-        [[ ${compiler_type} == "gcc" ]] && hand_precondition_compiler "gcc" || hand_precondition_compiler "bisheng"
-      else
+      if [[ $? != 0 ]]; then
         logger "Do not install the ${compiler_type^^} repeatedly." ${TIP_COLOR_FAILED}
         return 1
       fi
-    else
-      [[ ${compiler_type} == "gcc" ]] && hand_precondition_compiler "gcc" || hand_precondition_compiler "bisheng"
     fi
+    if [[ ${compiler_type} == "gcc" ]];then
+      hand_precondition_compiler "gcc" 
+    else
+      hand_precondition_compiler "bisheng"
+    fi
+    [[ $? == 1 ]] && return 1
   fi
   if [[ ${compiler_type} == "gcc" ]]; then
     # Check whether the GCC in the systecm meets the requirements. If no, add a mark.
@@ -351,7 +353,15 @@ install_math_kml() {
   else
     $install_package_kind -i ${install_package_dir}/kml/${boost_math_deb_name}.deb
   fi
+  if [[ $? -ne 0 ]];then
+    logger "Failed to install the math library." ${TIP_COLOR_FAILED}
+    return 1
+  fi
   nm_math_kml
+  if [[ $? -ne 0 ]];then
+    logger "Failed to install the math library." ${TIP_COLOR_FAILED}
+    return 1
+  fi
   logger "To make the related commands take effect, run the following command: source /etc/profile" ${TIP_COLOR_WARNING}
   logger "The math library is installed." ${TIP_COLOR_SUCCESS}
 }
@@ -374,11 +384,11 @@ nm_math_kml() {
     if ! nm liblapack_adapt.a | grep -qe " T ${sym}_\$"; then
       continue
     fi
-    ar x liblapack_adapt.a $sym.f.o
+    ar x liblapack_adapt.a $sym.f.o >/dev/null 2>&1
     mv $sym.f.o ${sym}_netlib.f.o
     objcopy --redefine-sym ${sym}_=${sym}_netlib_ ${sym}_netlib.f.o
-    ar d liblapack_adapt.a ${sym}.f.o
-    ar ru liblapack_adapt.a ${sym}_netlib.f.o
+    ar d liblapack_adapt.a ${sym}.f.o >/dev/null 2>&1
+    ar ru liblapack_adapt.a ${sym}_netlib.f.o >/dev/null 2>&1
     rm ${sym}_netlib.f.o
   done <comm.sym
 }
@@ -392,11 +402,11 @@ change_modules_hmpi(){
       cd ${install_hmpi_path}
       pwd
     )/${hmpi_package_name}#" ${module_file_dir}/hmpi_modulefiles
-  if [ ! -d ${customize_path}/modules/hmpi_mpi_${hmpi_type} ]; then
-    mkdir -p ${customize_path}/modules/hmpi_mpi_${hmpi_type}
+  if [ ! -d ${customize_path}/modules/hyper_mpi_${hmpi_type} ]; then
+    mkdir -p ${customize_path}/modules/hyper_mpi_${hmpi_type}
   fi
-  cp -rf ${module_file_dir}/hmpi_modulefiles ${customize_path}/modules/hmpi_mpi_${hmpi_type}/
-  show_modulefile_path=${customize_path}modules/hmpi_mpi_${hmpi_type}/hmpi_modulefiles
+  cp -rf ${module_file_dir}/hmpi_modulefiles ${customize_path}/modules/hyper_mpi_${hmpi_type}/
+  show_modulefile_path=${customize_path}modules/hyper_mpi_${hmpi_type}/hmpi_modulefiles
   logger "The path of HMPI-${hmpi_type^^} modules is ${show_modulefile_path}." ${TIP_COLOR_ECHO}
 }
 

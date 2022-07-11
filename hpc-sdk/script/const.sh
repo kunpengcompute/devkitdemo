@@ -60,9 +60,9 @@ ALLOW_STRING=$(sed '/^ALLOW_STRING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf
 SUCCESS=1
 FAILED=0
 # Color processing for terminal output
-TIP_COLOR_FAILED=$(sed '/^TIP_COLOR_FAILED=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)     # 红色
-TIP_COLOR_SUCCESS=$(sed '/^TIP_COLOR_SUCCESS=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # 绿色
-TIP_COLOR_WARNING=$(sed '/^TIP_COLOR_WARNING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # 黄色
-TIP_COLOR_COMMAND=$(sed '/^TIP_COLOR_COMMAND=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # 紫色
-TIP_COLOR_CHECKING=$(sed '/^TIP_COLOR_CHECKING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf) # 蓝色
-TIP_COLOR_ECHO=$(sed '/^TIP_COLOR_ECHO=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)         # 白色
+TIP_COLOR_FAILED=$(sed '/^TIP_COLOR_FAILED=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)     # red
+TIP_COLOR_SUCCESS=$(sed '/^TIP_COLOR_SUCCESS=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # green
+TIP_COLOR_WARNING=$(sed '/^TIP_COLOR_WARNING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # yellow
+TIP_COLOR_COMMAND=$(sed '/^TIP_COLOR_COMMAND=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)   # purple
+TIP_COLOR_CHECKING=$(sed '/^TIP_COLOR_CHECKING=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf) # blue
+TIP_COLOR_ECHO=$(sed '/^TIP_COLOR_ECHO=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)         # white

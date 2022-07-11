@@ -38,8 +38,9 @@ Note: The OSs listed in the preceding table use the AArch64 architecture. The ve
 | glibc-devel(libc-dev-bin) | N  | N | Y(>2.17) | N  |
 | glibc  | N | Y(>2.17)| Y(>2.17) | N  |
 | libatomic  | N | Y(>=1.2) | N | N  |
+| libgomp  | N | N | N | Y  | 
 
-Note: The preceding table lists the dependencies required for installing the Hyper-MPI, math library, GCC, and Bisheng Compiler. Y indicates required dependency for the software and N indicates the dependency is not required.
+Note: The preceding table lists the dependencies required for installing the Hyper-MPI, math library, GCC, and Bisheng Compiler. Y indicates required dependency for the software and N indicates the dependency is not required. Before installing the RPM　package compiled by Bisheng in the Red Hat system, ensure that libgomp has been installed in the system.
 
 ## 3、Usage Guide
 

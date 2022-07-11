@@ -206,7 +206,7 @@ check_space() {
   done
   if [[ ${avail_space} -lt ${low_space} ]]; then
     logger "The disk space of the selected installation directory is insufficient." ${TIP_COLOR_FAILED}
-    logger "Ensure that the available space of the ${customize_path} directory is greater than ${low_pace_package_g} GB" ${TIP_COLOR_FAILED}
+    logger "Ensure that the available space of the ${customize_path} directory is greater than ${low_space_package_g} GB" ${TIP_COLOR_FAILED}
     exit 1
   fi
 }
@@ -281,9 +281,9 @@ read_answer() {
   while [[ ${ask_flag} == 1 ]]; do
     read -p "${ask_question} [Y/N]:" you_choose
     if [[ ${you_choose} =~ ^[Yy]$ ]]; then
-      return 1
-    elif [[ ${you_choose} =~ ^[nN]$ ]]; then
       return 0
+    elif [[ ${you_choose} =~ ^[nN]$ ]]; then
+      return 1
     else
       logger 'input error' ${TIP_COLOR_FAILED}
       continue
@@ -297,7 +297,7 @@ hand_precondition_mpi() {
   if [[ ${#miss_package[@]} -gt 0 ]]; then
     logger "The $(echo ${miss_package[@]}) dependency is not detected in the environment." ${TIP_COLOR_WARNING}
     read_answer "The corresponding ${miss_package[@]} is missing or the version is incorrect. Are you sure you want to continue the installation?"
-    if [[ $? != 1 ]]; then
+    if [[ $? != 0 ]]; then
       logger "Exit the hyper-mpi installation." ${TIP_COLOR_FAILED}
       return 1
     fi
@@ -307,15 +307,13 @@ hand_precondition_mpi() {
 
 check_precondition_kml() {
   # Check the math library dependency.
+  local install_package_kind=$1
   miss_package_kml=()
   libc6="/usr/lib64/libc.so.6"
+  [[ ${install_package_kind} == "dpkg" ]] && libc6="/lib/aarch64-linux-gnu/libc.so.6"
   libgomp1="/usr/lib64/libgomp.so.1"
-  if [[ ! -f ${libc6} ]]; then
-    miss_package_kml[${#miss_package_kml[*]}]="libc6"
-  fi
-  if [[ ! -f ${libgomp1} ]]; then
-    miss_package_kml[${#miss_package_kml[*]}]="libgomp1"
-  fi
+  [[ ! -f ${libc6} ]] && miss_package_kml[${#miss_package_kml[*]}]="libc6"
+  [[ ! -f ${libgomp1} && ${install_package_kind} == "rpm" ]] && miss_package_kml[${#miss_package_kml[*]}]="libgomp1"
   result=$(command -v nm)
   if [[ -z ${result} ]]; then
     miss_package_kml[${#miss_package_kml[*]}]="nm"
@@ -326,7 +324,7 @@ hand_precondition_kml() {
   if [[ ${#miss_package_kml[@]} -gt 0 ]]; then
     logger "The ${miss_package_kml[@]} dependency is not detected in the environment."
     read_answer "The system does not have dependencies such as ${miss_package_kml[@]} or the version does not meet the requirements. Are you sure you want to continue the installing the KML?"
-    if [[ $? != 1 ]]; then
+    if [[ $? != 0 ]]; then
       logger "Exit the KML installation." ${TIP_COLOR_FAILED}
       return 1
     fi
@@ -345,7 +343,7 @@ check_precondition_compiler() {
   local compiler_type=$1
   miss_package_bisheng=()
   miss_package_gcc=()
-  glibc_version=$(ldd --version | head -n 1 | grep -Po '\d+.\d+\d+')
+  glibc_version=$(ldd --version | grep -Po '\d+.\d+\d+' | head -n 1)
   version_ge "${glibc_version}" "2.17"
   if [[ "$?" != 0 ]]; then
     miss_package_gcc[${#miss_package_gcc[*]}]="GLIBC(>=2.17)"
@@ -356,7 +354,7 @@ check_precondition_compiler() {
       glibc_devel_version=$(${install_package_kind} -qa | grep -E "^glibc-devel" | head -n 1 | grep -Po "\d+\.\d+\d+")
       glibc_devel="glibc-devel(>=2.17)"
     else
-      glibc_devel_version=$(${install_package_kind} -l | grep "ii libc-dev-bin" | head -n 1 | grep -Po "\d+\.\d+\d+")
+      glibc_devel_version=$(${install_package_kind} -l | grep "libc-dev-bin" | head -n 1 | grep -Po "\d+\.\d+\d+")
       glibc_devel="libc-dev-bin(>=2.17)"
     fi
     version_ge "${glibc_devel_version}" '2.17'
@@ -390,12 +388,16 @@ hand_precondition_compiler() {
   if [[ ${#miss_package_compiler[@]} -gt 0 ]]; then
     logger "The ${miss_package_compiler[@]} dependency is nit detected in the environment."
     read_answer "The system does not have dependencies such as ${miss_package_compiler[@]} or the version does not meet the requirements. Are you sure you want to continue the installing the ${compiler_type^^}?"
-    if [[ $? != 1 ]]; then
-      logger "Exit the ${compiler_type^^}  installation." ${TIP_COLOR_FAILED}
+    if [[ $? != 0 ]]; then
+      logger "Exit the ${compiler_type^^} installation." ${TIP_COLOR_FAILED}
       return 1
     fi
   fi
   install_compiler ${compiler_type}
+  if [[ $? == 1 ]]; then
+    logger "Exit the ${compiler_type^^} installation." ${TIP_COLOR_FAILED}
+    return 1
+  fi
 }
 
 check_install_user() {
@@ -434,6 +436,7 @@ change_directory_permissions() {
   local directory="$1"
   local bin_type="$2"
   local flag=1
+  local path=''
   if [[ ${bin_type} ]]; then
     [[ ${bin_type} == "hyper-mpi" ]] && local software_ompi_bin="${directory}/ompi/bin" && local software_ucx_bin="${directory}/ucx/bin"
     [[ ${bin_type} == "gcc" ]] && local software_gcc_bin="${directory}/bin" && local software_gcc_gnu_bin="${directory}/aarch64-linux-gnu/bin"
@@ -441,7 +444,6 @@ change_directory_permissions() {
   fi
   if [[ ${customize_path_status} == 1 ]]; then
     cd ${customize_path}
-    local split_path=$(echo ${directory} | awk -F "^${customize_path}" '{print $2}')
   elif [[ ${customize_path_status} == 2 ]]; then
     if [ -z ${valid_customize_path} ]; then
       local customize_path_special=${customize_path}
@@ -450,7 +452,21 @@ change_directory_permissions() {
       local split_path=$(echo $directory | awk -F "^${valid_customize_path}/" '{print $2}')
     fi
   fi
-  [[ ${customize_path_special} ]] && chmod 755 -R ${customize_path_special} || chmod 755 -R ${split_path%%/*}
+  if [[ "${split_path}" ]];then
+    local valid_customize_path_split=${valid_customize_path}
+    for path in $(echo ${split_path} | tr '/' ' ');do
+      valid_customize_path_split=${valid_customize_path_split}/${path}
+      chmod 755 ${valid_customize_path_split}
+    done
+  else
+    local delete_last_slashes=${customize_path%%/}
+    for path in $(echo ${directory} | tr '/' ' ');do
+      local chmod_path=${chmod_path}/${path}
+      [[ -z "${customize_path_special}" && ${#delete_last_slashes} -ge ${#chmod_path} ]] && continue || chmod 755 ${chmod_path}
+    done
+  fi
+
+  [[ $(ls -A "${directory}") ]] && chmod 755 -R ${directory}/*
   find ${directory} -type f | xargs chmod 644
   [[ ${software_ompi_bin} ]] && find ${software_ompi_bin} -type f | xargs chmod 755
   [[ ${software_ucx_bin} ]] && find ${software_ucx_bin} -type f | xargs chmod 755
@@ -461,8 +477,8 @@ change_directory_permissions() {
 
 del_math_kml() {
   # Delete the original kml environment variables
-  read_answer "Before the installation, the existing software will be uninstalled. Are you want to authorize the script to continue?"
-  if [[ $? != 1 ]];then 
+  read_answer "Before the installation, the existing software will be uninstalled. Are you sure want to authorize the script to continue?"
+  if [[ $? != 0 ]];then 
     logger "Do not install the kml repeatedly." ${TIP_COLOR_ECHO}
     return 1
   fi
@@ -481,34 +497,33 @@ del_hyper_mpi() {
   install_hyper_mpi_path="${customize_path}hyper_mpi/${hyper_mpi_type}/${hmpi_package_name}"
   hyper_mpi_modules_path="${customize_path}modules/${hyper_mpi_type}/hmpi_modulefiles"
   if [[ -d "${install_hyper_mpi_path}" ]] || [[ -f "${hyper_mpi_modules_path}" ]];then
-    logger "${hyper_mpi_modules_path} file already exists." ${TIP_COLOR_WARNING}
-    logger "${install_hyper_mpi_path} directory is not empty." ${TIP_COLOR_WARNING}
-    read_answer "Are you sure you want to continue the instation? if yes, ${install_hyper_mpi_path} the directory or ${hyper_mpi_modules_path} file will be overwritten "
-    if [[ $? != 1 ]];then 
+    [[ -f "${hyper_mpi_modules_path}" ]] && logger "${hyper_mpi_modules_path} file already exists." ${TIP_COLOR_WARNING}
+    [[ -d "${install_hyper_mpi_path}" ]] && logger "${install_hyper_mpi_path} directory is not empty." ${TIP_COLOR_WARNING}
+    read_answer "Are you sure you want to continue the instation? if yes, ${install_hyper_mpi_path} the directory or ${hyper_mpi_modules_path} file will be overwritten."
+    if [[ $? != 0 ]];then 
       logger 'Do not install the hyper-mpi repeatedly.' ${TIP_COLOR_ECHO}
       return 1
     fi
-    rm -rf ${hyper_mpi_modules_path}
-    rm -rf ${install_hyper_mpi_path}
-    logger 'Deleting hyper-mpi' ${TIP_COLOR_ECHO}
+    [[ -f "${hyper_mpi_modules_path}" ]] && rm -rf "${hyper_mpi_modules_path}"
+    [[ -d "${install_hyper_mpi_path}" ]] && rm -rf "${install_hyper_mpi_path}"
+    logger "Deleting ${hyper_mpi_type}" ${TIP_COLOR_ECHO}
   fi
-  
 }
 
 del_compiler() {
   local compiler_type=$1
   local compiler_path="${customize_path}${compiler_type}/${compiler_name}"
   local compiler_modules_path="${customize_path}modules/${compiler_type}_modulefiles"
-  if [[ -d "${compiler_modules_path}" ]] || [[ -f "${compiler_path}" ]];then
-    logger "${compiler_modules_path} file already exists." ${TIP_COLOR_WARNING}
-    logger "${compiler_path} directory is not empty." ${TIP_COLOR_WARNING}
-    read_answer "Are you sure you want to continue the instation? if yes, ${compiler_path} the directory or ${compiler_modules_path} file will be overwritten "
-    if [[ $? != 1 ]];then 
-      logger "Do not install the ${compiler_type} repeatedly." ${TIP_COLOR_ECHO}
+  if [[ -f "${compiler_modules_path}" ]] || [[ -d "${compiler_path}" ]];then
+    [[ -f "${compiler_modules_path}" ]] && logger "${compiler_modules_path} file already exists." ${TIP_COLOR_WARNING}
+    [[ -d "${compiler_path}" ]] && logger "${compiler_path} directory is not empty." ${TIP_COLOR_WARNING}
+    read_answer "Are you sure you want to continue the instllation? if yes, the ${compiler_path} directory or ${compiler_modules_path} file will be overwritten."
+    if [[ $? != 0 ]];then 
+      logger "Do not install the ${compiler_type^^} repeatedly." ${TIP_COLOR_ECHO}
       return 1
     fi
-    rm -rf ${compiler_path}
-    rm -rf ${compiler_modules_path}
-    logger "Deleting ${compiler_type} " ${TIP_COLOR_ECHO}
+    [[ -d "${compiler_path}" ]] && rm -rf ${compiler_path}
+    [[ -f "${compiler_modules_path}" ]] && rm -rf ${compiler_modules_path}
+    logger "Deleting ${compiler_type^^} " ${TIP_COLOR_ECHO}
   fi
 }
