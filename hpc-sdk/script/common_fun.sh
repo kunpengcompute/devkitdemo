@@ -310,10 +310,11 @@ check_precondition_kml() {
   local install_package_kind=$1
   miss_package_kml=()
   libc6="/usr/lib64/libc.so.6"
+  libgomp="/usr/lib64/libgomp.so.1"
   [[ ${install_package_kind} == "dpkg" ]] && libc6="/lib/aarch64-linux-gnu/libc.so.6"
-  libgomp1="/usr/lib64/libgomp.so.1"
+  [[ ${install_package_kind} == "dpkg" ]] && libgomp="/usr/lib/aarch64-linux-gnu/libgomp.so.1"
   [[ ! -f ${libc6} ]] && miss_package_kml[${#miss_package_kml[*]}]="libc6"
-  [[ ! -f ${libgomp1} && ${install_package_kind} == "rpm" ]] && miss_package_kml[${#miss_package_kml[*]}]="libgomp1"
+  [[ ! -f ${libgomp} ]] && miss_package_kml[${#miss_package_kml[*]}]="libgomp"
   result=$(command -v nm)
   if [[ -z ${result} ]]; then
     miss_package_kml[${#miss_package_kml[*]}]="nm"
