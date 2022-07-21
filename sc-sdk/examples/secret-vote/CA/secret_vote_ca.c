@@ -378,8 +378,7 @@ static int ReadRSAPubkey(const char *pubkeyPath, RSA **rsa)
         return GENERIC_ERROR;
     }
 
-    PEM_read_RSA_PUBKEY(fp, rsa, NULL, NULL);
-    if (rsa == NULL) {
+    if (PEM_read_RSA_PUBKEY(fp, rsa, NULL, NULL) == NULL) {
         printf("Failed to read pubkey.\n");
         ret = GENERIC_ERROR;
     }
