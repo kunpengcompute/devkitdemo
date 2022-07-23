@@ -1,10 +1,10 @@
 # **CRC-32 demo**
 
-English | 简体中文(README.md)
+English | [简体中文](README.md)
 
 ## Introduction
 
-The cyclic redundancy check (CRC) algorithm is used to detect errors that may occur before and after data transmission or storage. It checks data integrity and is mainly used in storage, compression/decompression, and communication fields.
+Cyclic Redundancy Check (CRC) is a channel coding technology that generates a short and fixed-length check value according to data such as network data packets or computer files. It detects or checks errors that may occur after data transmission or storage based on the principle of division and remainder.
 
 1. [Use the traditional table lookup method to implement CRC-32.]
 
@@ -27,7 +27,7 @@ The cyclic redundancy check (CRC) algorithm is used to detect errors that may oc
 2. Switch to the project root path.
 
    ```shell
-   cd ./devkitdemo/Development_framework/gpc-sdk/examples/crc32/
+   cd ./devkitdemo/gpc-sdk/examples/crc32/
    ```
 
 3. Compile the demo.
@@ -42,13 +42,13 @@ The cyclic redundancy check (CRC) algorithm is used to detect errors that may oc
 4. Run the demo.
 
    ```shell
-   # Excete the binary file generated using the traditional table lookup method:
+   # Excete the binary file, if the path parameter is not specified, the ../src/mian.c file is scanned by default:
    ./crc32_demo
    ```
 
    ```shell
-   # Execute the binary file generated using the NEON instruction method:
-   ./crc32_neon_demo
+   # Excete the binary file with the path parameter:
+   ./crc32_demo /opt/main.c
    ```
 
 5. Clean up the demo.

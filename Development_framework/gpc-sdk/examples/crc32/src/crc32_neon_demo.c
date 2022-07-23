@@ -20,9 +20,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <sys/time.h>
+
 #include <arm_acle.h>
 #include <arm_neon.h>
+
+#include "crc32_neon_demo.h"
 
 
 unsigned int NeonCrc32(unsigned int crcInit, unsigned char *s, unsigned int n)
@@ -60,45 +62,4 @@ unsigned int NeonCrc32(unsigned int crcInit, unsigned char *s, unsigned int n)
     }
 
     return (crcResult ^ 0xffffffffL);
-}
-
-int main()
-{
-    unsigned char *s = NULL;
-    unsigned int n = 0;
-    unsigned int i;
-    unsigned int seed;
-    struct timeval time1, time2;
-
-    printf("Please input test length:\n");
-    scanf("%u", &n);
-    if (n <= 0) {
-        return -1;
-    }
-    s = (unsigned char *)malloc(n);
-    if (s == NULL) {
-        return -1;
-    }
-    printf("Please input random seed:\n");
-    scanf("%u", &seed);
-    srand(seed);
-    for (i = 0; i < n; i++) {
-        s[i] = (unsigned char)(rand() % 256u);
-    }
-
-    printf("Test random string len:%d\n", n);
-    printf("First 10 byte:");
-    for (i = 0; i < 10; i++) {
-        printf("[%u] ", s[i]);
-    }
-
-    printf("\nNeon crc calc:\n");
-    gettimeofday(&time1, NULL);
-    unsigned int neonCrc = NeonCrc32(0, s, n);
-    gettimeofday(&time2, NULL);
-    printf("Neon crc:0x%x\n", neonCrc);
-    printf("Time used: %ld ms\n", (time2.tv_sec - time1.tv_sec) * 1000 + (time2.tv_usec - time1.tv_usec) /1000);
-
-    free(s);
-    return 0;
 }

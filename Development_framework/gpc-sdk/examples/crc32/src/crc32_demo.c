@@ -20,7 +20,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <sys/time.h>
+
+#include "crc32_demo.h"
 
 
 static const unsigned int g_crc32Tab[] = {
@@ -64,53 +65,10 @@ unsigned int CalcCrc32(unsigned int crcInit, unsigned char *s, unsigned int n)
     if (n) {
         do {
             c = g_crc32Tab[((int)c ^ (*s++)) & 0xff] ^ (c >> 8);
-        }while(--n);
+        }while (--n);
     }
 
     return c ^ 0xffffffffL;
 }
-
-
-int main()
-{
-    unsigned char *s = NULL;
-    unsigned int n = 0;
-    unsigned int i;
-    unsigned int seed;
-    struct timeval time1, time2;
-    
-    printf("Please input test length:\n");
-    scanf("%u", &n);
-    if (n <= 0) {
-        return -1;
-    }
-    s = (unsigned char *)malloc(n);
-    if (s == NULL) {
-        return -1;
-    }
-    printf("Please input random seed:\n");
-    scanf("%u", &seed);
-    srand(seed);
-    for (i = 0; i < n; i++) {
-        s[i] = (unsigned char)(rand() % 256u);
-    }
-    
-    printf("Test random string len:%d\n", n);
-    printf("First 10 byte:");
-    for (i = 0; i < 10; i++) {
-        printf("[%u] ", s[i]);
-    }
-    
-    printf("\nCrc calc:\n");
-    gettimeofday(&time1, NULL);
-    unsigned int crcResult = CalcCrc32(0, s, n);
-    gettimeofday(&time2, NULL);
-    printf("Crc:0x%x\n", crcResult);
-    printf("Time used: %ld ms\n", (time2.tv_sec - time1.tv_sec) * 1000 + (time2.tv_usec - time1.tv_usec) /1000);
-    
-    free(s);
-    return 0;
-}
-
 
 

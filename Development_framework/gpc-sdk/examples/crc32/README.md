@@ -4,7 +4,7 @@
 
 ## 介绍
 
-CRC循环冗余校验算法，主要用来检测数据传输或者保存前后可能出现的错误。CRC用来检测数据的完整性，主要用于存储、压缩/解压缩、通信领域。
+循环冗余校验（Cyclic Redundancy Check， CRC）是一种根据网络数据包或计算机文件等数据产生简短固定位数校验码的一种信道编码技术，主要用来检测或校验数据传输或者保存后可能出现的错误。它是利用除法及余数的原理来作错误侦测的。
 
 1. [Crc32 传统查表法] 
 
@@ -27,7 +27,7 @@ CRC循环冗余校验算法，主要用来检测数据传输或者保存前后�
 2. 切入到项目根路径
 
    ```shell
-   cd ./devkitdemo/Development_framework/gpc-sdk/examples/crc32/
+   cd ./devkitdemo/gpc-sdk/examples/crc32/
    ```
 
 3. 编译demo
@@ -42,13 +42,13 @@ CRC循环冗余校验算法，主要用来检测数据传输或者保存前后�
 4. 运行demo.
 
    ```shell
-   # 执行传统查表法生成的二进制文件
+   # 执行二进制文件, 如果不带路径参数，默认扫描../src/main.c文件
    ./crc32_demo
    ```
-
+   
    ```shell
-   # 执行neon指令方法生成的二进制文件
-   ./crc32_neon_demo
+   # 执行二进制文件, 带路径参数
+   ./crc32_demo /opt/main.c
    ```
 
 5. 清理demo.

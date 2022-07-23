@@ -14,20 +14,22 @@
 
 
 cmake_minimum_required(VERSION 2.8)
-project(crc32_demo C)
+project(crc32_demo)
+
+# Add include files
+include_directories(
+    ./inc
+)
 
 # Add source files
-set(SRC src/crc32_demo.c)
-set(SRCC src/crc32_neon_demo.c)
+aux_source_directory(src SRC)
 
-#Set target file
+# Set target file
 set(TARGET_FILE crc32_demo)
-set(TARGET_NEON_FILE crc32_neon_demo)
 
 #Set compile
 set(CMAKE_C_COMPILER gcc)
+set(CMAKE_C_FLAGS "-march=armv8-a+crc")
 
 #Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
-set(CMAKE_C_FLAGS "-march=armv8-a+crc")
-add_executable(${TARGET_NEON_FILE} ${SRCC})
