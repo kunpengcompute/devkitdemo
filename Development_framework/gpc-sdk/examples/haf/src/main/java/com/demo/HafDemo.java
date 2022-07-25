@@ -21,7 +21,6 @@ import com.huawei.haf.annotations.HafTarget;
 
 public class HafDemo {
     private int c = 0;
-    private String ip = "127.0.0.1";
     // target 卸载的目标服务器地址 必选
     // to 指定传入得参数 可选
     // from 卸载测需要返回的变量 可选
@@ -29,7 +28,7 @@ public class HafDemo {
     // runInHostIfFailed 如果执行失败是否在主机测执行，默认为true 可选
     // exception 指定异常处理函数，默认为执行失败后本地执行  可选
     // app 卸载的应用名称，默认为jar包名称 可选
-    @HafTarget(target = ip, to = {"a", "b"}, from = {"c"}, timeout = 600, runInHostIfFailed = true, exception = Exception.exception, app = "add")
+    @HafTarget(target = "127.0.0.1", to = {"a", "b"}, from = {"c"}, timeout = 600, runInHostIfFailed = true, exception = Exception.class, app = "add")
     int sum(int a, int b) {
         c = 100;
         return a + b;
