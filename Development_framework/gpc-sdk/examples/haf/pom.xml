@@ -39,13 +39,13 @@
           <version>3.3.0</version>
           <configuration>
             <archive>
-                <mainfest>
+                <manifest>
                     <mainClass>com.demo.HafDemo</mainClass>
-                </mainfest>
-                <descriptorRefs>
-                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                </descriptorRefs>
+                </manifest>
             </archive>
+            <descriptorRefs>
+                  <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
           </configuration>
           <executions>
             <execution>
