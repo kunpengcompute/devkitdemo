@@ -42,12 +42,12 @@ Cyclic Redundancy Check (CRC) is a channel coding technology that generates a sh
 4. Run the demo.
 
    ```shell
-   # Excete the binary file, if the path parameter is not specified, the ../src/mian.c file is scanned by default:
+   # Execute the binary file. If the command does not contain a path parameter, the '../src/mian.c' file is scanned by default.
    ./crc32_demo
    ```
 
    ```shell
-   # Excete the binary file with the path parameter:
+   # Execute the binary file with the path parameter.
    ./crc32_demo /opt/main.c
    ```
 

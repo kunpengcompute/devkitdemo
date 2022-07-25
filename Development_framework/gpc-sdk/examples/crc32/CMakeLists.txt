@@ -18,7 +18,7 @@ project(crc32_demo)
 
 # Add include files
 include_directories(
-    ./inc
+    ./include
 )
 
 # Add source files
