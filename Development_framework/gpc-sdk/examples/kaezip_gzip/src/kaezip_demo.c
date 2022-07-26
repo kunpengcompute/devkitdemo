@@ -46,7 +46,7 @@
 #define KAE_SGID 02000 /* set GID on execution */
 #define KAE_SVTX 01000 /* reserved */
 
-/* file permission */
+/* file permissions */
 #define KAE_UREAD 00400 /* read by owner */
 #define KAE_UWRITE 00200 /* write by owner */
 #define KAE_UEXEC 00100 /* execute/search by owner */
@@ -101,24 +101,24 @@ FILE *g_file_ptr;
 
 static const struct option long_options[] = {
     {"help", no_argument, NULL, 'h'},
-    {"creat", no_argument, NULL, 'c'},
+    {"create", no_argument, NULL, 'c'},
     {"extract", no_argument, NULL, 'x'},
     {"gzip", no_argument, NULL, 'z'},
-    {"file", no_argument, NULL, 'f'},
+    {"file", required_argument, NULL, 'f'},
     {0, 0, 0, 0}
 };
 
 static void usage()
 {
-    printf("usage:\n");;
-    printf("-c --creat           creat an archive.\n");
+    printf("usage:\n");
+    printf("-c --create          create an archive.\n");
     printf("-x --extract         extract an archive.\n");
-    printf("-z --gzip            use conpress program gzip.\n");
+    printf("-z --gzip            use compress program gzip.\n");
     printf("-f --file=ARCHIVE    archive name.\n");
     printf("-h --help            help doc.\n");
 }
 
-static int set_archive_name(cahr *arg)
+static int set_archive_name(char *arg)
 {
     if (!strlen(arg)) {
         return 1;
@@ -127,7 +127,7 @@ static int set_archive_name(cahr *arg)
     g_archive_name = (char*)malloc(arglen + 1);
     memset(g_archive_name, 0, arglen + 1);
     /* g_archive_name init */
-    if (g_archive_name) {
+    if (g_archive_name == NULL) {
         printf("kaezip: memory allocation failed");
         return 1;
     }
@@ -150,7 +150,7 @@ int compress_file_to_gzip(char *input_name, char *output_name)
         strcpy(new_output_name, output_name);
     }
     if (input_name == NULL) {
-        perror("kaezipL file name can not be empty\n");
+        perror("kaezip: file name can not be empty\n");
         free(new_output_name);
         return 1;
     }
@@ -189,25 +189,25 @@ static mode_t get_mode(mode_t v)
     mode_t u;
 
     u = ((v & S_ISUID ? KAE_SUID : 0) | (v & S_ISGID ? KAE_SGID : 0) |
-         (v & S_ISVIX ? KAE_SVTX : 0) | (v & S_IRUSR ? KAE_UREAD : 0) |
+         (v & S_ISVTX ? KAE_SVTX : 0) | (v & S_IRUSR ? KAE_UREAD : 0) |
          (v & S_IWUSR ? KAE_UWRITE : 0) | (v & S_IXUSR ? KAE_UEXEC : 0) |
          (v & S_IRGRP ? KAE_GREAD : 0) | (v & S_IWGRP ? KAE_GWRITE : 0) |
          (v & S_IXGRP ? KAE_GEXEC : 0) | (v & S_IROTH ? KAE_OREAD : 0) |
-         (v & S_IWOTH ? KAE_OWRITE : 0) | (v & S_IXOTH ? KAE_OEXEC : 0) |);
+         (v & S_IWOTH ? KAE_OWRITE : 0) | (v & S_IXOTH ? KAE_OEXEC : 0));
     return u;
 }
 
 static void get_uname(union block *header_buffer)
 {
-    strcpy(header_bufffer->header.uname, "");
+    strcpy(header_buffer->header.uname, "");
 }
 
 static void get_gname(union block *header_buffer)
 {
-    strcpy(header_bufffer->header.gname, "");
+    strcpy(header_buffer->header.gname, "");
 }
 
-static void to_octal(unsigned int value, cahr *pt, size_t size)
+static void to_octal(unsigned int value, char *ptr, size_t size)
 {
     if (size == 0) {
         printf("size can not be 0");
@@ -230,9 +230,9 @@ static void set_typeflag(union block *header_buffer)
     }
 }
 
-static void set_chKsum(union block *header_buffer)
+static void set_chksum(union block *header_buffer)
 {
-    /* Set chkrum of tat file */
+    /* Set chksum of tar file */
     int sum = 0;
     char *p = NULL;
 
@@ -263,8 +263,8 @@ int gz_uncompress(gzFile in, FILE *out)
             perror("failed fwrite\n");
             return 1;
         }
-        return 0;
     }
+    return 0;
 }
 
 static int write_emptyblock()
@@ -304,7 +304,7 @@ static void write_header_to_archive(char *archive, char *file)
     to_octal(g_stat_buffer->st_size, header_buffer.header.size, 12);          /* SIZE */
     to_octal(g_stat_buffer->st_mtim.tv_sec, header_buffer.header.mtime, 12);  /* mtime */
     set_typeflag(&header_buffer);                                             /* typeflag */
-    strcpy(header_buffer.header.magic, "ustar  ");
+    strcpy(header_buffer.header.magic, "ustar  ");                            /* magic */
     /* Finally calculate chksum */
     set_chksum(&header_buffer);
     /* write header_buffer to file */
@@ -332,10 +332,10 @@ static int write_contents_to_archive(char *file)
     for(int i=0; i<block_count; i++)
     {
         fread(file_buffer, BLOCKSIZE2, 1, file_ptr);
-        /* res is the number of block */
+        /* res is the number of blocks */
         write(g_archive_fd, file_buffer, BLOCKSIZE2);
     }
-    if(g_stat_buffer->st_size * BLOCKSIZE2 != 0) {
+    if(g_stat_buffer->st_size % BLOCKSIZE2 != 0) {
         while (1)
         {
             int res = fread(file_buffer, BLOCKSIZE, 1, file_ptr);
@@ -374,20 +374,20 @@ static int write_to_archive(char *archive, char *file)
     if (S_ISREG(g_stat_buffer->st_mode)) {
         /* Determine if file is a file */
         write_header_to_archive(archive, file);
-        if(write_connects_to_archive(file) != 0) {
+        if(write_contents_to_archive(file) != 0) {
             return 1;
         }
         return 0;
     } else if (S_ISDIR(g_stat_buffer->st_mode)) {
         /* Determine if file is a directory */
-        if (file_name_len != 0 && file[file_name_len - 1] != '/) {
+        if (file_name_len != 0 && file[file_name_len - 1] != '/') {
             file[file_name_len++] = '/';
             file[file_name_len] = '\0';
         }
         write_header_to_archive(archive, file);
         DIR *dir = opendir(file);
         if (dir == NULL) {
-            printf("open direction %s faild!\n", file);
+            printf("open direction %s failed!\n", file);
             return 1;
         }
         struct dirent *now_filename;
@@ -431,7 +431,7 @@ static void free_all()
 int create(char **argv, char *archive_name)
 {
     int archive = creat(archive_name, S_IWUSR | S_IWGRP |
-                                      S_IWOTH | S_IRUSR | U_IRGPR | S_IROTH);
+                                      S_IWOTH | S_IRUSR | S_IRGRP | S_IROTH);
     if(archive == -1) {
         printf("kaezip: archive create failed\n");
         return 1;
@@ -447,7 +447,7 @@ int create(char **argv, char *archive_name)
     char *file_name = NULL;
     g_archive_name_tot = (char *)malloc(NAME_LEN * sizeof(char));
     memset(g_archive_name_tot, 0, NAME_LEN * sizeof(char));
-    if (g_archive_name_tot = NULL) {
+    if (g_archive_name_tot == NULL) {
         printf("kaezip: memory allocation failed\n");
         free_all();
         return 1;
@@ -462,15 +462,15 @@ int create(char **argv, char *archive_name)
     memset(g_stat_buffer, 0, sizeof(struct stat));
     file_name = (char *)malloc(sizeof(char) * NAME_LEN);
     if (file_name == NULL) {
-        printf("kaezip: memory allcation failed\n");
+        printf("kaezip: memory allocation failed\n");
         free_all();
         return 1;
     }
     memset(file_name, 0, sizeof(char) * NAME_LEN);
-    int file_name_position = optind;
+    int filename_position = optind;
     if(strlen(argv[filename_position]) > NAME_LEN)
     {
-        printf(:kaezip: file name is too long\n);
+        printf("kaezip: file name is too long\n");
         free(file_name);
         free_all();
         return 1;
@@ -518,7 +518,7 @@ static int main_create(char **argv)
     memset(outputname, 0, NAME_LEN * sizeof(char));
     strcat(outputname, g_archive_name);
     strcat(outputname, ".gz");
-    compress_file_to_zip(g_archive_name, outputname);
+    compress_file_to_gzip(g_archive_name, outputname);
     free(outputname);
     return 0;
 }
@@ -552,7 +552,7 @@ static void extract_head_block(union block *archive_buffer, unsigned int *file_s
     }
 }
 
-static void extract_content_block(union *archive_buffer, unsigned int *file_size) {
+static void extract_content_block(union block *archive_buffer, unsigned int *file_size) {
     if (g_content_block_count == 1) {
         // last block
         fwrite(archive_buffer, *file_size % BLOCKSIZE, 1, g_file_ptr);
@@ -580,11 +580,12 @@ void extract(char *archive_name)
     unsigned int file_size;
     int res;
     while (1) {
-        memset(archive_buffer.buffer, BLOCKSIZE, 1, g_archive_ptr);
+        memset(archive_buffer.buffer, 0, sizeof(union block));
+        res = fread(&archive_buffer, BLOCKSIZE, 1, g_archive_ptr);
         if (res <= 0) {
             break;
         }
-        if (g_content_block_count = 0) {
+        if (g_content_block_count == 0) {
             g_now_block = HEAD_BLOCK;
         } else {
             g_now_block = CONTENT_BLOCK;
@@ -609,7 +610,7 @@ int decompress_gzip_to_file(char *file)
     unsigned len = strlen(file);
 
     if (len + strlen(GZ_SUFFIX) >= sizeof(buf)) {
-        fprintf(stderr, "kaezip: filenaem too long\n");
+        fprintf(stderr, "kaezip: filename too long\n");
         return 1;
     }
     snprintf(buf, sizeof(buf), "%s", file);
@@ -641,7 +642,7 @@ int decompress_gzip_to_file(char *file)
     }
     if (gzclose(in) != Z_OK) {
         perror("failed gzclose\n");
-        return 1
+        return 1;
     }
     return 0;
 }
@@ -650,7 +651,7 @@ static int main_extract()
 {
     if (g_use_compress_program) {
         decompress_gzip_to_file(g_archive_name);
-        char *suffix = strrchr(g_archive_name, '.);
+        char *suffix = strrchr(g_archive_name, '.');
         if (suffix == NULL) {
             printf("kaezip: Nonstandard archive name\n");
             return 1;
@@ -685,7 +686,7 @@ int main(int argc, char **argv)
                 g_create_flag = 1;
                 break;
             case 'x':
-                g_extrcat_flag = 1;
+                g_extract_flag = 1;
                 break;
             case 'z':
                 g_use_compress_program = 1;
@@ -703,6 +704,7 @@ int main(int argc, char **argv)
     
     if (g_archive_name == NULL) {
         printf("kaezip: please input archive name\n");
+        return 0;
     }
     if (g_create_flag) {
         if (main_create(argv) != 0) {

@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(ZSTD-demo)
 
 # Add C++11 standard
-add_compile_option(-std=c++11)
+add_compile_options(-std=c++11)
 
 # Add source files
 set(SRC src/command.cpp src/zstd_demo.cpp)
@@ -32,7 +32,7 @@ set(ZSTD_PATH /usr/local/ZSTD)
 include_directories(${ZSTD_PATH}/include)
 
 # Set lib path
-link_directories(${SNAPPY_PATH}/lib)
+link_directories(${ZSTD_PATH}/lib)
 
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})

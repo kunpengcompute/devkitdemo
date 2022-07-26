@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 2.8)
 project(hyperscan-demo)
 
 # Add C++11 standard
-add_compile_option(-std=c++11)
+add_compile_options(-std=c++11)
 
 # Add source files
 set(SRC src/hyperscan_demo.cpp src/CommonGrep.cpp)

@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 3.4.1)
 project(snappy-demo)
 
 # Add C++11 standard
-add_compile_option(-std=c++11)
+add_compile_options(-std=c++11)
 
 # Add source files
 set(SRC src/snappy_demo.cpp)

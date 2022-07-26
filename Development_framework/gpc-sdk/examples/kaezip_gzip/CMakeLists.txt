@@ -20,7 +20,7 @@ project(kaezip-demo)
 set(SRC src/kaezip_demo.c)
 
 # Set target file
-set(TARGET_FILE kaezip-demo)
+set(TARGET_FILE kaezip_demo)
 
 # Set KAEZIP path
 set(KAEZIP_PATH /usr/local/kaezip)
