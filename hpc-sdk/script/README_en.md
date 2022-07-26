@@ -4,7 +4,7 @@ English | [简体中文](README.md)
 
 ## 1、Introduction
 
-#### 1、Use the automatic installation script to automatically deploy HPC software, including Hyper-MPI, KML, GCC, and Bisheng.
+#### 1、Use the automatic installation script to automatically deploy HPC software, including HYPER-MPI, KML, GCC, and BISHENG.
 
 #### 2、Support installation in a user-defined path.
 
@@ -13,7 +13,7 @@ English | [简体中文](README.md)
 
 #### 1、The server compatibility is as follows:
 
-|  OS  | hyper-mpi  | BiSheng 2.1 | gcc  | KML   |  
+|  OS  | HYPER-MPI  | BISHENG 2.1 | GCC  | KML   |  
 |  ---- | ----  | ---- | ---- | ----  |
 | centos 7  | Y (GCC >= 9.3,BISHENG) | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 LTS  | Y (BISHNEG) | Y | Y | Y (GCC >= 7.3) |
@@ -31,7 +31,7 @@ Note: The OSs listed in the preceding table use the AArch64 architecture. The ve
 #### 2、Software dependency list
 
 
-|  Dependency  | hyper-mpi  | Bisheng2.1 | gcc  | KML   |  
+|  Dependency  | HYPER-MPI  | BISHENG2.1 | GCC  | KML   |  
 |  ---- | ----  | ---- | ---- | ----  |
 | gcc  | Y(9.3.0) | Y(>4.8.5)| N | N |
 | bisheng  | Y | N | N | N  |
@@ -40,7 +40,7 @@ Note: The OSs listed in the preceding table use the AArch64 architecture. The ve
 | libatomic  | N | Y(>=1.2) | N | N  |
 | libgomp  | N | N | N | Y  | 
 
-Note: The preceding table lists the dependencies required for installing the Hyper-MPI, math library, GCC, and Bisheng Compiler. Y indicates required dependency for the software and N indicates the dependency is not required. Before installing the RPM　package compiled by Bisheng in the Red Hat system, ensure that libgomp has been installed in the system.
+Note: The preceding table lists the dependencies required for installing the HYPER-MPI, math library, GCC, and Bisheng Compiler. Y indicates required dependency for the software and N indicates the dependency is not required. Before installing the RPM　package compiled by Bisheng in the Red Hat system, ensure that libgomp has been installed in the system.
 
 ## 3、Usage Guide
 
