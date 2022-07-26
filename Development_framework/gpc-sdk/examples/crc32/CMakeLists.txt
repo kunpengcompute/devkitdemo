@@ -27,7 +27,7 @@ aux_source_directory(src SRC)
 # Set target file
 set(TARGET_FILE crc32_demo)
 
-#Set compile
+# Set compile
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_C_FLAGS "-march=armv8-a+crc")
 
