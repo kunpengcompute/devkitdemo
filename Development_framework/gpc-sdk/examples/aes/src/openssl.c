@@ -236,7 +236,7 @@ int cfb_encrypt(AES_KEY *ks, int enc, const unsigned char *in, size_t length, un
 {
     char ivec[] = "1234567812345678";
     int num = 0;
-    CRYPTO_cfb128_encrypt(in, out, length, ks, ivec, &num, enc, aes_v8_encrypt);
+    CRYPTO_cfb128_encrypt(in, out, length, ks, ivec, &num, enc, (block128_f)aes_v8_encrypt);
     return 0;
 }
 
@@ -244,17 +244,21 @@ int ofb_encrypt(AES_KEY *ks, const unsigned char *in, size_t length, unsigned ch
 {
     char ivec[] = "1234567812345678";
     int num = 0;
-    CRYPTO_ofb128_encrypt(in, out, length, ks, ivec, &num, aes_v8_encrypt);
+    CRYPTO_ofb128_encrypt(in, out, length, ks, ivec, &num, (block128_f)aes_v8_encrypt);
     return 0;
 }
 
 int opensslEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
 {
     AES_KEY *ks = (AES_KEY *)calloc(1, sizeof(AES_KEY));
-    if (param->enc) {
+    if (mode == CFB_MODE || mode == OFB_MODE) {
         aes_v8_set_encrypt_key(param->key, param->keyLen * 8, ks);
     } else {
-        aes_v8_set_decrypt_key(param->key, param->keyLen * 8, ks);
+        if (param->enc) {
+            aes_v8_set_encrypt_key(param->key, param->keyLen * 8, ks);
+        } else {
+            aes_v8_set_decrypt_key(param->key, param->keyLen * 8, ks);
+        }
     }
     switch (mode)
     {
