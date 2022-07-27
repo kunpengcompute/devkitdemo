@@ -14,22 +14,28 @@
 
 
 cmake_minimum_required(VERSION 2.8)
-project(crc32_demo)
+project(hyperscan-demo)
 
-# Add include files
-include_directories(
-    ./include
-)
+# Add C++11 standard
+add_compile_options(-std=c++11)
 
 # Add source files
-aux_source_directory(src SRC)
+set(SRC src/hyperscan_demo.cpp src/CommonGrep.cpp)
 
 # Set target file
-set(TARGET_FILE crc32_demo)
+set(TARGET_FILE hyperscan_demo)
 
-# Set compile
-set(CMAKE_C_COMPILER gcc)
-set(CMAKE_C_FLAGS "-march=armv8-a+crc")
+# Set HYPERSCAN path
+set(HYPERSCAN_PATH /usr/local/hyperscan)
 
-#Generate execute file
+# Add header file include directories
+include_directories(${HYPERSCAN_PATH}/include)
+
+# Set lib path
+link_directories(${HYPERSCAN_PATH}/lib)
+
+# Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
+
+# link library
+target_link_libraries(${TARGET_FILE} hs)

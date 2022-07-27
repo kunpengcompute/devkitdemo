@@ -13,23 +13,26 @@
 # limitations under the License.
 
 
-cmake_minimum_required(VERSION 2.8)
-project(crc32_demo)
-
-# Add include files
-include_directories(
-    ./include
-)
+cmake_minimum_required(VERSION 3.4.1)
+project(kaezip-demo)
 
 # Add source files
-aux_source_directory(src SRC)
+set(SRC src/kaezip_demo.c)
 
 # Set target file
-set(TARGET_FILE crc32_demo)
+set(TARGET_FILE kaezip_demo)
 
-# Set compile
-set(CMAKE_C_COMPILER gcc)
-set(CMAKE_C_FLAGS "-march=armv8-a+crc")
+# Set KAEZIP path
+set(KAEZIP_PATH /usr/local/kaezip)
 
-#Generate execute file
+# Add header file include directories
+include_directories(${KAEZIP_PATH}/include)
+
+# Set lib path
+link_directories(${KAEZIP_PATH}/lib)
+
+# Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
+
+# link library
+target_link_libraries(${TARGET_FILE} kaezip z)
