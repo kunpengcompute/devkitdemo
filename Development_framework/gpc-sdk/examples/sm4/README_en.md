@@ -35,11 +35,13 @@ Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/deta
 
 4. Run the demo.
 
+   Key is in hexadecimal format and supports 128-bit.
+
    ```shell
-   ./sm4_demo encrypt -k 1234567812345678 -m cbc -i ../test_data/sm4.txt -o ../test_data/sm4.txt.cipher
-   ./sm4_demo decrypt -k 1234567812345678 -m cbc -i ../test_data/sm4.txt.cipher -o ../test_data/sm4.txt.plain
-   ./sm4_demo encrypt -k 1234567812345678 -m cbc -i ../test_data/sm4.txt -o ../test_data/sm4.txt.cipher -K
-   ./sm4_demo decrypt -k 1234567812345678 -m cbc -i ../test_data/sm4.txt.cipher -o ../test_data/sm4.txt.plain -K
+   ./sm4_demo encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/sm4.txt -o ../test_data/sm4.txt.cipher
+   ./sm4_demo decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/sm4.txt.cipher -o ../test_data/sm4.txt.plaintext
+   ./sm4_demo encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/sm4.txt -o ../test_data/sm4.txt.cipher -K
+   ./sm4_demo decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/sm4.txt.cipher -o ../test_data/sm4.txt.plaintext -K
    ```
 
 5. Clean up the demo.

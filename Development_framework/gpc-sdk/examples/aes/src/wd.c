@@ -26,7 +26,7 @@ struct wd_queue_mempool {
     int dev;
 };
 
-int WDEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
+int KAEDriverEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
 {
     struct wd_queue queue;
     memset(&queue, 0, sizeof(queue));
@@ -64,13 +64,15 @@ int WDEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MO
     setup.br.iova_unmap = (void *)wd_blk_iova_unmap;
     setup.br.usr = mempool;
     ctx = wcrypto_create_cipher_ctx(&queue, &setup);
+    // 设置加解密的key
     wcrypto_set_cipher_key(ctx, param->key, param->keyLen);
 
     struct wcrypto_cipher_op_data op_data;
     memset((void *)&op_data, 0, sizeof(op_data));
 
     op_data.op_type = param->enc ? WCRYPTO_CIPHER_ENCRYPTION : WCRYPTO_CIPHER_DECRYPTION;
-    unsigned char *iv = (unsigned char *)"1234567812345678";
+    unsigned char iv[] = {0xc5, 0xa9, 0x9f, 0x63, 0xec, 0xeb, 0x7f, 0x32,
+                          0x92, 0x6b, 0xd6, 0x00, 0x8b, 0xa0, 0x61, 0x87};
     size_t iv_len = 16;
     op_data.iv = wd_alloc_blk(mempool);
     memcpy(op_data.iv, iv, iv_len);
@@ -81,6 +83,7 @@ int WDEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MO
 
     int i = 0;
     int op_bytes = 0;
+    // 对数据进行分块加解密
     do {
         op_bytes = bufSize - i > CIPHER_BLOCK_SIZE ? CIPHER_BLOCK_SIZE : bufSize - i;
         memcpy(op_data.in, in + i, op_bytes);
@@ -91,6 +94,7 @@ int WDEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MO
         i += CIPHER_BLOCK_SIZE;
     } while (i < bufSize);
 
+    // 释放资源
     wd_free_blk(mempool, op_data.in);
     wd_free_blk(mempool, op_data.out);
     wd_free_blk(mempool, op_data.iv);

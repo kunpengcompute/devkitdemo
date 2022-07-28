@@ -34,11 +34,13 @@
 
 4. 运行demo
 
+   key为16进制格式，支持128-bit, 192-bit和256-bit
+
    ```shell
-   ./aes encrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher
-   ./aes decrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plain
-   ./aes encrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher -K
-   ./aes decrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plain -K
+   ./aes encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher
+   ./aes decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plaintext
+   ./aes encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher -K
+   ./aes decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plaintext -K
    ```
 
 5. 清理demo

@@ -35,11 +35,13 @@ Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/deta
 
 4. Run the demo.
 
+   Key is in hexadecimal format and supports 128-bit, 192-bit, and 256-bit.
+
    ```shell
-   ./aes encrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher
-   ./aes decrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plain
-   ./aes encrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher -K
-   ./aes decrypt -k 1234567812345678 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plain -K
+   ./aes encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher
+   ./aes decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plaintext
+   ./aes encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher -K
+   ./aes decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plaintext -K
    ```
 
 5. Clean up the demo.
