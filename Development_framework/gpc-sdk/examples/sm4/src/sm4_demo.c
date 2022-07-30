@@ -88,8 +88,8 @@ int hexchar2int(unsigned char c)
 // 转换16进制的key
 int SetKey(Param *param, char *optarg, size_t argLen)
 {
-    if (argLen > 32) {
-        printf("key too long.\n");
+    if (argLen != 32) {
+        printf("SM4 supports only 128-bit key.\n");
         return 1;
     }
     param->keyLen = argLen / 2;

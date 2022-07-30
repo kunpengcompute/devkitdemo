@@ -83,8 +83,8 @@ int hexchar2int(unsigned char c)
 // 转换16进制的key
 int SetKey(Param *param, char *optarg, size_t argLen)
 {
-    if (argLen > 64) {
-        printf("key too long.\n");
+    if (argLen != 32 && argLen != 48 && argLen != 64) {
+        printf("AES supports only 128-bit, 192-bit or 256-bit key.\n");
         return 1;
     }
     param->keyLen = argLen / 2;
