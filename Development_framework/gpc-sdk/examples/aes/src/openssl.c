@@ -227,14 +227,16 @@ int ecb_encrypt(AES_KEY *ks, int enc, const unsigned char *in, size_t length, un
 
 int cbc_encrypt(AES_KEY *ks, int enc, const unsigned char *in, size_t length, unsigned char *out)
 {
-    char ivec[] = "1234567812345678";
+    char ivec[] = {0xc5, 0xa9, 0x9f, 0x63, 0xec, 0xeb, 0x7f, 0x32,
+                   0x92, 0x6b, 0xd6, 0x00, 0x8b, 0xa0, 0x61, 0x87};
     aes_v8_cbc_encrypt(in, out, length, ks, ivec, enc);
     return 0;
 }
 
 int cfb_encrypt(AES_KEY *ks, int enc, const unsigned char *in, size_t length, unsigned char *out)
 {
-    char ivec[] = "1234567812345678";
+    char ivec[] = {0xc5, 0xa9, 0x9f, 0x63, 0xec, 0xeb, 0x7f, 0x32,
+                   0x92, 0x6b, 0xd6, 0x00, 0x8b, 0xa0, 0x61, 0x87};
     int num = 0;
     CRYPTO_cfb128_encrypt(in, out, length, ks, ivec, &num, enc, (block128_f)aes_v8_encrypt);
     return 0;
@@ -242,15 +244,17 @@ int cfb_encrypt(AES_KEY *ks, int enc, const unsigned char *in, size_t length, un
 
 int ofb_encrypt(AES_KEY *ks, const unsigned char *in, size_t length, unsigned char *out)
 {
-    char ivec[] = "1234567812345678";
+    char ivec[] = {0xc5, 0xa9, 0x9f, 0x63, 0xec, 0xeb, 0x7f, 0x32,
+                   0x92, 0x6b, 0xd6, 0x00, 0x8b, 0xa0, 0x61, 0x87};
     int num = 0;
     CRYPTO_ofb128_encrypt(in, out, length, ks, ivec, &num, (block128_f)aes_v8_encrypt);
     return 0;
 }
 
-int opensslEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
+int OpenSSLEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
 {
     AES_KEY *ks = (AES_KEY *)calloc(1, sizeof(AES_KEY));
+    // CFB OFB 模式加解密都是对IV进行加密操作
     if (mode == CFB_MODE || mode == OFB_MODE) {
         aes_v8_set_encrypt_key(param->key, param->keyLen * 8, ks);
     } else {

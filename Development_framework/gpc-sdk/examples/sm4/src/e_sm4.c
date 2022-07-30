@@ -390,10 +390,11 @@ void sm4_ofb128_encrypt(const unsigned char *in, unsigned char *out,
                           (block128_f)SM4_encrypt);
 }
 
-int opensslEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
+int OpenSSLEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode)
 {
     int num = 0;
-    char iv[] = "1234567812345678";
+    char iv[] = {0xc5, 0xa9, 0x9f, 0x63, 0xec, 0xeb, 0x7f, 0x32,
+                 0x92, 0x6b, 0xd6, 0x00, 0x8b, 0xa0, 0x61, 0x87};;
     SM4_KEY *ks = (SM4_KEY *)calloc(1, sizeof(SM4_KEY));
     SM4_set_key(param->key, ks);
     switch (mode)

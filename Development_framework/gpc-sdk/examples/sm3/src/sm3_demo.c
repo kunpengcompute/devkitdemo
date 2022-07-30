@@ -10,7 +10,7 @@
 
 #define HASH_DIGEST_SIZE 32
 
-int WDSM3Digest(unsigned char *in, unsigned int bufSize, unsigned char *digest);
+int KAEDriverSM3Digest(unsigned char *in, unsigned int bufSize, unsigned char *digest);
 
 void PrintDigest(const unsigned char *digest)
 {
@@ -21,12 +21,15 @@ void PrintDigest(const unsigned char *digest)
     printf("\n");
 }
 
-int GetFileSize(char *filePath)
+int GetFileSize(char *filePath, int *fileSize)
 {
     struct stat statbuf;
-    stat(filePath, & statbuf);
-    int size = statbuf.st_size;
-    return size;
+    int ret = stat(filePath, &statbuf);
+    if (ret != 0) {
+        return ret;
+    }
+    *fileSize = statbuf.st_size;
+    return 0;
 }
 
 int ReadAll(char *filePath, char *buf, size_t fileSize)
@@ -58,7 +61,7 @@ void TestWDSM3(unsigned char *in, unsigned int inputFileSize)
 {
     printf("Test WD SM3 digest. Result: ");
     unsigned char digest[HASH_DIGEST_SIZE];
-    WDSM3Digest(in, inputFileSize, digest);
+    KAEDriverSM3Digest(in, inputFileSize, digest);
     PrintDigest(digest);
 }
 
@@ -70,8 +73,16 @@ int main(int argc, char *argv[])
     }
 
     char *inputFilePath = argv[1];
-    unsigned int inputFileSize = GetFileSize(inputFilePath);
+    unsigned int inputFileSize = 0;
+    if (GetFileSize(inputFilePath, &inputFileSize) != 0) {
+        printf("Failed to read input file.\n");
+        return 1;
+    }
     unsigned char *in = calloc(1, inputFileSize);
+    if (in == NULL) {
+        printf("Failed to calloc memory.\n");
+        return 1;
+    }
     ReadAll(inputFilePath, in, inputFileSize);
 
     struct timeval start, end;
@@ -87,5 +98,6 @@ int main(int argc, char *argv[])
     timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
     printf("WD SM3 cost time: %f s\n", timeuse / 1000000.0);
 
+    free(in);
     return 0;
 }

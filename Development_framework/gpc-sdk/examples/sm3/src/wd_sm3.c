@@ -27,7 +27,7 @@ struct wd_queue_mempool {
     int dev;
 };
 
-int WDSM3Digest(unsigned char *in, unsigned int bufSize, unsigned char *digest)
+int KAEDriverSM3Digest(unsigned char *in, unsigned int bufSize, unsigned char *digest)
 {
     struct wd_queue queue;
     memset(&queue, 0, sizeof(queue));
@@ -64,6 +64,7 @@ int WDSM3Digest(unsigned char *in, unsigned int bufSize, unsigned char *digest)
     op_data.has_next = 0;
     int i = 0;
     int op_bytes = 0;
+    // 分块计算哈希值
     do {
         if (bufSize - i > BUFFER_SIZE) {
             op_data.in_bytes = BUFFER_SIZE;
@@ -79,6 +80,7 @@ int WDSM3Digest(unsigned char *in, unsigned int bufSize, unsigned char *digest)
     } while (i < bufSize);
     memcpy(digest, op_data.out, DIGEST_SIZE);
 
+    // 释放资源
     wd_free_blk(mempool, op_data.in);
     wd_free_blk(mempool, op_data.out);
     wcrypto_del_digest_ctx(ctx);

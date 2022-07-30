@@ -11,7 +11,7 @@ typedef enum {
 } BLOCK_CIPHER_MODE;
 
 typedef struct Param {
-    char *key;
+    char key[32];
     size_t keyLen;
     char *mode;
     size_t modeLen;
@@ -23,7 +23,7 @@ typedef struct Param {
     int kae;
 } Param;
 
-int opensslEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode);
-int WDEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode);
+int OpenSSLEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode);
+int KAEDriverEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode);
 
 #endif

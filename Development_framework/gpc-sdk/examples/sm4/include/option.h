@@ -11,7 +11,7 @@ typedef enum {
 } BLOCK_CIPHER_MODE;
 
 typedef struct Param {
-    char *key;
+    char key[16];
     size_t keyLen;
     char *mode;
     size_t modeLen;
