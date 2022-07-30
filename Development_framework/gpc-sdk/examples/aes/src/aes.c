@@ -317,13 +317,13 @@ int main(int argc, char *argv[])
             printf("KAEdriver supports only ECB and CBC mode.\n");
             goto finish;
         }
-        printf("KAEdriver AES-%d-%s %s\n", param.keyLen * 8, param.mode, operation);
+        printf("KAEdriver AES-%lu-%s %s\n", param.keyLen * 8, param.mode, operation);
         // 调用KAE driver加解密
         if (KAEDriverEncrypt(&param, in, bufSize, out, g_cipher_mode) != 0) {
             goto finish;
         }
     } else {
-        printf("OpenSSL armv8 ASM AES-%d-%s %s\n", param.keyLen * 8, param.mode, operation);
+        printf("OpenSSL armv8 ASM AES-%lu-%s %s\n", param.keyLen * 8, param.mode, operation);
         // 调用OpenSSL armv8 aes汇编指令加解密
         OpenSSLEncrypt(&param, in, bufSize, out, g_cipher_mode);
     }
