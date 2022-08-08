@@ -21,7 +21,7 @@ Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/deta
 2. Switch to the project root path.
 
    ```shell
-   cd ./devkitdemo/Development_framework/gpc-sdk/examples/sm3/
+   cd ./devkitdemo/Development_framework/gpc-sdk/examples/kae_sm3/
    ```
 
 3. Compile the demo.

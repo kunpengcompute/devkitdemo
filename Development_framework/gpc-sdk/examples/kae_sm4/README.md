@@ -1,30 +1,29 @@
 # **SM4 demo**
 
-English | [简体中文](README.md)
+简体中文 | [English](README_en.md)
 
-## Introduction
+## 介绍
+**SM4 demo** 展示使用SM4算法进行对称加密的代码示例，提供openSSL、KAEdriver两种代码实现
 
-The **SM4 demo** shows a code example of symmetric encryption using SM4 algorithm, and provides two code implementations: OpenSSL and KAEdriver.
+## 使用依赖
 
-## Dependencies
+确保已安装 **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)**
 
-Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/detail/en/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)** has been installed.
+## 使用教程
 
-## Guidance
-
-1. Obtain the code.
+1. 获取代码
 
    ```shell
    git clone https://github.com/kunpengcompute/devkitdemo.git
    ```
 
-2. Switch to the project root path.
+2. 切入到项目根路径
 
    ```shell
-   cd ./devkitdemo/Development_framework/gpc-sdk/examples/sm4/
+   cd ./devkitdemo/Development_framework/gpc-sdk/examples/kae_sm4/
    ```
 
-3. Compile the demo.
+3. 编译demo
 
    ```shell
    mkdir build
@@ -33,9 +32,9 @@ Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/deta
    make
    ```
 
-4. Run the demo.
+4. 运行demo
 
-   Key is in hexadecimal format and supports 128-bit.
+   key为16进制格式，支持128-bit
 
    ```shell
    ./sm4_demo encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/sm4.txt -o ../test_data/sm4.txt.cipher
@@ -44,7 +43,7 @@ Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/deta
    ./sm4_demo decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/sm4.txt.cipher -o ../test_data/sm4.txt.plaintext -K
    ```
 
-5. Clean up the demo.
+5. 清理demo
 
    ```shell
    cd ..

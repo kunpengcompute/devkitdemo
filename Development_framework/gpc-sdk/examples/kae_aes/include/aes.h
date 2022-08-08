@@ -20,8 +20,10 @@ typedef struct Param {
     char *outputFilePath;
     size_t outputFilePathLen;
     int enc;
+    int kae;
 } Param;
 
 int OpenSSLEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode);
+int KAEDriverEncrypt(Param *param, char *in, size_t bufSize, char *out, BLOCK_CIPHER_MODE mode);
 
 #endif
