@@ -37,6 +37,7 @@ void PrintUsage(char *name)
     printf("-m, --mode <mode>     block cipher mode\n");
     printf("-i, --input <path>    input file path\n");
     printf("-o, --output <path>   output file path\n");
+    printf("-K, --KAE             use KAEdriver\n");
     printf("-h, --help            Print Help (this message) and exit\n");
 }
 
@@ -114,6 +115,7 @@ int GetOptions(int argc, char *argv[], Param *param)
         {"mode", required_argument, NULL, 'm'},
         {"input", required_argument, NULL, 'i'},
         {"output", required_argument, NULL, 'o'},
+        {"KAE", no_argument, NULL, 'K'},
         {"help", no_argument, NULL, 'h'},
         {0, 0, 0, 0}
     };
@@ -131,7 +133,7 @@ int GetOptions(int argc, char *argv[], Param *param)
     }
     size_t argLen = 0;
     while (1) {
-        option = getopt_long(argc, argv, "k:m:i:o:h", long_options, &option_index);
+        option = getopt_long(argc, argv, "k:m:i:o:Kh", long_options, &option_index);
         if (option == -1) {
             break;
         }
@@ -165,6 +167,9 @@ int GetOptions(int argc, char *argv[], Param *param)
             case 'o':
                 param->outputFilePath = optarg;
                 param->outputFilePathLen = strlen(param->outputFilePath);
+                break;
+            case 'K':
+                param->kae = 1;
                 break;
             case 'h':
                 PrintUsage(argv[0]);
@@ -307,9 +312,21 @@ int main(int argc, char *argv[])
     }
 
     char *operation = param.enc ? "encrypt" : "decrypt";
-    printf("OpenSSL armv8 ASM AES-%lu-%s %s\n", param.keyLen * 8, param.mode, operation);
-    // 调用OpenSSL armv8 aes汇编指令加解密
-    OpenSSLEncrypt(&param, in, bufSize, out, g_cipher_mode);
+    if (param.kae) {
+        if (g_cipher_mode != ECB_MODE && g_cipher_mode != CBC_MODE) {
+            printf("KAEdriver supports only ECB and CBC mode.\n");
+            goto finish;
+        }
+        printf("KAEdriver AES-%lu-%s %s\n", param.keyLen * 8, param.mode, operation);
+        // 调用KAE driver加解密
+        if (KAEDriverEncrypt(&param, in, bufSize, out, g_cipher_mode) != 0) {
+            goto finish;
+        }
+    } else {
+        printf("OpenSSL armv8 ASM AES-%lu-%s %s\n", param.keyLen * 8, param.mode, operation);
+        // 调用OpenSSL armv8 aes汇编指令加解密
+        OpenSSLEncrypt(&param, in, bufSize, out, g_cipher_mode);
+    }
 
     // 解密时去除PKCS7填充
     if (!param.enc && padding == 1) {

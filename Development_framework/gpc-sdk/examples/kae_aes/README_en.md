@@ -4,7 +4,11 @@ English | [简体中文](README.md)
 
 ## Introduction
 
-The **AES demo** shows a code example of AES symmetric encryption using ARMV8 AES assembly accelerated instructions.
+The **AES demo** shows a code example of symmetric encryption using AES algorithm, and provides two code implementations: OpenSSL and KAEdriver.
+
+## Dependencies
+
+Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/detail/en/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)** has been installed.
 
 ## Guidance
 
@@ -17,7 +21,7 @@ The **AES demo** shows a code example of AES symmetric encryption using ARMV8 AE
 2. Switch to the project root path.
 
    ```shell
-   cd ./devkitdemo/Development_framework/gpc-sdk/examples/aes/
+   cd ./devkitdemo/Development_framework/gpc-sdk/examples/kae_aes/
    ```
 
 3. Compile the demo.
@@ -36,6 +40,8 @@ The **AES demo** shows a code example of AES symmetric encryption using ARMV8 AE
    ```shell
    ./aes encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher
    ./aes decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plaintext
+   ./aes encrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt -o ../test_data/aes.txt.cipher -K
+   ./aes decrypt -k c5a99f63eceb7f32926bd6008ba06187 -m cbc -i ../test_data/aes.txt.cipher -o ../test_data/aes.txt.plaintext -K
    ```
 
 5. Clean up the demo.

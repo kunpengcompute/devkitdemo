@@ -20,7 +20,7 @@
 2. 切入到项目根路径
 
    ```shell
-   cd ./devkitdemo/Development_framework/gpc-sdk/examples/sm3/
+   cd ./devkitdemo/Development_framework/gpc-sdk/examples/kae_sm3/
    ```
 
 3. 编译demo
