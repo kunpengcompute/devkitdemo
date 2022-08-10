@@ -180,6 +180,7 @@ int compress_file_to_gzip(char *input_name, char *output_name)
     remove(input_name);
     gzclose(zfile);
     free(new_output_name);
+    free(s);
     return 0;
 }
 
