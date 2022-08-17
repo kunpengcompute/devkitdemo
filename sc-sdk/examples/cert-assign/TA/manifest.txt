@@ -1,0 +1,7 @@
+gpd.ta.appID:                d17fa523-ab23-47fa-97b4-ede34acf748c
+gpd.ta.service_name:         cert-assign
+gpd.ta.singleInstance:       true
+gpd.ta.multiSession:         false
+gpd.ta.instanceKeepAlive:    false
+gpd.ta.dataSize:             67928064
+gpd.ta.stackSize:            40960
