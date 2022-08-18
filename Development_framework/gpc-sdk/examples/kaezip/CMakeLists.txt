@@ -35,4 +35,4 @@ link_directories(${KAEZIP_PATH}/lib)
 add_executable(${TARGET_FILE} ${SRC})
 
 # link library
-target_link_libraries(${TARGET_FILE} kaezip z)
+target_link_libraries(${TARGET_FILE} z)

@@ -239,7 +239,8 @@ static void set_chksum(union block *header_buffer)
 
     memset(header_buffer->header.chksum, ' ', 8);
     p = header_buffer->buffer;
-    for (int i = sizeof(*header_buffer); i-- != 0;) {
+    int i;
+    for (i = sizeof(*header_buffer); i-- != 0;) {
         sum += 0xFF & *p++;
     }
     to_octal(sum, header_buffer->header.chksum, 7);
@@ -330,7 +331,8 @@ static int write_contents_to_archive(char *file)
     }
 
     int block_count = g_stat_buffer->st_size / BLOCKSIZE2;
-    for(int i=0; i<block_count; i++)
+    int i;
+    for(i=0; i<block_count; i++)
     {
         fread(file_buffer, BLOCKSIZE2, 1, file_ptr);
         /* res is the number of blocks */
