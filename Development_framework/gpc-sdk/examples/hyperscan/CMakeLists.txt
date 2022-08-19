@@ -26,7 +26,7 @@ set(SRC src/hyperscan_demo.cpp src/CommonGrep.cpp)
 set(TARGET_FILE hyperscan_demo)
 
 # Set HYPERSCAN path
-set(HYPERSCAN_PATH /usr/local/hyperscan)
+set(HYPERSCAN_PATH /usr/local)
 
 # Add header file include directories
 include_directories(${HYPERSCAN_PATH}/include)

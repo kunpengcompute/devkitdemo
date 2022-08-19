@@ -17,7 +17,6 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <zlib.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -26,6 +25,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <dirent.h>
+#include "kaezip/zlib.h"
 
 #define NAME_LEN 100
 #define SHOUT_OPTION "hcxzf:"

@@ -21,7 +21,7 @@
 #include <stdlib.h>    
 #include <stdio.h> 
 #include <string.h>
-#include "snappy.h"
+#include "snappy/snappy.h"
 
 enum tpye {
     compress = 1,

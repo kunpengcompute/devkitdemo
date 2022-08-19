@@ -26,7 +26,7 @@ set(SRC src/command.cpp src/zstd_demo.cpp)
 set(TARGET_FILE zstd_demo)
 
 # Set zstd path
-set(ZSTD_PATH /usr/local/ZSTD)
+set(ZSTD_PATH /usr/local)
 
 # Add header file include directories
 include_directories(${ZSTD_PATH}/include)
