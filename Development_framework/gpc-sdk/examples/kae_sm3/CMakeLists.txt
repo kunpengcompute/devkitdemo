@@ -7,6 +7,12 @@ set(SRCS
     src/wd_sm3.c
 )
 
+# Set KAELIB path
+set(KAELIB_PATH /usr/local/lib)
+
+# Set lib path
+link_directories(${KAELIB_PATH})
+
 include_directories(
     include
 )
