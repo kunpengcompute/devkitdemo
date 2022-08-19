@@ -12,20 +12,7 @@
 [下载地址](https://github.com/kunpengcompute/zstd)
 [编译参考](https://github.com/kunpengcompute/zstd)
 
-2. 创建ZSTD include和lib的目录，将头文件和，so库拷贝到该目录下；
-   ```shell
-   # 创建目录
-   mkdir -p /usr/local/ZSTD/include
-   mkdir -p /usr/local/ZSTD/lib
-   # 拷贝头文件 zstd-aarch64-1.4.4/lib
-   cp -p zstd.h /usr/local/ZSTD/include
-   # 拷贝so文件 zstd-aarch64-1.4.4/lib
-   cp -p libzstd.so.1.4.4 /usr/local/ZSTD/lib
-   # 创建软连接
-   cd /usr/local/ZSTD/lib
-   ln -s libzstd.so.1.4.4 libzstd.so.1
-   ln -s libzstd.so.1.4.4 libzstd.so
-   ```
+2. 或者安装**kunpeng-gpc**和**kunpeng-gpc-devel** SDK
 
 ## 使用教程
 

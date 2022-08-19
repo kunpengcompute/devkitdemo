@@ -12,20 +12,7 @@
 [下载地址](https://github.com/kunpengcompute/snappy)
 [编译参考](https://github.com/kunpengcompute/snappy)
 
-2. 创建Snappy include和lib的目录，将头文件和，so库拷贝到该目录下；
-   ```shell
-   # 创建目录
-   mkdir -p /usr/local/snappy/include
-   mkdir -p /usr/local/snappy/lib
-   # 拷贝头文件 snappy-aarch64-1.1.7/
-   cp -p snappy.h /usr/local/snappy/include
-   # 拷贝so文件 snappy-aarch64-1.1.7/build
-   cp -p libsnappy.so.1.1.7 /usr/local/snappy/lib
-   # 创建软连接
-   cd /usr/local/snappy/lib
-   ln -s libsnappy.so.1.1.7 libsnappy.so.1
-   ln -s libsnappy.so.1 libsnappy.so
-   ```
+2. 或者安装**kunpeng-gpc**和**kunpeng-gpc-devel** SDK
 
 ## 使用教程
 

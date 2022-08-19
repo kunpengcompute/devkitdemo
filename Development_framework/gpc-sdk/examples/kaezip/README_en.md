@@ -12,6 +12,8 @@ English | [简体中文](README.md)
 [Download KAEzip](https://github.com/kunpengcompute/KAEdriver)
 [Reference](https://github.com/kunpengcompute/KAEzip)
 
+2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK
+
 ## Guidance
 1. Obtain the code.
 

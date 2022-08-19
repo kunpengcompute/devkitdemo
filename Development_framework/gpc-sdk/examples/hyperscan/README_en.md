@@ -13,25 +13,7 @@ English | [简体中文](README.md)
 [Download](https://github.com/kunpengcompute/hyperscan)
 [Reference](https://support.huaweicloud.com/cg-hyperscan-kunpengaccel/kunpengaccel_hyperscan_02_0001.html)
 
-2. Create HyperScan include and lib dir，copy head file and so to dir；
-   ```shell
-   # create dir
-   mkdir -p /usr/local/hyperscan/include
-   mkdir -p /usr/local/hyperscan/lib
-   # copy head file hyperscan-5.3.0.aarch64/src
-   cp -p hs*.h /usr/local/hyperscan/include/
-   # copy head file hyperscan-5.3.0.aarch64/build
-   cp -p hs_version.h /usr/local/hyperscan/include/
-   # copy so file hyperscan-5.3.0.aarch64/build/lib
-   cp -p libhs_runtime.so.5.3.0 /usr/local/hyperscan/lib
-   cp -p libhs.so.5.3.0 /usr/local/hyperscan/lib
-   # create soft link
-   cd /usr/local/hyperscan/lib
-   ln -s libhs_runtime.so.5.3.0 libhs_runtime.so.5
-   ln -s libhs_runtime.so.5 libhs_runtime.so
-   ln -s libhs.so.5.3.0 libhs.so.5
-   ln -s libhs.so.5 libhs.so
-   ```
+2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK
 
 ## Guidance
 

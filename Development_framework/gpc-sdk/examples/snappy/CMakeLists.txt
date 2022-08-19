@@ -26,7 +26,7 @@ set(SRC src/snappy_demo.cpp)
 set(TARGET_FILE snappy_demo)
 
 # Set snappy path
-set(SNAPPY_PATH /usr/local/snappy)
+set(SNAPPY_PATH /usr/local)
 
 # Add header file include directories
 include_directories(${SNAPPY_PATH}/include)

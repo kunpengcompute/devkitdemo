@@ -23,7 +23,7 @@ set(SRC src/kaezip_demo.c)
 set(TARGET_FILE kaezip_demo)
 
 # Set KAEZIP path
-set(KAEZIP_PATH /usr/local/kaezip)
+set(KAEZIP_PATH /usr/local)
 
 # Add header file include directories
 include_directories(${KAEZIP_PATH}/include)

@@ -22,7 +22,7 @@
 #include <iostream>
 #include <vector>
 
-#include <hs.h>
+#include "hyperscan/hs.h"
 
 
 using namespace std;

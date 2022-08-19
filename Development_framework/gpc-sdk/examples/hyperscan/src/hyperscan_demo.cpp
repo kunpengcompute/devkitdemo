@@ -19,8 +19,8 @@
 #include "CommonGrep.h"
 
 #include <iostream>
-#include <hs.h>
-#include <hs_version.h>
+#include "hyperscan/hs.h"
+#include "hyperscan/hs_version.h"
 
 #define ARG_NUM 3
 

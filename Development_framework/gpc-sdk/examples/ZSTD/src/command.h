@@ -6,9 +6,9 @@
 #include <string.h>   
 #include <errno.h>
 #include <sys/stat.h>
-#include <zstd.h>
 #include <queue>
 #include <vector>
+#include "zstd/zstd.h"
 
 #define CHECK(cond, ...)                        \
     do {                                        \

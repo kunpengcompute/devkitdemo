@@ -13,20 +13,7 @@ English | [简体中文](README.md)
 [Download](https://github.com/kunpengcompute/snappy)
 [Reference](https://github.com/kunpengcompute/snappy)
 
-2. Create Snappy include and lib dir，copy head file and so to dir；
-   ```shell
-   # Create dir
-   mkdir -p /usr/local/snappy/include
-   mkdir -p /usr/local/snappy/lib
-   # Copy head file snappy-aarch64-1.1.7/
-   cp -p *.h* /usr/local/snappy/include
-   # 拷贝so文件 snappy-aarch64-1.1.7/build
-   cp -p libsnappy.so.1.1.7 /usr/local/snappy/lib
-   # create soft link
-   cd /usr/local/snappy/lib
-   ln -s libsnappy.so.1.1.7 libsnappy.so.1
-   ln -s libsnappy.so.1 libsnappy.so
-   ```
+2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK
 
 ## Guidance
 
