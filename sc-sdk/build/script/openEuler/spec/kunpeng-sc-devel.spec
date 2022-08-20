@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           kunpeng-sc-devel
-Version:        1.0.0
+Version:        1.0.1
 Release:        1
 Summary:        kunpeng sc devel
 License:        GPL
@@ -11,7 +11,7 @@ Source2:        libboundscheck.tar.gz
 Source3:        demo.tar.gz
 
 BuildRequires:  gcc
-Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 1.0.0
+Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 1.0.1
 
 Conflicts: TEE_SDK TEE-devel_SDK
 

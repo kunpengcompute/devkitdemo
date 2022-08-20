@@ -1,9 +1,9 @@
 Package: kunpeng-sc
-Version: 1.0.0
+Version: 1.0.1
 Section: utils
 Priority: optional
 Depends: libssl-dev, zlib1g-dev
-Conflicts: tee-sdk, tee-devel-sdk
+Conflicts: tee-sdk, tee-devel-sdk, kunpeng-sc (=1.0.0)
 Suggests:
 Architecture: arm64
 Installed-Size: 4096

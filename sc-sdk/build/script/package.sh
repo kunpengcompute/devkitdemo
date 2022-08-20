@@ -156,9 +156,9 @@ function get_src_code() {
 
     cd ${SrcPath}
     # download source code
-    git clone https://gitee.com/openeuler/itrustee_sdk.git
-    git clone https://gitee.com/openeuler/itrustee_client.git
-    git clone https://gitee.com/openeuler/itrustee_tzdriver.git
+    git clone -b itrustee_sdk-1.0 https://gitee.com/openeuler/itrustee_sdk.git
+    git clone -b itrustee_client-1.0 https://gitee.com/openeuler/itrustee_client.git
+    git clone -b itrustee_tzdriver-1.0 https://gitee.com/openeuler/itrustee_tzdriver.git
     git clone https://gitee.com/openeuler/libboundscheck.git
     git clone https://gitee.com/kunpengcompute/devkitdemo.git
 
@@ -247,15 +247,15 @@ function output() {
 
     cd ${OutputPath}
     if [[ ${OsArch} =~ "Redhat" ]]; then
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-1.0.0-1.aarch64.rpm ${OutputPath}
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-1.0.0-1.aarch64.rpm ${OutputPath}
-        sha256sum kunpeng-sc-1.0.0-1.aarch64.rpm > kunpeng-sc-1.0.0-1.aarch64.rpm.sha256sum
-        sha256sum kunpeng-sc-devel-1.0.0-1.aarch64.rpm > kunpeng-sc-devel-1.0.0-1.aarch64.rpm.sha256sum
+        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-1.0.1-1.aarch64.rpm ${OutputPath}
+        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-1.0.1-1.aarch64.rpm ${OutputPath}
+        sha256sum kunpeng-sc-1.0.1-1.aarch64.rpm > kunpeng-sc-1.0.1-1.aarch64.rpm.sha256sum
+        sha256sum kunpeng-sc-devel-1.0.1-1.aarch64.rpm > kunpeng-sc-devel-1.0.1-1.aarch64.rpm.sha256sum
     elif [[ ${OsArch} =~ "Debian" ]]; then
-        cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_1.0.0_arm64.deb ${OutputPath}
-        cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_1.0.0_arm64.deb ${OutputPath}
-        sha256sum kunpeng-sc_1.0.0_arm64.deb > kunpeng-sc_1.0.0_arm64.deb.sha256sum
-        sha256sum kunpeng-sc-devel_1.0.0_arm64.deb > kunpeng-sc-devel_1.0.0_arm64.deb.sha256sum
+        cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_1.0.1_arm64.deb ${OutputPath}
+        cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_1.0.1_arm64.deb ${OutputPath}
+        sha256sum kunpeng-sc_1.0.1_arm64.deb > kunpeng-sc_1.0.1_arm64.deb.sha256sum
+        sha256sum kunpeng-sc-devel_1.0.1_arm64.deb > kunpeng-sc-devel_1.0.1_arm64.deb.sha256sum
     fi
     echo "/*** The package create successfully, please go to ${OutputPath} to get it. ***/"
 }
@@ -268,12 +268,12 @@ function clean_tmp_file() {
     if [[ ${OsArch} =~ "Redhat" ]]; then
         if [ -d ${RpmBuild} ]; then
             echo "delete ${RpmBuild}"
-            rm -rf ${RpmBuild}
+            # rm -rf ${RpmBuild}
         fi
     elif [[ ${OsArch} =~ "Debian" ]]; then
         if [ -d ${DebBuild} ]; then
             echo "delete ${DebBuild}"
-            rm -rf ${DebBuild}
+            # rm -rf ${DebBuild}
         fi
     fi
 }
