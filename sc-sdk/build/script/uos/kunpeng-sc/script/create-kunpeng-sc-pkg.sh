@@ -104,7 +104,7 @@ function install_software(){
 
 function create_pkg(){
     cd ${ScriptPath}
-    dpkg-deb -b ../buildroot kunpeng-sc_1.0.0_arm64.deb
+    dpkg-deb -b ../buildroot kunpeng-sc_1.0.1_arm64.deb
 }
 
 function clean(){

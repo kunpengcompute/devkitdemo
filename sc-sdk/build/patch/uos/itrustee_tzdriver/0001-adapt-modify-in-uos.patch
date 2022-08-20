@@ -1,8 +1,7 @@
-From 5078ad2a7a4192e719041e52a742302505c9597f Mon Sep 17 00:00:00 2001
-From: hyt <hyt3161@163.com>
-Date: Thu, 16 Jun 2022 21:46:43 +0800
-Subject: [PATCH] Compile adaptation modification in uos and modify kernel
- devel directory acquisition method
+From ca176228e383c6ce929eb8c3a6b2e5a363217d42 Mon Sep 17 00:00:00 2001
+From: huangyongtao1 <hyt3161@163.com>
+Date: Fri, 19 Aug 2022 16:49:25 +0800
+Subject: [PATCH] adapt modify in uos
 
 ---
  CMakeLists.txt    | 16 +++++++++++++---
@@ -46,7 +45,7 @@ index cd58879..7113efd 100644
  set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_TEE_LOG_ACHIVE_PATH=\\\\\\\"/var/log/tee/last_teemsg\\\\\\\"")
  set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID")
 diff --git a/Makefile b/Makefile
-index 253938d..5b75285 100644
+index 253938d..5a7db05 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -17,15 +17,15 @@ libboundscheck/src/securecutil.o libboundscheck/src/secureprintoutput_a.o libbou
@@ -56,7 +55,7 @@ index 253938d..5b75285 100644
 -KPATH := /usr/src/kernels
 -KDIR  := $(KPATH)/$(shell ls $(KPATH))
 +KPATH := /usr/src
-+KDIR  := $(KPATH)/$(shell ls $(KPATH) | grep $(shell uname -r))
++KDIR  := $(KPATH)/$(shell dpkg -l | grep linux-headers | awk '{print $$2}' head -n 1)
  
 -EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH
 +EXTRA_CFLAGS += -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH
@@ -82,14 +81,14 @@ index 0fb93ed..cdab479 100644
  5.License
  please see License/Tzdriver_License for more details
 diff --git a/README.md b/README.md
-index a277830..dcde2f9 100644
+index 37198d0..faf8b11 100644
 --- a/README.md
 +++ b/README.md
-@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
-    2）使用root用户，执行insmod tzdriver.ko
-    3）使用root用户，执行/usr/bin/teecd&
-    4）运行测试CA 和TA
-+   5) 如果要卸载tzdriver，需要重启服务器才可生效
+@@ -26,3 +26,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
+    2.使用root用户，执行insmod tzdriver.ko
+    3.使用root用户，执行/usr/bin/teecd&
+    4.运行测试CA 和TA
++   5.如果要卸载tzdriver，需要重启服务器才可生效
 diff --git a/core/gp_ops.c b/core/gp_ops.c
 index f73aca0..c07fd38 100644
 --- a/core/gp_ops.c

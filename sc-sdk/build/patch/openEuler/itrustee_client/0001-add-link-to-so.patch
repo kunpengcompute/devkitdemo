@@ -1,7 +1,7 @@
-From 343d7c1feb1015ea9fff4deb7282e1aaeb50c60b Mon Sep 17 00:00:00 2001
-From: hyt <hyt3161@163.com>
-Date: Thu, 16 Jun 2022 17:11:04 +0800
-Subject: [PATCH] add version info to dynamic library
+From 1709e39af424855df874a1daeedd2d1569d5341e Mon Sep 17 00:00:00 2001
+From: huangyongtao1 <hyt3161@163.com>
+Date: Fri, 19 Aug 2022 15:28:32 +0800
+Subject: [PATCH] add link to so
 
 ---
  Makefile | 13 +++++++++----

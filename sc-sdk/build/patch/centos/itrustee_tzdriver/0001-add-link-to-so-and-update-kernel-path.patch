@@ -1,7 +1,7 @@
-From f5a7217634573ed175e13d177b91dec8878d773d Mon Sep 17 00:00:00 2001
-From: hyt <hyt3161@163.com>
-Date: Fri, 17 Jun 2022 15:03:55 +0800
-Subject: [PATCH] Modify the way to obtain kernel dir
+From e654173ae98203423f8fef137171b0da6c63a70d Mon Sep 17 00:00:00 2001
+From: huangyongtao1 <hyt3161@163.com>
+Date: Fri, 19 Aug 2022 15:41:12 +0800
+Subject: [PATCH] add link to so and update kernel path
 
 ---
  CMakeLists.txt | 13 ++++++++++++-
@@ -65,14 +65,14 @@ index 0fb93ed..cdab479 100644
  5.License
  please see License/Tzdriver_License for more details
 diff --git a/README.md b/README.md
-index a277830..dcde2f9 100644
+index 37198d0..faf8b11 100644
 --- a/README.md
 +++ b/README.md
-@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
-    2）使用root用户，执行insmod tzdriver.ko
-    3）使用root用户，执行/usr/bin/teecd&
-    4）运行测试CA 和TA
-+   5) 如果要卸载tzdriver，需要重启服务器才可生效
+@@ -26,3 +26,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
+    2.使用root用户，执行insmod tzdriver.ko
+    3.使用root用户，执行/usr/bin/teecd&
+    4.运行测试CA 和TA
++   5.如果要卸载tzdriver，需要重启服务器才可生效
 -- 
 2.36.1.windows.1
 

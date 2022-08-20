@@ -1,7 +1,7 @@
-From 5969e6a59716ec22490cb316de4159b6857c7e3b Mon Sep 17 00:00:00 2001
-From: hyt <hyt3161@163.com>
-Date: Thu, 16 Jun 2022 21:24:56 +0800
-Subject: [PATCH] Add version info to dynamic library
+From 776a46bd81ab9514f16fbc77e378f977ccc7291d Mon Sep 17 00:00:00 2001
+From: huangyongtao1 <hyt3161@163.com>
+Date: Fri, 19 Aug 2022 16:52:26 +0800
+Subject: [PATCH] add link to so
 
 ---
  CMakeLists.txt | 35 +++++++++++++++++++++++++++++++++++
