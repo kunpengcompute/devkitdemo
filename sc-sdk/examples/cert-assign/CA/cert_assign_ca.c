@@ -25,7 +25,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
-#include <signal.h>
 
 #include "securec.h"
 #include "tee_client_api.h"
@@ -173,11 +172,6 @@ static void TeecClose(void)
     TEEC_Debug("TEEC uninit OK.");
 }
 
-static void SignalCallback(int signum)
-{
-    TeecClose();
-}
-
 int GetFileSize(char *filePath, size_t *fileSize)
 {
     struct stat statbuf;
@@ -231,8 +225,8 @@ static int GetCertState()
         TEEC_NONE
     );
     result = TEEC_InvokeCommand(&g_session, CMD_GET_ROOT_CERT_STATE, &operation, &origin);
-    if (result != CMD_GET_ROOT_CERT_STATE) {
-        TEEC_Error("Invoke CMD_CERT_STATE failed, codes=0x%x, origin=0x%x.", result, origin);
+    if (result != TEEC_SUCCESS) {
+        TEEC_Error("Invoke CMD_GET_ROOT_CERT_STATE failed, codes=0x%x, origin=0x%x.", result, origin);
     }
     return result;
 }
@@ -272,7 +266,10 @@ static int SignCert(char *csrPath, char *certPath)
     char csrBuffer[CERT_BUFFER_LEN + 1] = {0};
     size_t fileSize = 0;
     GetFileSize(csrPath, &fileSize);
-    ReadAll(csrPath, csrBuffer, fileSize);
+    if (ReadAll(csrPath, csrBuffer, fileSize) != 0) {
+        printf("Failed to read the certificate signing request file.\n");
+        return 1;
+    }
     TEEC_Operation operation;
     TEEC_Result result;
     uint32_t origin = 0;
@@ -293,7 +290,10 @@ static int SignCert(char *csrPath, char *certPath)
         TEEC_Error("Invoke CMD_SIGN_X509_CERT failed, codes=0x%x, origin=0x%x.", result, origin);
     }
     certBufferLen = operation.params[1].tmpref.size;
-    WriteAll(certPath, certBuffer, certBufferLen);
+    if (WriteAll(certPath, certBuffer, certBufferLen) != 0) {
+        printf("Failed to write certificate.\n");
+    }
+    printf("The certificate has been saved in %s.\n", certPath);
     return result;
 }
 
@@ -308,10 +308,34 @@ static int ReadLine(char *buffer, size_t bufferLen, const char *prompt) {
     }
 }
 
+static int ShowRootCertificate(char *buffer, size_t bufferLen)
+{
+    TEEC_Operation operation;
+    TEEC_Result result;
+    uint32_t origin = 0;
+    operation.started = 1;
+    operation.cancel_flag = 0;
+    operation.paramTypes = TEEC_PARAM_TYPES(
+        TEEC_MEMREF_TEMP_OUTPUT,
+        TEEC_NONE,
+        TEEC_NONE,
+        TEEC_NONE
+    );
+    operation.params[0].tmpref.buffer = buffer;
+    operation.params[0].tmpref.size = bufferLen;
+    result = TEEC_InvokeCommand(&g_session, CMD_SHOW_ROOT_CERT, &operation, &origin);
+    if (result != TEEC_SUCCESS) {
+        TEEC_Error("Invoke CMD_SHOW_ROOT_CERT failed, codes=0x%x, origin=0x%x.", result, origin);
+    }
+    return result;
+}
+
 static void PrintHelp() {
-    printf("\tsign             sign csr\n");
-    printf("\thelp             show this help message\n");
-    printf("\texit             exit this program\n");
+    printf("cert-assign>\n");
+    printf("\tsign             Sign a certificate signing request.\n");
+    printf("\tshow             Show the root certificate info.\n");
+    printf("\thelp             Show this help message\n");
+    printf("\texit             Exit this program\n");
 }
 
 static int StartInteraction(char *username)
@@ -334,7 +358,11 @@ static int StartInteraction(char *username)
         if (CreateRootCert(commonName, cipher, certBuffer, &certBufferLen) != TEEC_SUCCESS) {
             return 1;
         }
-        WriteAll("root_cert.pem", certBuffer, certBufferLen);
+        if (WriteAll("root_cert.pem", certBuffer, certBufferLen) != 0) {
+            printf("Failed to write root certificate.\n");
+            return 1;
+        }
+        printf("The root certificate has been saved in root_cert.pem.\n");
     }
     char inputBuffer[INPUT_LEN + 1] = {0};
     char csrPath[INPUT_LEN + 1] = {0};
@@ -346,11 +374,17 @@ static int StartInteraction(char *username)
             ReadLine(csrPath, PATH_LEN, "Please input certificate signing request file path: ");
             ReadLine(certPath, PATH_LEN, "Please input X509 certificate storage path: ");
             SignCert(csrPath, certPath);
+        } else if (strcmp(inputBuffer, "show") == 0) {
+            size_t bufferLen = CERT_BUFFER_LEN;
+            char buffer[CERT_BUFFER_LEN + 1] = {0};
+            ShowRootCertificate(buffer, bufferLen);
+            printf("root certificate info:\n%s\n", buffer);
         } else if (strcmp(inputBuffer, "exit") == 0) {
             break;
         } else {
             PrintHelp();
         }
+        memset(inputBuffer, 0, INPUT_LEN + 1);
     }
     return 0;
 }
@@ -377,11 +411,6 @@ int main(int argc, char *argv[])
     }
     if (TEEC_SUCCESS != ret) {
         printf("TeecInit Failed!\n");
-        return 1;
-    }
-    if (signal(SIGINT, SignalCallback) == SIG_ERR) {
-        printf("Can not catch SIGINT.\n");
-        TeecClose();
         return 1;
     }
     StartInteraction(username);

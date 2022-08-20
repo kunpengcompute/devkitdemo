@@ -47,6 +47,7 @@ typedef enum {
     CMD_GET_ROOT_CERT_STATE = 1,
     CMD_CREAT_ROOT_CERT,
     CMD_SIGN_X509_CERT,
+    CMD_SHOW_ROOT_CERT
 } CERT_ASSIGN_CMD;
 
 typedef struct {

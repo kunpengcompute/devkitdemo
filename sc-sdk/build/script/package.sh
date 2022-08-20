@@ -268,12 +268,12 @@ function clean_tmp_file() {
     if [[ ${OsArch} =~ "Redhat" ]]; then
         if [ -d ${RpmBuild} ]; then
             echo "delete ${RpmBuild}"
-            # rm -rf ${RpmBuild}
+            rm -rf ${RpmBuild}
         fi
     elif [[ ${OsArch} =~ "Debian" ]]; then
         if [ -d ${DebBuild} ]; then
             echo "delete ${DebBuild}"
-            # rm -rf ${DebBuild}
+            rm -rf ${DebBuild}
         fi
     fi
 }

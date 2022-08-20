@@ -188,7 +188,7 @@ int GenRSA(RSA *rsa)
         return -1;
     }
     SLogError("RSA_generate_key_ex\n");
-    ret = RSA_generate_key_ex(rsa, 4096, bne, NULL);
+    ret = RSA_generate_key_ex(rsa, 2048, bne, NULL);
     if (ret != 1) {
         SLogError("RSA_generate_key_ex err!\n");
         return -1;
@@ -213,8 +213,8 @@ TEE_Result GetCertState(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     TEE_Result ret;
     char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
-    sprintf(rootCertPath, "%s/%s/cert.pem", SEC_STORAGE_PATH, identity->username);
-    sprintf(rootKeyPath, "%s/%s/key.pem", SEC_STORAGE_PATH, identity->username);
+    sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
+    sprintf(rootKeyPath, "%s/%s/root_key.pem", SEC_STORAGE_PATH, identity->username);
     TEE_ObjectHandle object = NULL;
     ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, rootCertPath, strlen(rootCertPath), TEE_DATA_FLAG_ACCESS_READ, &object);
     TEE_CloseObject(object);
@@ -275,15 +275,14 @@ TEE_Result CreateRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     BIO *keyBIO = BIO_new(BIO_s_mem());
     char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
-    sprintf(rootCertPath, "%s/%s/cert.pem", SEC_STORAGE_PATH, identity->username);
-    sprintf(rootKeyPath, "%s/%s/key.pem", SEC_STORAGE_PATH, identity->username);
+    sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
+    sprintf(rootKeyPath, "%s/%s/root_key.pem", SEC_STORAGE_PATH, identity->username);
     if (strcmp(cipher, "RSA") == 0) {
         RSA *rsa = RSA_new();
         GenRSA(rsa);
         EVP_PKEY_assign_RSA(pkey, rsa);
         GenerateREQ(pkey, req, commonName, EVP_sha256());
         SignRootCert(pkey, req, x, EVP_sha256());
-        // PEM_write_bio_RSAPrivateKey(keyBIO, rsa, EVP_aes_256_cbc(), (unsigned char *)"admin", 5, NULL, NULL);
         PEM_write_bio_RSAPrivateKey(keyBIO, rsa, NULL, NULL, 0, NULL, NULL);
         RSA_free(rsa);
         ret = TEE_SUCCESS;
@@ -293,7 +292,6 @@ TEE_Result CreateRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
         EVP_PKEY_assign_EC_KEY(pkey, eckey);
         GenerateREQ(pkey, req, commonName, EVP_sha256());
         SignRootCert(pkey, req, x, EVP_sha256());
-        // PEM_write_bio_ECPrivateKey(keyBIO, eckey, EVP_sm4_cbc(), (unsigned char *)"admin", 5, NULL, NULL);
         PEM_write_bio_ECPrivateKey(keyBIO, eckey, NULL, NULL, 0, NULL, NULL);
         EC_KEY_free(eckey);
         ret = TEE_SUCCESS;
@@ -306,41 +304,19 @@ TEE_Result CreateRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     SLogError("certBIO");
     BIO *certBIO = BIO_new(BIO_s_mem());
     PEM_write_bio_X509(certBIO, x);
-    // PEM_write_bio_X509_REQ(certBIO, req);
     size_t bufferLen = BIO_ctrl_pending(certBIO);
     SLogError("%d\n", bufferLen);
     char *buffer = (char *)TEE_Malloc(bufferLen, 0);
     BIO_read(certBIO, buffer, bufferLen);
     DumpBuff(buffer, bufferLen, "cert");
     SaveData(buffer, bufferLen, rootCertPath);
-    SLogError("TEE_MemMove");
     TEE_MemMove(params[PARAMS_IDX2].memref.buffer, buffer, bufferLen);
     params[PARAMS_IDX2].memref.size = bufferLen;
     TEE_Free(buffer);
-    SLogError("BIO_free");
     BIO_free(certBIO);
-    SLogError("EVP_PKEY_free");
     EVP_PKEY_free(pkey);
-    // SLogError("X509_REQ_free");
-    // X509_REQ_free(req);
-    SLogError("X509_free");
     X509_free(x);
-    SLogError("free");
     return ret;
-}
-
-int pass_cb(char *buf, int size, int rwflag, void *u)
-{
-    char *tmp = (char *)u;
-    if (tmp == NULL)
-        return -1;
-
-    int len = strlen(tmp);
-
-    if (len > size)
-        len = size;
-    memcpy(buf, tmp, len);
-    return len;
 }
 
 int pkey_ctrl_string(EVP_PKEY_CTX *ctx, const char *value)
@@ -442,7 +418,7 @@ static int x509_certify(const EVP_MD *digest,
     ret = 1;
  end:
     if (!ret)
-        printf("errrrrrrrr");
+        printf("Failed to verify certificate.");
     if (sno)
         ASN1_INTEGER_free(sno);
     return ret;
@@ -491,8 +467,8 @@ TEE_Result CmdSignCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     SLogTrace("---- CmdSignCert------- ");
     char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
-    sprintf(rootCertPath, "%s/%s/cert.pem", SEC_STORAGE_PATH, identity->username);
-    sprintf(rootKeyPath, "%s/%s/key.pem", SEC_STORAGE_PATH, identity->username);
+    sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
+    sprintf(rootKeyPath, "%s/%s/root_key.pem", SEC_STORAGE_PATH, identity->username);
     BIO *rootKeyBIO = BIO_new(BIO_s_mem());
     BIO *rootCertBIO = BIO_new(BIO_s_mem());
     char rootCertBuffer[PEM_BUFFER_LEN] = {0};
@@ -513,7 +489,6 @@ TEE_Result CmdSignCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     EVP_PKEY *pkey = NULL;
 
     EVP_PKEY *CApkey;
-    // CApkey = PEM_read_bio_PrivateKey(keyBIO, NULL, pass_cb, "admin");
     CApkey = PEM_read_bio_PrivateKey(rootKeyBIO, NULL, NULL, NULL);
     if (CApkey == NULL) {
         printf("CApkey is NULL\n");
@@ -565,6 +540,39 @@ end:
     return TEE_SUCCESS;
 }
 
+TEE_Result CmdShowRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
+                           SessionIdentity *identity)
+{
+    SLogTrace("---- CmdShowRootCert------- ");
+    char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
+    sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
+    BIO *rootCertBIO = BIO_new(BIO_s_mem());
+    char rootCertBuffer[PEM_BUFFER_LEN] = {0};
+    uint32_t rootCertBufferLen = PEM_BUFFER_LEN;
+    ReadFile(rootCertPath, rootCertBuffer, &rootCertBufferLen);
+    BIO_write(rootCertBIO, rootCertBuffer, rootCertBufferLen);
+
+    X509 *xca;
+    xca = PEM_read_bio_X509(rootCertBIO, NULL, 0, NULL);
+    if (xca == NULL) {
+        printf("xca is NULL\n");
+        BIO_free(rootCertBIO);
+        return TEE_ERROR_GENERIC;
+    }
+    BIO *out = BIO_new(BIO_s_mem());
+    X509_print_ex(out, xca, XN_FLAG_ONELINE, 0);
+    size_t bufferLen = BIO_ctrl_pending(out);
+    char *buffer = (char *)TEE_Malloc(bufferLen, 0);
+    BIO_read(out, buffer, bufferLen);
+    TEE_MemMove(params[PARAMS_IDX0].memref.buffer, buffer, bufferLen);
+    params[PARAMS_IDX0].memref.size = bufferLen;
+    TEE_Free(buffer);
+    X509_free(xca);
+    BIO_free(rootCertBIO);
+    BIO_free(out);
+    return TEE_SUCCESS;
+}
+
 TEE_Result TA_InvokeCommandEntryPoint(void *sessionContext, uint32_t cmdId,
                                       uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
@@ -588,6 +596,9 @@ TEE_Result TA_InvokeCommandEntryPoint(void *sessionContext, uint32_t cmdId,
             ret = CmdSignCert(paramTypes, params, identity);
             break;
 
+        case CMD_SHOW_ROOT_CERT:
+            ret = CmdShowRootCert(paramTypes, params, identity);
+            break;
         default:
             SLogError("Unknown CMD ID: %d", cmdId);
             ret = TEE_FAIL;
