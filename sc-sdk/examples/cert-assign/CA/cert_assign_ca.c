@@ -292,6 +292,7 @@ static int SignCert(char *csrPath, char *certPath)
     certBufferLen = operation.params[1].tmpref.size;
     if (WriteAll(certPath, certBuffer, certBufferLen) != 0) {
         printf("Failed to write certificate.\n");
+        return 1;
     }
     printf("The certificate has been saved in %s.\n", certPath);
     return result;
