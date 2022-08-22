@@ -4,7 +4,7 @@ Name:           kunpeng-sc-devel
 Version:        1.0.1
 Release:        1
 Summary:        kunpeng sc devel
-License:        GPL
+License:        Apache-2.0
 Source0:        itrustee_client.tar.gz
 Source1:        itrustee_sdk.tar.gz
 Source2:        libboundscheck.tar.gz
