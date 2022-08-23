@@ -160,7 +160,8 @@ function get_src_code() {
     git clone -b itrustee_client-1.0 https://gitee.com/openeuler/itrustee_client.git
     git clone -b itrustee_tzdriver-1.0 https://gitee.com/openeuler/itrustee_tzdriver.git
     git clone https://gitee.com/openeuler/libboundscheck.git
-    git clone https://gitee.com/kunpengcompute/devkitdemo.git
+    git clone https://github.com/kunpengcompute/devkitdemo.git
+    wget https://gitee.com/lsjhw/devkitdemo/releases/download/1.0.1/libcrypto.a
 
     # modify source code
     apply_patch
@@ -173,6 +174,9 @@ function get_src_code() {
     tar zcvf itrustee_sdk.tar.gz itrustee_sdk
 
     cp -r devkitdemo/sc-sdk/examples/* demo
+    # copy libcrypto.a for demo cert-assign
+    mkdir -p demo/cert-assign/lib
+    cp libcrypto.a demo/cert-assign/lib
     tar zcvf demo.tar.gz demo
 }
 
