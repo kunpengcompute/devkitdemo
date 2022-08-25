@@ -168,9 +168,16 @@ function get_src_code() {
 
     # tar source code
     cd ${SrcPath}
+    rm -rf libboundscheck/.git
     tar zcvf libboundscheck.tar.gz libboundscheck
+
+    rm -rf itrustee_tzdriver/.git
     tar zcvf itrustee_tzdriver.tar.gz itrustee_tzdriver
+
+    rm -rf itrustee_client/.git
     tar zcvf itrustee_client.tar.gz itrustee_client
+
+    rm -rf itrustee_sdk/.git
     tar zcvf itrustee_sdk.tar.gz itrustee_sdk
 
     cp -r devkitdemo/sc-sdk/examples/* demo
