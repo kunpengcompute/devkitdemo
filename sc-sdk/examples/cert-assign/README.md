@@ -7,6 +7,7 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 [鲲鹏机密计算特性介绍](https://www.hikunpeng.com/zh/developer/boostkit/confidential-computing)
 
+此demo主要用于为用户签发X509证书的场景，主要功能是通过创建根证书（支持RSA和SM2算法），然后对用户提交的证书请求文件进行签名，生成X509证书。使用TEE对根证书的私钥加密保存，可以保证私钥不会泄露，根证书生成和用户证书的签发在TEE侧进行计算，可以保证计算过程不被攻击。
 
 ## 使用依赖
 
@@ -40,7 +41,7 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 4. 将 ./TA/ 目录下的manifest.txt 文件替换成,申请开发者证书时使用的manifest.txt文件
 
-5. 安装TA demo
+5. 安装TA demo，编译TA时需要静态链接适用于TEE的OpenSSL加解密库，安装`kunpeng-sc-devel-1.0.1`后会将适用于TEE的OpenSSL加解密库安装到/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a，也可以参考 **编译生成适用于TEE的libcrypto.a** 章节自行编译。
 
    ```shell
    cd ./TA/
@@ -51,7 +52,7 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
    ```shell
    vim ../CA/cert_assign_ca.h
-   # #define TA_UUID                "d17fa523-ab23-47fa-97b4-ede34acf748c"    //开发者证书UUID[需根据实际情况进行修改]
+       #define TA_UUID                "d17fa523-ab23-47fa-97b4-ede34acf748c"    //开发者证书UUID[需根据实际情况进行修改]
    ```
 
 7. 安装CA demo
@@ -87,23 +88,24 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 ## 编译生成适用于TEE的libcrypto.a
 
 下载openssl1.1.1k代码：
-```
+```shell
 wget https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_1_1k.tar.gz
 ```
 
 解压：
-```
+```shell
 tar -zxf OpenSSL_1_1_1k.tar.gz
 ```
 
-合入适用于TEE的patch:
-```
+合入适用于TEE的patch，patch存放在patch目录:
+```shell
 cd openssl-OpenSSL_1_1_1k
+# patch路径根据实际路径修改
 patch -p1 < /path/to/openssl_for_tee.patch
 ```
 
-编译，编译后会生成适用于TEE的libcrypto.a：
-```
+编译，编译前需要先安装 `kunpeng-sc` 和 `kunpeng-sc-devel` ， 编译后会生成适用于TEE的libcrypto.a：
+```shell
 ./config no-sock no-shared CFLAGS="-DOPENSSL_RAND_TEE -DNO_SYSLOG \
    -DOPENSSL_NO_UI_CONSOLE \
    -DOPENSSL_NO_SECURE_MEMORY -DOPENSSL_NO_STDIO \

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 cmake_minimum_required(VERSION 2.8)
-project(cert-assign)
+project(cert-assign C)
 
 set(CMAKE_VERBOSE_MAKEFILEON ON)
 
@@ -27,11 +27,6 @@ set(LIBSECURE ${iTrustee_SDK_PATH}/source/liboundscheck)
 
 # Add source files
 set(SRCS ${SRCS} ./cert_assign_ta.c)
-
-set(OPENSSL_ROOT_DIR /usr/local/openssl)
-set(OPENSSL_INCLUDE_DIR ${OPENSSL_ROOT_DIR}/include)
-set(OPENSSL_USE_STATIC_LIBS TRUE)
-find_package(OpenSSL REQUIRED)
 
 # Add header file include directories
 include_directories(
