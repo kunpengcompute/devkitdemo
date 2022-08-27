@@ -29,6 +29,9 @@
 #include "tee_object_api.h"
 #include "cert_assign_ta.h"
 
+#define RSA_KEY_SIZE 256
+#define SERIAL_RAND_BITS 159
+
 void DumpBuff(const char *buffer, const size_t bufferLen, const char *name)
 {
     if (buffer == NULL || bufferLen == 0) {
@@ -68,6 +71,7 @@ TEE_Result TA_CreateEntryPoint(void)
     SLogTrace("----- TA_CreateEntryPoint ----- ");
     SLogTrace("TA version: %s ", TA_VERSION);
 
+    // 验证CA程序路径和运行用户
     if (addcaller_ca_exec(CLIENT_APPLICATION_NAME, "root") != TEE_SUCCESS) {
         SLogError("TA_CreateEntryPoint: addcaller_ca_exec failed.");
         return TEE_ERROR_GENERIC;
@@ -80,7 +84,11 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t paramTypes, TEE_Param params[PARAMS
 {
     TEE_Result ret = TEE_SUCCESS;
     SLogTrace("---- TA_OpenSessionEntryPoint -------- ");
-    (void)paramTypes;
+    if (TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)
+        || TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
+    }
     char *username = params[PARAMS_IDX0].memref.buffer;
     if (strncmp(username, g_user.username, USERNAME_MAX) != 0) {
         SLogError("Incorrect user name or password. Username: %s.", username);
@@ -93,16 +101,21 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t paramTypes, TEE_Param params[PARAMS
         return TEE_ERROR_GENERIC;
     }
 
+    // 使用PBKDF2_HMAC算法生成密码哈希值
     if (PKCS5_PBKDF2_HMAC(password, params[PARAMS_IDX1].memref.size, (unsigned char *)g_user.salt, strlen(g_user.salt), HASH_ITER,
                           EVP_sha256(), HASHED_PASSWORD_MAX, hashed_password) == 0) {
         SLogError("Get hashed password failed.");
+        TEE_Free(hashed_password);
         return TEE_ERROR_GENERIC;
     }
-    DumpBuff((char *)hashed_password, HASHED_PASSWORD_MAX, "hashed_password");
+
+    // 校验密码哈希值是否正确
     if (memcmp(hashed_password, g_user.hashed_password, HASHED_PASSWORD_MAX) != 0) {
         SLogError("Incorrect user name or password. Username: %s.", username);
+        TEE_Free(hashed_password);
         return TEE_ERROR_ACCESS_DENIED;
     }
+    TEE_Free(hashed_password);
     SessionIdentity *identity = NULL;
     identity = (SessionIdentity *)TEE_Malloc(sizeof(SessionIdentity), 0);
     if (identity == NULL) {
@@ -115,13 +128,10 @@ TEE_Result TA_OpenSessionEntryPoint(uint32_t paramTypes, TEE_Param params[PARAMS
     return ret;
 }
 
-#define RSA_KEY_SIZE 256
-
-# define SERIAL_RAND_BITS 159
-
+// 生成自签名根证书
 int SignRootCert(EVP_PKEY *caPkey, X509_REQ *req, X509 *x, const EVP_MD *md)
 {
-    SLogError("X509Sign");
+    SLogError("SignRootCert");
     ASN1_INTEGER *sno = ASN1_INTEGER_new();
     BIGNUM *btmp = BN_new();
     BN_rand(btmp, SERIAL_RAND_BITS, BN_RAND_TOP_ANY, BN_RAND_BOTTOM_ANY);
@@ -140,6 +150,7 @@ int SignRootCert(EVP_PKEY *caPkey, X509_REQ *req, X509 *x, const EVP_MD *md)
     return 0;
 }
 
+// 生成证书请求文件
 int GenerateREQ(EVP_PKEY *pkey, X509_REQ *req, char *commonName, const EVP_MD *md)
 {
     int ret;
@@ -169,13 +180,13 @@ int GenerateREQ(EVP_PKEY *pkey, X509_REQ *req, char *commonName, const EVP_MD *m
     ret = X509_REQ_digest(req, md, (unsigned char *)mdout, &mdlen);
     ret = X509_REQ_sign(req, pkey, md);
     if (!ret) {
-        SLogError("sign err!\n");
+        SLogError("sign err!");
         return -1;
     }
-    SLogError("GenerateREQ end");
     return 0;
 }
 
+// 生成RSA key
 int GenRSA(RSA *rsa)
 {
     int ret;
@@ -184,18 +195,18 @@ int GenRSA(RSA *rsa)
     bne = BN_new();
     ret = BN_set_word(bne, e);
     if (ret != 1) {
-        SLogError("BN_set_word err!\n");
+        SLogError("BN_set_word err!");
         return -1;
     }
-    SLogError("RSA_generate_key_ex\n");
     ret = RSA_generate_key_ex(rsa, 2048, bne, NULL);
     if (ret != 1) {
-        SLogError("RSA_generate_key_ex err!\n");
+        SLogError("RSA_generate_key_ex err!");
         return -1;
     }
     return 0;
 }
 
+// 生成SM2 key
 int GenSM2(EC_KEY *eckey)
 {
     EC_GROUP *group = NULL;
@@ -206,10 +217,10 @@ int GenSM2(EC_KEY *eckey)
     return 0;
 }
 
-TEE_Result GetCertState(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
-                        SessionIdentity *identity)
+// 获取根证书是否存在
+TEE_Result GetRootCertState(SessionIdentity *identity)
 {
-    SLogTrace("---- CmdCertState------- ");
+    SLogTrace("---- GetRootCertState------- ");
     TEE_Result ret;
     char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
@@ -229,18 +240,19 @@ TEE_Result GetCertState(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     return TEE_SUCCESS;
 }
 
-TEE_Result SaveData(char *buffer, size_t bufferLen, char *path) {
+// 调用TEE安全存储接口保存数据
+TEE_Result TEESaveData(char *buffer, size_t bufferLen, char *path) {
     TEE_Result ret;
     TEE_ObjectHandle object = NULL;
     ret = TEE_CreatePersistentObject(TEE_OBJECT_STORAGE_PRIVATE, path, strlen(path), TEE_DATA_FLAG_ACCESS_WRITE,
                                      TEE_HANDLE_NULL, NULL, 0, &object);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveKeypair: Failed to invoke TEE_CreatePersistentObject. ret: %x", ret);
+        SLogError("TEESaveData: Failed to invoke TEE_CreatePersistentObject. ret: %x", ret);
         return TEE_ERROR_GENERIC;
     }
     ret = TEE_WriteObjectData(object, (void *)buffer, bufferLen);
     if (ret != TEE_SUCCESS) {
-        SLogError("SaveKeypair: Failed to invoke TEE_WriteObjectData. ret: %x", ret);
+        SLogError("TEESaveData: Failed to invoke TEE_WriteObjectData. ret: %x", ret);
         TEE_CloseObject(object);
         return TEE_ERROR_GENERIC;
     }
@@ -248,24 +260,37 @@ TEE_Result SaveData(char *buffer, size_t bufferLen, char *path) {
     return TEE_SUCCESS;
 }
 
-int SaveKeypair(BIO *bio, char *path) {
-    int ret = 0;
-    size_t bufferLen = BIO_ctrl_pending(bio);
-    SLogError("%d\n", bufferLen);
-    char *buffer = (char *)TEE_Malloc(bufferLen, 0);
-    BIO_read(bio, buffer, bufferLen);
-    DumpBuff(buffer, bufferLen, "Keypair");
-    if (SaveData(buffer, bufferLen, path) != TEE_SUCCESS) {
-        ret = 1;
+// 调用TEE安全存储接口读取数据
+TEE_Result TEEReadData(char *path, char *buffer, uint32_t *bufferLen)
+{
+    TEE_Result ret;
+    TEE_ObjectHandle object = NULL;
+    ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, path, strlen(path), TEE_DATA_FLAG_ACCESS_READ, &object);
+    if (ret != TEE_SUCCESS) {
+        SLogError("TEEReadData: Failed to invoke TEE_OpenPersistentObject. ret: %x", ret);
+        return TEE_ERROR_GENERIC;
     }
-    TEE_Free(buffer);
-    return ret;
+    ret = TEE_ReadObjectData(object, (void *)buffer, *bufferLen, bufferLen);
+    if (ret != TEE_SUCCESS) {
+        TEE_CloseObject(object);
+        SLogError("TEEReadData: Failed to invoke TEE_ReadObjectData. ret: %x", ret);
+        return TEE_ERROR_GENERIC;
+    }
+    TEE_CloseObject(object);
+    return TEE_SUCCESS;
 }
 
+// 创建自签名根证书
 TEE_Result CreateRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
                           SessionIdentity *identity)
 {
     SLogTrace("---- CreateRootCert------- ");
+    if (TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)
+        || TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)
+        || TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX2)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
+    }
     TEE_Result ret;
     char *commonName = params[PARAMS_IDX0].memref.buffer;
     char *cipher = params[PARAMS_IDX1].memref.buffer;
@@ -273,74 +298,135 @@ TEE_Result CreateRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
     X509_REQ *req = X509_REQ_new();
     X509 *x = X509_new();
     BIO *keyBIO = BIO_new(BIO_s_mem());
+    BIO *certBIO = BIO_new(BIO_s_mem());
     char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
     sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
     sprintf(rootKeyPath, "%s/%s/root_key.pem", SEC_STORAGE_PATH, identity->username);
     if (strcmp(cipher, "RSA") == 0) {
+        // 生成RSA key
         RSA *rsa = RSA_new();
         GenRSA(rsa);
         EVP_PKEY_assign_RSA(pkey, rsa);
+        // 生成证书请求文件
         GenerateREQ(pkey, req, commonName, EVP_sha256());
+        // 生成自签名根证书
         SignRootCert(pkey, req, x, EVP_sha256());
+        // 将RSA key写入BIO
         PEM_write_bio_RSAPrivateKey(keyBIO, rsa, NULL, NULL, 0, NULL, NULL);
         RSA_free(rsa);
         ret = TEE_SUCCESS;
     } else if (strcmp(cipher, "SM2") == 0) {
+        // 生成SM2 key
         EC_KEY *eckey = EC_KEY_new();
         GenSM2(eckey);
         EVP_PKEY_assign_EC_KEY(pkey, eckey);
+        // 生成证书请求文件
         GenerateREQ(pkey, req, commonName, EVP_sha256());
+        // 生成自签名根证书
         SignRootCert(pkey, req, x, EVP_sha256());
+        // 将SM2 key写入BIO
         PEM_write_bio_ECPrivateKey(keyBIO, eckey, NULL, NULL, 0, NULL, NULL);
         EC_KEY_free(eckey);
         ret = TEE_SUCCESS;
     } else {
         SLogError("Invalid parameters. cipher: %s", cipher);
         ret = TEE_ERROR_GENERIC;
+        goto end;
     }
-    SaveKeypair(keyBIO, rootKeyPath);
-    BIO_free(keyBIO);
-    SLogError("certBIO");
-    BIO *certBIO = BIO_new(BIO_s_mem());
+
+    // 保存密钥对
+    size_t keyBufferLen = BIO_ctrl_pending(keyBIO);
+    char *keyBuffer = (char *)TEE_Malloc(keyBufferLen, 0);
+    BIO_read(keyBIO, keyBuffer, keyBufferLen);
+    if (TEESaveData(keyBuffer, keyBufferLen, rootKeyPath) != TEE_SUCCESS) {
+        ret = TEE_ERROR_GENERIC;
+        TEE_Free(keyBuffer);
+        goto end;
+    }
+    TEE_Free(keyBuffer);
+
+    // 保存根证书
     PEM_write_bio_X509(certBIO, x);
-    size_t bufferLen = BIO_ctrl_pending(certBIO);
-    SLogError("%d\n", bufferLen);
-    char *buffer = (char *)TEE_Malloc(bufferLen, 0);
-    BIO_read(certBIO, buffer, bufferLen);
-    DumpBuff(buffer, bufferLen, "cert");
-    SaveData(buffer, bufferLen, rootCertPath);
-    TEE_MemMove(params[PARAMS_IDX2].memref.buffer, buffer, bufferLen);
-    params[PARAMS_IDX2].memref.size = bufferLen;
-    TEE_Free(buffer);
+    size_t certBufferLen = BIO_ctrl_pending(certBIO);
+    char *certBuffer = (char *)TEE_Malloc(certBufferLen, 0);
+    BIO_read(certBIO, certBuffer, certBufferLen);
+    DumpBuff(certBuffer, certBufferLen, "root_cert");
+    if (TEESaveData(certBuffer, certBufferLen, rootCertPath) != TEE_SUCCESS) {
+        ret = TEE_ERROR_GENERIC;
+        TEE_Free(certBuffer);
+        goto end;
+    }
+
+    // 根证书数据返回给CA
+    TEE_MemMove(params[PARAMS_IDX2].memref.buffer, certBuffer, certBufferLen);
+    params[PARAMS_IDX2].memref.size = certBufferLen;
+    TEE_Free(certBuffer);
+
+end:
+    // 释放资源
+    BIO_free(keyBIO);
     BIO_free(certBIO);
     EVP_PKEY_free(pkey);
     X509_free(x);
     return ret;
 }
 
-int pkey_ctrl_string(EVP_PKEY_CTX *ctx, const char *value)
+// 查询根证书信息
+TEE_Result ShowRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
+                        SessionIdentity *identity)
 {
-    int rv;
-    char *stmp, *vtmp = NULL;
-    stmp = OPENSSL_strdup(value);
-    if (!stmp)
-        return -1;
-    vtmp = strchr(stmp, ':');
-    if (vtmp) {
-        *vtmp = 0;
-        vtmp++;
+    SLogTrace("---- ShowRootCert------- ");
+    if (TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
     }
-    rv = EVP_PKEY_CTX_ctrl_str(ctx, stmp, vtmp);
-    OPENSSL_free(stmp);
-    return rv;
+    // 读取根证书并写入BIO
+    char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
+    sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
+    BIO *rootCertBIO = BIO_new(BIO_s_mem());
+    char rootCertBuffer[PEM_BUFFER_LEN] = {0};
+    uint32_t rootCertBufferLen = PEM_BUFFER_LEN;
+    if (TEEReadData(rootCertPath, rootCertBuffer, &rootCertBufferLen) != TEE_SUCCESS) {
+        SLogError("Failed to read root cert.");
+        BIO_free(rootCertBIO);
+        return TEE_ERROR_GENERIC;
+    }
+    BIO_write(rootCertBIO, rootCertBuffer, rootCertBufferLen);
+
+    // 生成X509
+    X509 *xca;
+    xca = PEM_read_bio_X509(rootCertBIO, NULL, 0, NULL);
+    if (xca == NULL) {
+        SLogError("Failed to read root cert.");
+        BIO_free(rootCertBIO);
+        return TEE_ERROR_GENERIC;
+    }
+
+    // 获取证书信息写入BIO
+    BIO *out = BIO_new(BIO_s_mem());
+    X509_print_ex(out, xca, XN_FLAG_ONELINE, 0);
+    size_t bufferLen = BIO_ctrl_pending(out);
+    char *buffer = (char *)TEE_Malloc(bufferLen, 0);
+    BIO_read(out, buffer, bufferLen);
+
+    // 证书信息返回给CA
+    TEE_MemMove(params[PARAMS_IDX0].memref.buffer, buffer, bufferLen);
+    params[PARAMS_IDX0].memref.size = bufferLen;
+
+    // 释放资源
+    TEE_Free(buffer);
+    X509_free(xca);
+    BIO_free(rootCertBIO);
+    BIO_free(out);
+    return TEE_SUCCESS;
 }
 
-static int do_sign_init(EVP_MD_CTX *ctx, EVP_PKEY *pkey,
-                        const EVP_MD *md, STACK_OF(OPENSSL_STRING) *sigopts)
+// 调用OpenSSL函数进行签名
+static int do_sign_init(EVP_MD_CTX *ctx, EVP_PKEY *pkey, const EVP_MD *md)
 {
     EVP_PKEY_CTX *pkctx = NULL;
-    int i, def_nid;
+    int def_nid;
 
     if (ctx == NULL)
         return 0;
@@ -355,33 +441,23 @@ static int do_sign_init(EVP_MD_CTX *ctx, EVP_PKEY *pkey,
     }
     if (!EVP_DigestSignInit(ctx, &pkctx, md, NULL, pkey))
         return 0;
-    for (i = 0; i < sk_OPENSSL_STRING_num(sigopts); i++) {
-        char *sigopt = sk_OPENSSL_STRING_value(sigopts, i);
-        if (pkey_ctrl_string(pkctx, sigopt) <= 0) {
-            printf("parameter error \"%s\"\n", sigopt);
-            return 0;
-        }
-    }
     return 1;
 }
 
-int do_X509_sign(X509 *x, EVP_PKEY *pkey, const EVP_MD *md,
-                 STACK_OF(OPENSSL_STRING) *sigopts)
+int do_X509_sign(X509 *x, EVP_PKEY *pkey, const EVP_MD *md)
 {
     int rv;
     EVP_MD_CTX *mctx = EVP_MD_CTX_new();
 
-    rv = do_sign_init(mctx, pkey, md, sigopts);
+    rv = do_sign_init(mctx, pkey, md);
     if (rv > 0)
         rv = X509_sign_ctx(x, mctx);
     EVP_MD_CTX_free(mctx);
     return rv > 0 ? 1 : 0;
 }
 
-static int x509_certify(const EVP_MD *digest,
-                        X509 *x, X509 *xca, EVP_PKEY *pkey,
-                        STACK_OF(OPENSSL_STRING) *sigopts,
-                        int days)
+static int X509_certify(const EVP_MD *digest,
+                        X509 *x, X509 *xca, EVP_PKEY *pkey, int days)
 {
     int ret = 0;
     ASN1_INTEGER *sno = NULL;
@@ -389,7 +465,7 @@ static int x509_certify(const EVP_MD *digest,
 
     upkey = X509_get0_pubkey(xca);
     if (upkey == NULL) {
-        printf("Error obtaining CA X509 public key\n");
+        SLogError("Error obtaining CA X509 public key.");
         goto end;
     }
     EVP_PKEY_copy_parameters(upkey, pkey);
@@ -401,7 +477,7 @@ static int x509_certify(const EVP_MD *digest,
     BN_to_ASN1_INTEGER(btmp, sno);
 
     if (!X509_check_private_key(xca, pkey)) {
-        printf("CA certificate and CA private key do not match\n");
+        SLogError("CA certificate and CA private key do not match.");
         goto end;
     }
 
@@ -413,18 +489,18 @@ static int x509_certify(const EVP_MD *digest,
     X509_gmtime_adj(X509_getm_notBefore(x), 0);
     X509_time_adj_ex(X509_getm_notAfter(x), days, 0, NULL);
 
-    if (!do_X509_sign(x, pkey, digest, sigopts))
+    if (!do_X509_sign(x, pkey, digest))
         goto end;
     ret = 1;
  end:
     if (!ret)
-        printf("Failed to verify certificate.");
+        SLogError("Failed to verify certificate.");
     if (sno)
         ASN1_INTEGER_free(sno);
     return ret;
 }
 
-int x509SignCsr(X509 *x, EVP_PKEY *CApkey, X509_REQ *req, X509 *xca)
+int X509SignReq(X509 *x, EVP_PKEY *CApkey, X509_REQ *req, X509 *xca)
 {
     int days = 360;
 
@@ -438,139 +514,127 @@ int x509SignCsr(X509 *x, EVP_PKEY *CApkey, X509_REQ *req, X509 *xca)
     EVP_PKEY *pkey;
     pkey = X509_REQ_get0_pubkey(req);
     X509_set_pubkey(x, pkey);
-    x509_certify(EVP_sha256(), x, xca, CApkey, NULL, days);
+    if (X509_certify(EVP_sha256(), x, xca, CApkey, days) != 1) {
+        return 1;
+    }
     return 0;
 }
 
-int ReadFile(char *path, char *buffer, uint32_t *bufferLen)
+// 使用根证书和根密钥对证书请求文件进行签名
+TEE_Result SignX509Cert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
+                        SessionIdentity *identity)
 {
-    TEE_Result ret;
-    TEE_ObjectHandle object = NULL;
-    ret = TEE_OpenPersistentObject(TEE_OBJECT_STORAGE_PRIVATE, path, strlen(path), TEE_DATA_FLAG_ACCESS_READ, &object);
-    if (ret != TEE_SUCCESS) {
-        SLogError("DecryptVote: Failed to invoke TEE_OpenPersistentObject. ret: %x", ret);
-        return TEE_ERROR_GENERIC;
+    SLogTrace("---- SignX509Cert------- ");
+    if (TEE_PARAM_TYPE_MEMREF_INPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX0)
+        || TEE_PARAM_TYPE_MEMREF_OUTPUT != TEE_PARAM_TYPE_GET(paramTypes, PARAMS_IDX1)) {
+        SLogError("Invalid parameters.");
+        return TEE_ERROR_BAD_PARAMETERS;
     }
-    ret = TEE_ReadObjectData(object, (void *)buffer, *bufferLen, bufferLen);
-    if (ret != TEE_SUCCESS) {
-        TEE_CloseObject(object);
-        SLogError("DecryptVote: Failed to invoke TEE_ReadObjectData. ret: %x", ret);
-        return TEE_ERROR_GENERIC;
-    }
-    TEE_CloseObject(object);
-    return TEE_SUCCESS;
-}
-
-TEE_Result CmdSignCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
-                       SessionIdentity *identity)
-{
-    SLogTrace("---- CmdSignCert------- ");
+    TEE_Result ret = TEE_ERROR_GENERIC;
     char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
     char rootKeyPath[SEC_STORAGE_PATH_MAX] = {0};
     sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
     sprintf(rootKeyPath, "%s/%s/root_key.pem", SEC_STORAGE_PATH, identity->username);
-    BIO *rootKeyBIO = BIO_new(BIO_s_mem());
-    BIO *rootCertBIO = BIO_new(BIO_s_mem());
     char rootCertBuffer[PEM_BUFFER_LEN] = {0};
     uint32_t rootCertBufferLen = PEM_BUFFER_LEN;
-    ReadFile(rootCertPath, rootCertBuffer, &rootCertBufferLen);
-    BIO_write(rootCertBIO, rootCertBuffer, rootCertBufferLen);
+    if (TEEReadData(rootCertPath, rootCertBuffer, &rootCertBufferLen) != TEE_SUCCESS) {
+        SLogError("Failed to read root cert.");
+        return ret;
+    }
     char rootKeyBuffer[PEM_BUFFER_LEN] = {0};
     uint32_t rootKeyBufferLen = PEM_BUFFER_LEN;
-    ReadFile(rootKeyPath, rootKeyBuffer, &rootKeyBufferLen);
+    if (TEEReadData(rootKeyPath, rootKeyBuffer, &rootKeyBufferLen) != TEE_SUCCESS) {
+        SLogError("Failed to read root key.");
+        return ret;
+    }
+    BIO *rootKeyBIO = BIO_new(BIO_s_mem());
+    BIO *rootCertBIO = BIO_new(BIO_s_mem());
+    BIO_write(rootCertBIO, rootCertBuffer, rootCertBufferLen);
     BIO_write(rootKeyBIO, rootKeyBuffer, rootKeyBufferLen);
-    char *csrBuffer = params[PARAMS_IDX0].memref.buffer;
-    size_t csrBufferLen = params[PARAMS_IDX0].memref.size;
+    char *reqBuffer = params[PARAMS_IDX0].memref.buffer;
+    size_t reqBufferLen = params[PARAMS_IDX0].memref.size;
     BIO *certBIO = BIO_new(BIO_s_mem());
-    BIO *csrBIO = BIO_new(BIO_s_mem());
-    BIO_write(csrBIO, csrBuffer, csrBufferLen);
-    X509_REQ *req;
-    req = PEM_read_bio_X509_REQ(csrBIO, NULL, NULL, NULL);
+    BIO *reqBIO = BIO_new(BIO_s_mem());
+    BIO_write(reqBIO, reqBuffer, reqBufferLen);
+
+    X509_REQ *req = NULL;
     EVP_PKEY *pkey = NULL;
+    EVP_PKEY *CApkey = NULL;
+    EVP_PKEY *reqPkey = NULL;
+    X509 *x = NULL;
+    X509 *xca = NULL;
 
-    EVP_PKEY *CApkey;
-    CApkey = PEM_read_bio_PrivateKey(rootKeyBIO, NULL, NULL, NULL);
-    if (CApkey == NULL) {
-        printf("CApkey is NULL\n");
-    }
-    X509 *x = X509_new();
-
-    X509 *xca;
-    xca = PEM_read_bio_X509(rootCertBIO, NULL, 0, NULL);
-    if (xca == NULL) {
-        printf("xca is NULL\n");
-    }
-    EVP_PKEY *tmpPkey;
-    if ((tmpPkey = X509_REQ_get0_pubkey(req)) == NULL) {
-        printf("error unpacking public key\n");
+    req = PEM_read_bio_X509_REQ(reqBIO, NULL, NULL, NULL);
+    if (req == NULL) {
+        SLogError("Failed to read certificate signing request.");
         goto end;
     }
-    int i = X509_REQ_verify(req, tmpPkey);
+
+    CApkey = PEM_read_bio_PrivateKey(rootKeyBIO, NULL, NULL, NULL);
+    if (CApkey == NULL) {
+        SLogError("Failed to read root key.");
+        goto end;
+    }
+
+    xca = PEM_read_bio_X509(rootCertBIO, NULL, 0, NULL);
+    if (xca == NULL) {
+        SLogError("Failed to read root cert.");
+        goto end;
+    }
+
+    if ((reqPkey = X509_REQ_get0_pubkey(req)) == NULL) {
+        SLogError("Failed to get public key.");
+        goto end;
+    }
+    int i = X509_REQ_verify(req, reqPkey);
     if (i < 0) {
-        printf("Signature verification error\n");
+        SLogError("Signature verification error.");
         goto end;
     }
     if (i == 0) {
-        printf("Signature did not match the certificate request\n");
+        SLogError("Signature did not match the certificate request.");
         goto end;
-    } else {
-        printf("Signature ok\n");
     }
 
-    x509SignCsr(x, CApkey, req, xca);
+    x = X509_new();
+    if (X509SignReq(x, CApkey, req, xca) != 0) {
+        goto end;
+    }
 
     PEM_write_bio_X509(certBIO, x);
     size_t bufferLen = BIO_ctrl_pending(certBIO);
     char *buffer = (char *)TEE_Malloc(bufferLen, 0);
     BIO_read(certBIO, buffer, bufferLen);
     DumpBuff(buffer, bufferLen, "cert");
-    SLogError("TEE_MemMove");
     TEE_MemMove(params[PARAMS_IDX1].memref.buffer, buffer, bufferLen);
     params[PARAMS_IDX1].memref.size = bufferLen;
     TEE_Free(buffer);
+    ret = TEE_SUCCESS;
 
 end:
-    EVP_PKEY_free(CApkey);
-    X509_free(x);
+    if (CApkey != NULL) {
+        EVP_PKEY_free(CApkey);
+    }
+    if (reqPkey != NULL) {
+        EVP_PKEY_free(reqPkey);
+    }
+    if (pkey != NULL) {
+        EVP_PKEY_free(pkey);
+    }
+    if (x != NULL) {
+        X509_free(x);
+    }
+    if (xca != NULL) {
+        X509_free(xca);
+    }
+    if (req != NULL) {
+        X509_REQ_free(req);
+    }
     BIO_free(certBIO);
-    BIO_free(csrBIO);
+    BIO_free(reqBIO);
     BIO_free(rootCertBIO);
     BIO_free(rootKeyBIO);
-    EVP_PKEY_free(pkey);
-    return TEE_SUCCESS;
-}
-
-TEE_Result CmdShowRootCert(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE],
-                           SessionIdentity *identity)
-{
-    SLogTrace("---- CmdShowRootCert------- ");
-    char rootCertPath[SEC_STORAGE_PATH_MAX] = {0};
-    sprintf(rootCertPath, "%s/%s/root_cert.pem", SEC_STORAGE_PATH, identity->username);
-    BIO *rootCertBIO = BIO_new(BIO_s_mem());
-    char rootCertBuffer[PEM_BUFFER_LEN] = {0};
-    uint32_t rootCertBufferLen = PEM_BUFFER_LEN;
-    ReadFile(rootCertPath, rootCertBuffer, &rootCertBufferLen);
-    BIO_write(rootCertBIO, rootCertBuffer, rootCertBufferLen);
-
-    X509 *xca;
-    xca = PEM_read_bio_X509(rootCertBIO, NULL, 0, NULL);
-    if (xca == NULL) {
-        printf("xca is NULL\n");
-        BIO_free(rootCertBIO);
-        return TEE_ERROR_GENERIC;
-    }
-    BIO *out = BIO_new(BIO_s_mem());
-    X509_print_ex(out, xca, XN_FLAG_ONELINE, 0);
-    size_t bufferLen = BIO_ctrl_pending(out);
-    char *buffer = (char *)TEE_Malloc(bufferLen, 0);
-    BIO_read(out, buffer, bufferLen);
-    TEE_MemMove(params[PARAMS_IDX0].memref.buffer, buffer, bufferLen);
-    params[PARAMS_IDX0].memref.size = bufferLen;
-    TEE_Free(buffer);
-    X509_free(xca);
-    BIO_free(rootCertBIO);
-    BIO_free(out);
-    return TEE_SUCCESS;
+    return ret;
 }
 
 TEE_Result TA_InvokeCommandEntryPoint(void *sessionContext, uint32_t cmdId,
@@ -585,20 +649,21 @@ TEE_Result TA_InvokeCommandEntryPoint(void *sessionContext, uint32_t cmdId,
     }
     switch (cmdId) {
         case CMD_GET_ROOT_CERT_STATE:
-            ret = GetCertState(paramTypes, params, identity);
+            ret = GetRootCertState(identity);
             break;
 
         case CMD_CREAT_ROOT_CERT:
             ret = CreateRootCert(paramTypes, params, identity);
             break;
 
-        case CMD_SIGN_X509_CERT:
-            ret = CmdSignCert(paramTypes, params, identity);
+        case CMD_SHOW_ROOT_CERT:
+            ret = ShowRootCert(paramTypes, params, identity);
             break;
 
-        case CMD_SHOW_ROOT_CERT:
-            ret = CmdShowRootCert(paramTypes, params, identity);
+        case CMD_SIGN_X509_CERT:
+            ret = SignX509Cert(paramTypes, params, identity);
             break;
+
         default:
             SLogError("Unknown CMD ID: %d", cmdId);
             ret = TEE_FAIL;

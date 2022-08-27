@@ -13,7 +13,7 @@
 # limitations under the License.
 
 cmake_minimum_required(VERSION 2.8)
-project(cert-assign)
+project(cert-assign C)
 
 # Set variable
 # set kunpeng-sc-devel path

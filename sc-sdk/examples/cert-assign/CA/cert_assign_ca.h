@@ -35,15 +35,15 @@
 #define PATH_LEN                   1024
 #define USERNAME_LEN               32
 #define INPUT_LEN                  64
-#define CERT_BUFFER_LEN            4096
+#define MAX_BUFFER_LEN             4096
 
 #define BASE_STR    "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 typedef enum {
     CMD_GET_ROOT_CERT_STATE = 1,
     CMD_CREAT_ROOT_CERT,
-    CMD_SIGN_X509_CERT,
-    CMD_SHOW_ROOT_CERT
+    CMD_SHOW_ROOT_CERT,
+    CMD_SIGN_X509_CERT
 } CERT_ASSIGN_CMD;
 
 #endif

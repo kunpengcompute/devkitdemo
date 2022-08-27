@@ -52,7 +52,7 @@ The cert-assign demo is a reference implementation of the certificate issuance s
 
    ```shell
    vim ../CA/cert_assign_ca.h
-  # #define TA_UUID                "d17fa523-ab23-47fa-97b4-ede34acf748c"    //Developer certificate UUID [Change it based on the site requirements.]
+       #define TA_UUID                "d17fa523-ab23-47fa-97b4-ede34acf748c"    //Developer certificate UUID [Change it based on the site requirements.]
    ```
 
 7. Install the CA demo.
