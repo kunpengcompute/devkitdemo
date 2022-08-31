@@ -23,13 +23,13 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
    git clone https://github.com/kunpengcompute/devkitdemo.git
    ```
 
-2. 切入到项目根路径
+2. 进入到项目根路径
 
    ```shell
    cd ./devkitdemo/sc-sdk/examples/cert-assign/
    ```
 
-3. 修改./TA/config_cloud.ini中的开发者私钥和config的绝对路径
+3. 修改`./TA/config_cloud.ini`中的开发者私钥和config文件的绝对路径
 
    ```shell
    vim ./TA/config_cloud.ini
@@ -39,16 +39,16 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
    # configPath = /home/kunpeng/devkitdemo/sc-sdk/examples/cert-assign/TA/signed_config/config
    ```
 
-4. 将 ./TA/ 目录下的manifest.txt 文件替换成,申请开发者证书时使用的manifest.txt文件
+4. 将 `./TA/` 目录下的 `manifest.txt` 文件替换成申请开发者证书时使用的 `manifest.txt` 文件
 
-5. 安装TA demo，编译TA时需要静态链接适用于TEE的OpenSSL加解密库，安装`kunpeng-sc-devel-1.0.1`后会将适用于TEE的OpenSSL加解密库安装到/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a，也可以参考 **编译生成适用于TEE的libcrypto.a** 章节自行编译。
+5. 安装TA demo，编译TA时需要静态链接适用于TEE的OpenSSL加解密库，安装`kunpeng-sc-devel-1.0.1`后会将适用于TEE的OpenSSL加解密库安装到 `/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a` ，也可以参考 **编译生成适用于TEE的libcrypto.a** 章节自行编译。
 
    ```shell
    cd ./TA/
    ./install.sh
    ```
 
-6. 将../CA/cert_assign_ca.h中的TA_UUID修改为开发者申请证书的uuid
+6. 将 `../CA/cert_assign_ca.h` 中的 `TA_UUID` 修改为开发者申请证书的uuid
 
    ```shell
    vim ../CA/cert_assign_ca.h
@@ -64,9 +64,11 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 8. 运行demo
 
-   默认用户名：admin，密码：admin
+   默认用户名：**admin**
 
-   可以使用openssl制作证书请求文件，然后使用此应用对证书请求文件进行签名生成x509证书，例如：
+   密码：**admin**
+
+   可以使用OpenSSL制作证书请求文件，然后使用此应用对证书请求文件进行签名生成X509证书，例如：
    ```
    # 生成私钥
    openssl genrsa -out cert.key 2048
@@ -74,12 +76,12 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
    openssl req -new -sha256 -key cert.key -subj "/C=CN/CN=test" -out cert.csr
    ```
 
-   1. 首次运行需要先生成根证书，需要输入根证书的common name和密钥算法（支持RSA和SM2），根证书生成后会将根证书的私钥使用TEE的安全存储功能加密保存，根证书会返回给TA保存到root_cert.pem。
-   2. 根证书生成后可以输入`show`查看根证书的信息。
-   3. 生成证书请求文件，输入`sign`可以使用根证书对证书请求文件进行签名后生成x509证书。
-   4. 删除TEE内保存的根证书和私钥： `rm -rf /var/itrustee/sec_storage_data/sec_storage_data/cert_assign`
+   - 首次运行需要先生成根证书，需要输入根证书的common name和密钥算法（支持RSA和SM2），根证书生成后会将根证书的私钥使用TEE的安全存储功能加密保存，根证书会返回给TA保存到 `root_cert.pem` 。
+   - 根证书生成后可以输入`show`查看根证书的信息。
+   - 生成证书请求文件，输入`sign`可以使用根证书对证书请求文件进行签名后生成X509证书。
+   - 删除TEE内保存的根证书和私钥： `rm -rf /var/itrustee/sec_storage_data/sec_storage_data/cert_assign` 。
 
-   运行：
+   运行demo：
    ```shell
    /vendor/bin/cert-assign
    ```
@@ -87,24 +89,24 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 ## 编译生成适用于TEE的libcrypto.a
 
-下载openssl1.1.1k代码：
+1. 下载OpenSSL-1.1.1k代码：
 ```shell
 wget https://github.com/openssl/openssl/archive/refs/tags/OpenSSL_1_1_1k.tar.gz
 ```
 
-解压：
+2. 解压：
 ```shell
 tar -zxf OpenSSL_1_1_1k.tar.gz
 ```
 
-合入适用于TEE的patch，patch存放在patch目录:
+3. 合入适用于TEE的patch，patch存放在patch目录:
 ```shell
 cd openssl-OpenSSL_1_1_1k
 # patch路径根据实际路径修改
 patch -p1 < /path/to/openssl_for_tee.patch
 ```
 
-编译，编译前需要先安装 `kunpeng-sc` 和 `kunpeng-sc-devel` ， 编译后会生成适用于TEE的libcrypto.a：
+4. 编译，编译前需要先安装 `kunpeng-sc` 和 `kunpeng-sc-devel` ， 编译后会生成适用于TEE的`libcrypto.a`：
 ```shell
 ./config no-sock no-shared CFLAGS="-DOPENSSL_RAND_TEE -DNO_SYSLOG \
    -DOPENSSL_NO_UI_CONSOLE \
