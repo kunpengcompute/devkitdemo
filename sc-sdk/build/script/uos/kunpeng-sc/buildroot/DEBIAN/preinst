@@ -13,6 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+checkDir=("/usr/local/kunpeng-sc")
+for tmpDir in ${checkDir[*]}
+do
+    if [ -d ${tmpDir} ]; then
+        echo "Failed to install the SDK because the ${tmpDir} directory already exists."
+        echo "Clear the ${tmpDir} directory and install the SDK again."
+        exit 1
+    fi
+done
+
 rm -rf /usr/lib64/libboundscheck.so
 rm -rf /usr/lib64/libboundscheck.so.1
 rm -rf /usr/lib64/libteec.so
@@ -29,7 +39,6 @@ rm -rf /usr/lib/libteec_adaptor.so.1
 
 rm -rf /usr/bin/iteecd
 rm -rf /usr/bin/tlogcat
-rm -rf /usr/local/kunpeng-sc
 
 count=$(ps -ef | grep teecd | grep -v "grep" | wc -l)
 if [ ${count} -ne 0 ]; then

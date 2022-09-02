@@ -43,9 +43,6 @@ tar -xf ${BuildDir}/demo.tar.gz
 %build
 
 %install
-#rm -rf $RPM_BUILD_ROOT
-# clean BUILDROOT
-# rm -rf %{_buildrootdir}
 BuildDir=%{_builddir}/%{name}-%{version}
 SdkHome=$RPM_BUILD_ROOT/usr/local/%{name}
 SdkSource=${SdkHome}/source
@@ -80,6 +77,17 @@ cp -r ${BuildDir}/demo/* ${SdkExample}
 
 /usr/local/%{name}
 /usr/include/itrustee_sdk
+
+%pre
+checkDir=("/usr/local/%{name}" "/usr/include/itrustee_sdk")
+for tmpDir in ${checkDir[*]}
+do
+    if [ -d ${tmpDir} ]; then
+        echo "Failed to install the SDK because the ${tmpDir} directory already exists."
+        echo "Clear the ${tmpDir} directory and install the SDK again."
+        exit 1
+    fi
+done
 
 %postun
 rm -rf /usr/include/itrustee_sdk
