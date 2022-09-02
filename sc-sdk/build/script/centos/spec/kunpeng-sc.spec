@@ -96,6 +96,16 @@ cp -r ${BuildDir}/itrustee_tzdriver/ ${TzDriverDir}
 /lib64/libteec_adaptor.so.1
 
 %pre
+checkDir=("/usr/local/%{name}")
+for tmpDir in ${checkDir[*]}
+do
+    if [ -d ${tmpDir} ]; then
+        echo "Failed to install the SDK because the ${tmpDir} directory already exists."
+        echo "Clear the ${tmpDir} directory and install the SDK again."
+        exit 1
+    fi
+done
+
 rm -rf /lib64/libboundscheck.so
 rm -rf /lib64/libteec.so
 rm -rf /lib64/libteec_adaptor.so

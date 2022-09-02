@@ -3,7 +3,7 @@
 简体中文 | [English](README_en.md)
 
 ## 介绍
-**TA demo** 展示非安全侧示例，如果需要运行，请和CA demo配合使用
+**TA demo** 展示安全侧示例，如果需要运行，请和CA demo配合使用
 
 ## 使用依赖
 
