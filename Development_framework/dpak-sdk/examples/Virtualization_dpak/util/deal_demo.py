@@ -2,7 +2,7 @@ import os
 import sys
 
 from configparser import ConfigParser
-from time import time
+import time
 from common_util import subprocess_command, common_result_check_contain,common_result_check_not_contain
 
 
@@ -24,7 +24,7 @@ class DealDemo:
     def check_virtual_first_config_status(self):
         check_item = ["ACTIVE"]
         software = "virtual1"
-        ssh_command = ["openstack", "server show {}".format(self.vm_id_first)]
+        ssh_command = ["openstack", "server", "show", "{}".format(self.vm_id_first)]
         value = subprocess_command(ssh_command)
         status, check_result = common_result_check_not_contain(software, value, check_item)
         return status, check_result
@@ -53,7 +53,7 @@ class DealDemo:
 
     def nova_interface_detach(self):
         print("虚拟机进行热拔")
-        ssh_command = ['nova','interface-detach', '{}'.format(self.vm_id_second), '{}'.format(self.port_id_first)]
+        ssh_command = ['nova','interface-detach', '{}'.format(self.vm_id_first), '{}'.format(self.port_id_first)]
         subprocess_command(ssh_command)
         ssh_command = ['openstack',"port", "show", "{}".format(self.port_id_first)]
         value = subprocess_command(ssh_command)
@@ -69,11 +69,11 @@ class DealDemo:
 
     def nova_interface_attach(self):
         print("虚拟机进行热插")
-        ssh_command = ['nova','interface-attach', '{}'.format(self.vm_id_second), '{}'.format(self.port_id_first)]
+        ssh_command = ['nova','interface-attach', '{}'.format(self.vm_id_first), '--port-id={}'.format(self.port_id_first)]
         subprocess_command(ssh_command)
         ssh_command = ['openstack',"port", 'show', "{}".format(self.port_id_first)]
         value = '虚拟机进行热插失败'
-        for i in range(120):
+        for i in range(10):
             value = subprocess_command(ssh_command)
             time.sleep(5)
             if "ACTIVE" in value:
@@ -87,12 +87,12 @@ class DealDemo:
     
     def check_virtual_first_status(self):
         """检查热迁移后虚拟机1的状态"""
-        print("检查热迁移后虚拟机1的状态")
+        print("验证迁移后虚拟机1的状态")
         ssh_command = ['openstack','server', 'show', '{}'.format(self.vm_id_second)]
         value = subprocess_command(ssh_command)
         if value == 'fail':
             return False, 'mgigrate faild'
-        if host_name_first in value:
+        if host_name_second in value:
             return True, 'mgigrate success'
 
     def ip2_ping_ip1(self):

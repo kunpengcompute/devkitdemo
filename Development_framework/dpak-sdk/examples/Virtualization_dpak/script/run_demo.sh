@@ -1,8 +1,8 @@
 #!/usr/bin/bash
-# demo主入口
-# 做免密操作
+
 # 执行python脚本运行demo
 current_dir=$(cd "$(dirname "$0")";pwd)
+ip_pattern='(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])$'
 
 get_local_ip(){
     local input_ip=$1
@@ -14,17 +14,16 @@ get_local_ip(){
 }
 
 create_pub_cert(){
-    if [ -f ${HOME}/.ssh/id_rsa.pub && -f ${HOME}/.ssh/id_rsa ]; then
+    if [[ -f ${HOME}/.ssh/id_rsa.pub && -f ${HOME}/.ssh/id_rsa ]];then
         echo 'the rsa exits'
     else
         ssh-keygen -t rsa
-        if [ $? != 0 ]; then
+        if [ $? != 0 ];then
             echo 'create rsa faild'
             exit 1
         fi
     fi
 }
-
 
 config_password_free(){
     local user=$1
@@ -43,7 +42,7 @@ check_password_free_status(){
     local user_ip=$1
     local port=$2
     res=$(ssh ${user_ip} -p ${port} -o PreferredAuthentications=publickey -o StrictHostKeyChecking=no "date" | wc -l)
-    if [[] $res == 1 ]]; then
+    if [[ $res == 1 ]]; then
         echo 'password free is ok'
     else
         echo 'password free is not ok'
@@ -53,7 +52,6 @@ check_password_free_status(){
 get_user_connect_info_ip(){
     # 获取用户信息
     local type=$1
-    # ip
     local flag=1
     while [[ ${flag} == 1 ]]; do
         read -p "input your ${type} ip: " IP
@@ -62,10 +60,6 @@ get_user_connect_info_ip(){
             continue
         else
             break
-        fi
-        if [ ${flag} >3 ]; then
-            echo '输入正确的port'
-            exit 1
         fi
     done
 
@@ -90,12 +84,7 @@ get_user_connect_info_port(){
         else
             break
         fi
-        if [ $flag >3 ]; then
-            echo '输入正确的port'
-            exit 1
-        fi
     done
-
     if [[ ${type} == 'storage' || ${type} == 'compute_first' || ${type} == 'compute_second' ]]; then
         input_port=${PORT}
     else
@@ -110,15 +99,11 @@ get_user_connect_info_username(){
     local flag=1
     while [[ $flag == 1 ]]; do
         read -p "input your ${type} username: " USERNAME
-        if [ -Z ${USERNAME} ]; then
+        if [ -z ${USERNAME} ]; then
             ((i++))
             continue
         else
             break
-        fi
-        if [ $flag >3 ]; then
-            echo '输入正确的用户名'
-            exit 1
         fi
     done
 
@@ -167,7 +152,7 @@ echo "start check storage server..."
 get_user_connect_info 'storage'
 sed -i "s#port_storage=''#port_storage=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#username_storage=''#username_storage=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#ip_storage=''#username_storage=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#ip_storage=''#ip_storage=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
 python3 ${current_dir}/../util/check_env_storage.py
 if [[ $? == 0 ]];then
@@ -206,12 +191,11 @@ else
 fi
 
 nova_service_list(){
-    host_names=$(openstack compute service list| grep 'nova-compute')
-    host_name1=$(echo ${host_names}| awk -F "|" '{print $4}' | head -n 1)
-    host_name2=$(echo ${host_names}| awk -F "|" '{print $4}' | head -n 2)
-    host_name1=$(echo ${host_name1}|sed s/[[:space:]]//g)
-    host_name2=$(echo ${host_name2}|sed s/[[:space:]]//g)
-    sed -i "s#host_name_first=''#host_name_first=${host_name1}#g" $current_dir/../conf/demo_conf.cfg 
+    host_names_1=$(openstack compute service list| grep 'nova-compute'| head -n 1| awk -F "|" '{print $4}' )
+    host_name1=$(echo ${host_names_1}|sed s/[[:space:]]//g)
+    sed -i "s#host_name_first=''#host_name_first=${host_name1}#g" $current_dir/../conf/demo_conf.cfg
+    host_names_2=$(openstack compute service list| grep 'nova-compute' | tail -n 1| awk -F "|" '{print $4}')
+    host_name2=$(echo ${host_names_2}|sed s/[[:space:]]//g) 
     sed -i "s#host_name_second=''#host_name_second=${host_name2}#g" $current_dir/../conf/demo_conf.cfg 
 
 }
@@ -222,10 +206,10 @@ create_vm(){
     local port_name=$1
     local vm_name=$2
     local ip=$3
-    port_id=$(openstack port create --network public --vnic-type direct --binding-profile '{"capablities": "switchdev","hw_type": "direct","max_queues": "1","n_rxq": "1"}' ${port_name} | grep "| id" | awk -F "|" '{print $3}')
+    port_id=$(openstack port create --network test --vnic-type direct --binding-profile '{"capabilities": "switchdev","hw_type": "direct","max_queues": "1","n_rxq": "1"}' ${port_name} | grep "| id" | awk -F "|" '{print $3}')
     if [[ $? == 0 ]]; then
         port_id=$(echo ${port_id}|sed s/[[:space:]]//g)
-        vm_id=$(openstack server create --image 'centos' --flavor 'm1.tiny' --nic port-id=${port_id} --availability-zone nova:${ip} ${vm_name} | grep "| id" | awk -F "|" '{print $3}')
+        vm_id=$(openstack server create --image centos --flavor jen_flavor --nic port-id=${port_id} --availability-zone nova:${ip} ${vm_name} | grep "| id" | awk -F "|" '{print $3}')
         if [[ $? == 0 ]];then
             vm_id=$(echo ${vm_id}|sed s/[[:space:]]//g)
             echo "${vm_name} create success"

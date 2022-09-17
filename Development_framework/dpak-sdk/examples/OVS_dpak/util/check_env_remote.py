@@ -2,7 +2,7 @@ import re
 from common_util import subprocess_command, common_result_check_contain, common_result_check_not_contain
 
 
-class CheckDemoEnvironme:
+class CheckDemoEnvironment:
 
     def __init__(self, ip=None, username=None,port=None,flag=None):
         self.ssh_command = 'ssh -p {} {}@{}'.format(port,username,ip)
@@ -31,7 +31,7 @@ class CheckDemoEnvironme:
         check_item = ['openEuler release 20.03 (LTS-SP1)']
         software = "os_system"
         ssh_command = ['cat', '/etc/system-release']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
@@ -42,8 +42,8 @@ class CheckDemoEnvironme:
         """huge mount"""
         check_item = ["/mnt/huge"]
         software = "huge"
-        ssh_command = ['cat', '/etcfstab']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = ['cat', '/etc/fstab']
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                         common_result_check_contain)
         if status:
@@ -51,10 +51,10 @@ class CheckDemoEnvironme:
         return status,check_result
 
     def check_status_firewalld(self):
-        check_item = ["incative"]
+        check_item = ["inactive"]
         software = "firewalld"
         ssh_command = ['systemctl', 'status', 'firewalld']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
@@ -65,7 +65,7 @@ class CheckDemoEnvironme:
         check_item = ["hisdk3","hiovs3","hinic3"]
         software = "hinic3"
         ssh_command = ['lsmod']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
@@ -76,7 +76,7 @@ class CheckDemoEnvironme:
         check_item = ["dpdk","vf"]
         software = "ovs_vsctl_show"
         ssh_command = ['ovs-vsctl','show']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
@@ -87,7 +87,7 @@ class CheckDemoEnvironme:
         check_item = ["VirtIO"]
         software = "VF device"
         ssh_command = ['hinicadm3','info']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
@@ -99,7 +99,7 @@ class CheckDemoEnvironme:
         check_item = ['running']
         software = 'The openswitch service'
         ssh_command = ['service','openvswitch','status']
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command, common_result_check_contain)
         if status:
             print('  The openswitch server is running')
@@ -110,7 +110,7 @@ class CheckDemoEnvironme:
         check_item = ['1 received']
         software = 'VM ping'
         ssh_command = ['ping','-c 1', ip]
-        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self,self.flag)
+        ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command, common_result_check_contain)
         if status:
             print('  VM1 can ping vm2')

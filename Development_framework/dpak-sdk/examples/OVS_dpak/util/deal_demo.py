@@ -56,11 +56,11 @@ if __name__ == "__main__":
     port_compute_first = cfg['compute_first'].get('port_compute_first')
     username_compute_first = cfg['compute_first'].get('username_compute_first')
     ip_compute_first = cfg['compute_first'].get('ip_compute_first')
-    eth0_ip_first =  cfg['compute_first'].get('ip_compute_first')
+    eth0_ip_first =  cfg['compute_first'].get('eth0_ip_first')
     port_compute_second = cfg['compute_second'].get('port_compute_second')
     username_compute_second = cfg['compute_second'].get('username_compute_second')
     ip_compute_second = cfg['compute_second'].get('ip_compute_second')
-    eth0_ip_second =  cfg['compute_second'].get('ip_compute_second')
+    eth0_ip_second =  cfg['compute_second'].get('eth0_ip_second')
     process_list = []
     process_1 = Process(target=check_demo_server,args=(ip_compute_first,username_compute_first,port_compute_first,eth0_ip_second))
     process_2 = Process(target=check_demo_server,args=(ip_compute_second,username_compute_second,port_compute_second,eth0_ip_first))

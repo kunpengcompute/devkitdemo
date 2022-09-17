@@ -1,9 +1,8 @@
 import re
-from subprocess import STARTF_USESTDHANDLES
 from common_util import subprocess_command, common_result_check_contain, common_result_check_not_contain
 
 
-class CheckDemoEnvironme:
+class CheckDemoEnvironment:
 
     def __init__(self, ip=None, username=None, port=None):
         self.ssh_command = 'ssh -p {} {}@{}'.format(port, username, ip)
@@ -45,7 +44,7 @@ class CheckDemoEnvironme:
         check_item = ["/mnt/huge"]
         software = "huge"
         ssh_command = self.ssh_command.split(' ')
-        ssh_command.append('cat /etcfstab')
+        ssh_command.append('cat /etc/fstab')
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
@@ -53,7 +52,7 @@ class CheckDemoEnvironme:
         return status,check_result
 
     def check_status_firewalld(self):
-        check_item = ["incative"]
+        check_item = ["inactive"]
         software = "firewalld"
         ssh_command = ['systemctl', 'status', 'firewalld']
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
@@ -63,7 +62,7 @@ class CheckDemoEnvironme:
         return status,check_result
 
     def check_status_remote_firewalld(self):
-        check_item = ["incative"]
+        check_item = ["inactive"]
         software = "firewalld"
         ssh_command = self.ssh_command.split(' ')
         ssh_command.append('systemctl status firewalld')
@@ -90,7 +89,7 @@ class CheckDemoEnvironme:
         software = "neutron"
         ssh_command = ['openstack', 'network agent list']
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
-                                                         common_result_check_contain)
+                                                         common_result_check_not_contain)
         if status:
             print("   Neutron configurations are normal.")
         return status,check_result
@@ -100,7 +99,7 @@ class CheckDemoEnvironme:
         software = "nova"
         ssh_command = ['openstack', 'compute service list']
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
-                                                         common_result_check_contain)
+                                                         common_result_check_not_contain)
         if status:
             print("   the Nova configurations is normal.")
         return status,check_result
@@ -110,7 +109,7 @@ class CheckDemoEnvironme:
         software = "ceph"
         ssh_command = ['openstack', 'volume service list']
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
-                                                         common_result_check_contain)
+                                                         common_result_check_not_contain)
         if status:
             print("   the ceph configurations is normal.")
         return status,check_result

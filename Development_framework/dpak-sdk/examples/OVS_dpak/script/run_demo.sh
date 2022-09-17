@@ -1,17 +1,18 @@
 #!/usr/bin/bash
 current_dir=$(cd "$(dirname "$0")";pwd)
+ip_pattern='^\([1-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)$'
 
 get_local_ip(){
     local input_ip
     local_ips=$(ifconfig -a| grep inet | grep -v 127.0.0.1| grep -v inet6| awk '{print $2}'|tr -d "addr:")
     if [[ ${local_ips} =~ ${input_ip} ]];then
-        echo '在同一个机器上需要配置免密操作'
+        echo 'You do not need to configure password-free processing on then same computer'
         return 1
     fi
 }
 
 create_pub_cert(){
-    if [ -f ${HOME}/.ssh/id_rsa.pub && -f ${HOME}/.ssh/id_rsa ];then
+    if [[ -f ${HOME}/.ssh/id_rsa.pub && -f ${HOME}/.ssh/id_rsa ]];then
         echo 'the rsa exits'
     else
         ssh-keygen -t rsa
@@ -21,7 +22,6 @@ create_pub_cert(){
         fi
     fi
 }
-
 
 config_password_free(){
     local user=$1
@@ -36,12 +36,11 @@ config_password_free(){
     fi    
 }
 
-
 check_password_free_status(){
     local user_ip=$1
     local port=$2
     res=$(ssh ${user_ip} -p ${port} -o PreferredAuthentications=publickey -o StrictHostKeyChecking=no "date" | wc -l)
-    if [[] $res == 1 ]];then
+    if [[ $res == 1 ]];then
         echo 'password free is ok'
     else
         echo 'password free is not ok'
@@ -54,7 +53,7 @@ get_user_connect_info_ip(){
     local flag=1
     while [[ $flag == 1 ]];do
         read -p "input your ${type} ip: " IP
-        if [ -Z ${IP} ];then
+        if [ -z ${IP} ];then
             ((i++))
             continue
         else
@@ -74,7 +73,7 @@ get_user_connect_info_port(){
     local flag=1
     while [[ $flag == 1 ]];do
         read -p "input your ${type} port: " PORT
-        if [ -Z ${PORT} ];then
+        if [ -z ${PORT} ];then
             ((i++))
             continue
         else
@@ -94,7 +93,7 @@ get_user_connect_info_username(){
     local flag=1
     while [[ $flag == 1 ]];do
         read -p "input your ${type} username: " USERNAME
-        if [ -Z ${USERNAME} ];then
+        if [ -z ${USERNAME} ];then
             ((i++))
             continue
         else
@@ -160,7 +159,9 @@ else
         exit 1
     fi
 fi
-echo '请确保配置虚拟机可以带宽ssh的管理口ip，然后再按照文档部署业务口'
+echo ''
+echo 'Ensure that the IP address of the management port that can provide the bandwidth for the VM is SSH'
+echo ''
 echo "start check first virtual machine server..."
 get_user_connect_info 'first_virtual'
 sed -i "s#port_compute_first=''#port_compute_first=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
@@ -168,14 +169,8 @@ sed -i "s#username_compute_first=''#username_compute_first=${input_username}#g" 
 sed -i "s#ip_compute_first=''#ip_compute_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_first=''#eth0_ip_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
-python3 ${current_dir}/../util/check_env_compute.py  'compute_first'
-if [[ $? == 0 ]];then
-    echo 'VM1 can ping vm2'
-else
-    echo "VM1 don't can ping vm2"
-    exit 1
-fi
+sed -i "s#eth0_ip_first=''#eth0_ip_first=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+
 
 echo "start check second virtual machine server..."
 get_user_connect_info 'second_virtual'
@@ -184,21 +179,27 @@ sed -i "s#username_compute_second=''#username_compute_second=${input_username}#g
 sed -i "s#ip_compute_second=''#ip_compute_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_second=''#eth0_ip_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_second=''#eth0_ip_second=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+
+# check vm1 ping vm2
+python3 ${current_dir}/../util/check_env_compute.py  'compute_first'
+if [[ $? == 0 ]];then
+    echo 'The network between VM1 and VM2 is normal and can be pinged'
+else
+    echo "The network between VM1 and VM2 is disconnected and cannot be pinged"
+    exit 1
+fi
+
+# check vm2 ping vm1
 python3 ${current_dir}/../util/check_env_compute.py 'compute_second'
 if [[ $? == 0 ]];then
-    echo 'VM2 can ping VM1'
+    echo 'The network between VM2 and VM1 is normal and can be pinged'
 else
-    echo "VM2 don't can ping VM1"
+    echo "The network between VM2 and VM1 is disconnected and cannot be pinged"
     exit 1
 fi
 
 python3 ${current_dir}/../util/deal_demo.py
 if [[ $? == 0 ]];then
-    echo "demo 执行完成"
+    echo "The demo is successfully executed."
 fi
-
-
-
-
-
