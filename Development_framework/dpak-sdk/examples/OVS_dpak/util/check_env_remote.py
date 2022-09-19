@@ -105,7 +105,7 @@ class CheckDemoEnvironment:
             print('  The openswitch server is running')
         return status,check_result
     
-    def check_vm_ping(self, ip):
+    def check_vm_ping(self, ip, show_message):
         """虚拟机之间互ping连接"""
         check_item = ['1 received']
         software = 'VM ping'
@@ -113,6 +113,6 @@ class CheckDemoEnvironment:
         ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
         status, check_result = self.check_result_contain(check_item, software,ssh_command, common_result_check_contain)
         if status:
-            print('  VM1 can ping vm2')
+            print("  {}".format(show_message))
         return status,check_result
 

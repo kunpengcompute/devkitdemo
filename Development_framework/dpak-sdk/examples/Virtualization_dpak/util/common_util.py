@@ -33,14 +33,3 @@ def common_result_check_not_contain(software, value, check_item):
     
     message = '{} is not ok,{}'.format(software, value)
     return False, message
-
-def findinfor(echo, image, k):
-    echo = echo.split(' ')
-    for i in range(len(echo) -1, -1, -1):
-        if echo[i] == "" or echo[i] == "|" or echo[i] == "|\r\n|":
-            del echo[i]
-    for i, _x in enumerate(echo):
-        if echo[i] == image:
-            information = echo[i + k]
-            break
-    return information

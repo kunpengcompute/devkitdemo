@@ -2,7 +2,7 @@
 
 # 执行python脚本运行demo
 current_dir=$(cd "$(dirname "$0")";pwd)
-ip_pattern='(^([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[0-9]{2}|2[0-5][0-9]|25[0-4])$'
+ip_pattern="^\([1-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)$"
 
 get_local_ip(){
     local input_ip=$1
@@ -43,9 +43,10 @@ check_password_free_status(){
     local port=$2
     res=$(ssh ${user_ip} -p ${port} -o PreferredAuthentications=publickey -o StrictHostKeyChecking=no "date" | wc -l)
     if [[ $res == 1 ]]; then
-        echo 'password free is ok'
+        echo "Password-free has been configured for the remote server ${IP}."
     else
-        echo 'password free is not ok'
+        echo "Password-free is not configured for the remote server ${IP}."
+        return 1
     fi
 }
 
@@ -59,8 +60,11 @@ get_user_connect_info_ip(){
         if [[ $IP == y ]];then
             read -r  IP
         fi
+        if echo ${IP} | grep -v ${ip_pattern} >/dev/null ;then
+            echo "The enter IP address is invalid."
+            continue
+        fi
         if [ -z ${IP} ]; then
-            ((i++))
             continue
         else
             break
@@ -83,8 +87,15 @@ get_user_connect_info_port(){
     while [[ $flag == 1 ]]; do
         echo -n "input your ${type} port: "
         read -r PORT
+        if [[ ! "${PORT}" =~ ^[1-9]+$ ]];then
+            echo "The enter port is invalid."
+            continue
+        fi
+        if [[ ${PORT} -gt 66535 ]] || [[ ${PORT} -lt 0 ]];then
+            echo "Enter the correct port number. The port number cannot be greater than 65535"
+            continue
+        fi
         if [ -z ${PORT} ]; then
-            ((i++))
             continue
         else
             break
@@ -246,29 +257,13 @@ while [[ $flag == 1 ]]; do
     fi
     sleep 1
     ((i++))
-    if [[ $i -gt 10 ]]; then
-        echo "虚拟机创建失败"
+    if [[ $i -gt 20 ]]; then
+        echo "Failed to create the VM"
         exit 1
     fi
 done
 
-get_bond_ip(){
-    bond_ips=$(ssh -p ${port} ${user_ip} ip a | grep bond0.| grep inet)
-    bond_ip=$(echo ${bond_ips} | head -n 1| awk '{print $2}'| awk -F "/" '{print $1}')
-    sed -i "s#bond_ip=''#bond_ip=${bond_ip}#g" $current_dir/../conf/demo_conf.cfg 
-}
-
-get_net(){
-    nets=$(ssh -p ${port} ${user_ip} hinicadm3 info | grep NIC| head -n 2)
-    net1=$(echo ${nets} | head -n 1 | awk -F "NIC:" '{print $2}' | awk -F ")" '{print $1}') 
-    net1=$(echo ${nets} | head -n 2 | awk -F "NIC:" '{print $2}' | awk -F ")" '{print $1}') 
-    sed -i "s#net_first=''#net_first=${net1}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#net_second=''#net_second=${net2}#g" $current_dir/../conf/demo_conf.cfg 
-}
-
 python3 ${current_dir}/../util/deal_demo.py
 if [[ $? == 0 ]];then
-    echo "demo 执行完成"
-else
-    echo "demo 执行失败"
+    echo "The demo execution is complete."
 fi
