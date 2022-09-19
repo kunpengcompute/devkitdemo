@@ -61,6 +61,7 @@ get_user_connect_info_ip(){
             echo "The enter IP address is invalid."
             continue
         fi
+
         if [ -z ${IP} ];then
             continue
         else

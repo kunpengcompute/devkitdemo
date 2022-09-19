@@ -64,6 +64,7 @@ get_user_connect_info_ip(){
             echo "The enter IP address is invalid."
             continue
         fi
+
         if [ -z ${IP} ]; then
             continue
         else
@@ -87,6 +88,7 @@ get_user_connect_info_port(){
     while [[ $flag == 1 ]]; do
         echo -n "input your ${type} port: "
         read -r PORT
+
         if [[ ! "${POrt}" =~ ^[1-9]+$ ]];then
             echo "The enter port is invalid."
             continue
@@ -95,6 +97,7 @@ get_user_connect_info_port(){
             echo "Enter the correct port number. The port number cannot be greater than 65535"
             continue
         fi
+
         if [ -z ${PORT} ]; then
             continue
         else
