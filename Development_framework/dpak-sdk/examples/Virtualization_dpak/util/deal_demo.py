@@ -35,7 +35,7 @@ class DealDemo:
         status, check_result = self.check_virtual_first_config_status()
         print(check_result)
         if status:
-            print("虚拟机生命周期管理重启成功")
+            print("VM Lifecyle Management Restarted successfully")
         return status, check_result
 
     def openstack_server_migrate(self):
@@ -48,7 +48,7 @@ class DealDemo:
         if value == 'fail':
             return False, 'migrate failed'
         if "ACTIVE" in value:
-            print("热迁移虚拟机vm2 success")
+            print("VM2 live migrated successfully")
             return True, 'migrate success'
 
     def nova_interface_detach(self):
@@ -60,10 +60,10 @@ class DealDemo:
         if value == 'fail':
             return False, 'migrate failed'
         if "DOWN" in value:
-            print("  虚拟机进行热拔成功")
+            print("  The VM is hot removed successfully")
             return True, 'migrate success'
         else:
-            print("  虚拟机进行热拔失败")
+            print("  Failed to hot remove the VM")
             return False, 'migrate failed'
 
 
@@ -72,17 +72,17 @@ class DealDemo:
         ssh_command = ['nova','interface-attach', '{}'.format(self.vm_id_first), '--port-id={}'.format(self.port_id_first)]
         subprocess_command(ssh_command)
         ssh_command = ['openstack',"port", 'show', "{}".format(self.port_id_first)]
-        value = '虚拟机进行热插失败'
+        value = 'Failed to hot-insert the VM'
         for i in range(10):
             value = subprocess_command(ssh_command)
             time.sleep(5)
             if "ACTIVE" in value:
                 break
         if "ACTIVE" in value:
-            print("  虚拟机进行热插成功")
+            print("  The VM is hot-inserted successfully.")
             return True, 'migrate success'
         else:
-            print("  虚拟机进行热插失败")
+            print("  Failed to hot-insert the VM")
             return False, 'migrate failed'
     
     def check_virtual_first_status(self):
@@ -94,48 +94,6 @@ class DealDemo:
             return False, 'mgigrate faild'
         if host_name_second in value:
             return True, 'mgigrate success'
-
-    def ip2_ping_ip1(self):
-        ssh_command = self.ssh_command.split(" ")
-        ssh_command.append('ping {}'.format(self.bond_ip))
-        value = subprocess_command(ssh_command)
-        if value == 'fail':
-            return False, 'ping ip failed'
-        return True, 'ping ip success'
-
-    def check_net_through(self):
-        net = ''
-        ssh_command = self.ssh_command.split(' ')
-        ssh_command.append('tcpdump -i {} -ne | grep -i ICMP'.format(self.net1))
-        value = subprocess_command(ssh_command)
-        if value == 'fail':
-            return False, value
-        if self.bond_ip in value:
-            ssh_command = [self.ssh_command, 'ifconfig {} down'.format(self.net1)]
-            subprocess_command(ssh_command)
-
-            ssh_command = [self.ssh_command, 'tcpdump -i {} -ne|grep -i ICMP'.format(self.net2)]
-            net = subprocess_command(ssh_command)
-            if net == 'fail':
-                return False, value
-            ssh_command = [self.ssh_command, 'ifconfig {} up'.format(self.net1)]
-            subprocess_command(ssh_command)
-        ssh_command = [self.ssh_command, 'tcpdump -i {} -ne|grep -i ICMP'.format(self.net2)]
-        value = subprocess_command(ssh_command)
-        if value == 'fail':
-            return False, value
-        if self.bond_ip in value:
-            ssh_command = [self.ssh_command, 'ifconfig {} down'.format(self.net2)]
-            subprocess_command(ssh_command)
-            ssh_command = [self.ssh_command, 'tcpdump -i {} -ne|grep -i ICMP'.format(self.net1)]
-            net = subprocess_command(ssh_command)
-            if net == 'fail':
-                return False, value
-            ssh_command = [self.ssh_command, 'ifconfig {} up'.format(self.net1)]
-            subprocess_command(ssh_command)
-        if self.bond_ip in net.lower():
-            return True, '备用网络口有流量通过'
-        return False, '备用网络口没有流量通过'
 
 
 def check_demo_server(ip,username,port):
