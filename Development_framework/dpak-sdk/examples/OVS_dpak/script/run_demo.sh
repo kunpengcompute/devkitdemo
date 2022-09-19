@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 current_dir=$(cd "$(dirname "$0")";pwd)
-ip_pattern='^\([1-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)$'
+ip_pattern="^\([1-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)$"
 
 get_local_ip(){
     local input_ip
@@ -40,10 +40,10 @@ check_password_free_status(){
     local user_ip=$1
     local port=$2
     res=$(ssh ${user_ip} -p ${port} -o PreferredAuthentications=publickey -o StrictHostKeyChecking=no "date" | wc -l)
-    if [[ $res == 1 ]];then
-        echo 'password free is ok'
+    if [[ $res == 1 ]]; then
+        echo "Password-free has been configured for the remote server ${IP}."
     else
-        echo 'password free is not ok'
+        echo "Password-free is not configured for the remote server ${IP}."
         return 1
     fi
 }
@@ -57,8 +57,12 @@ get_user_connect_info_ip(){
         if [[ $IP == y ]];then
             read -r  IP
         fi
+        if echo ${IP} | grep -v ${ip_pattern} >/dev/null ;then
+            echo "The enter IP address is invalid."
+            continue
+        fi
+
         if [ -z ${IP} ];then
-            ((i++))
             continue
         else
             break
@@ -68,7 +72,7 @@ get_user_connect_info_ip(){
         input_ip=${IP}
     else
         echo "input error"
-        exit
+        exit 
     fi
 }
 
@@ -78,8 +82,15 @@ get_user_connect_info_port(){
     while [[ $flag == 1 ]];do
         echo -n  "input your ${type} port: "
         read -r PORT
+        if [[ ! "${POrt}" =~ ^[1-9]+$ ]];then
+            echo "The enter port is invalid."
+            continue
+        fi
+        if [[ ${PORT} -gt 66535 ]];then
+            echo "Enter the correct port number. The port number cannot be greater than 65535"
+            continue
+        fi
         if [ -z ${PORT} ];then
-            ((i++))
             continue
         else
             break
@@ -100,7 +111,6 @@ get_user_connect_info_username(){
         echo -n "input your ${type} username: "
         read -r USERNAME
         if [ -z ${USERNAME} ];then
-            ((i++))
             continue
         else
             break
@@ -116,9 +126,9 @@ get_user_connect_info_username(){
 
 get_user_connect_info(){
     local type=$1
-    get_user_connect_info_username ${type}
     get_user_connect_info_ip  ${type}
     get_user_connect_info_port ${type}
+    get_user_connect_info_username ${type}
 }
 
 password_free_check(){
@@ -167,6 +177,8 @@ else
 fi
 echo ''
 echo 'Ensure that the IP address of the management port that can provide the bandwidth for the VM is SSH'
+echo 'If no configuration is performed, run the following command to configuration:'
+echo 'example: virsh attach-interface vm1 --type bridge --source virbr0 --model virtio --current'
 echo ''
 echo "start check first virtual machine server..."
 get_user_connect_info 'first_virtual'
@@ -207,5 +219,5 @@ fi
 
 python3 ${current_dir}/../util/deal_demo.py
 if [[ $? == 0 ]];then
-    echo "The demo is successfully executed."
+    echo "The demo execution is complete."
 fi
