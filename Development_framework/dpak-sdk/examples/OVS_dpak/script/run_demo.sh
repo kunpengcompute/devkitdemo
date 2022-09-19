@@ -52,7 +52,11 @@ get_user_connect_info_ip(){
     local type=$1
     local flag=1
     while [[ $flag == 1 ]];do
-        read -p "input your ${type} ip: " IP
+        echo -n "input your ${type} ip: "
+        read -r IP
+        if [[ $IP == y ]];then
+            read -r  IP
+        fi
         if [ -z ${IP} ];then
             ((i++))
             continue
@@ -72,7 +76,8 @@ get_user_connect_info_port(){
     local type=$1
     local flag=1
     while [[ $flag == 1 ]];do
-        read -p "input your ${type} port: " PORT
+        echo -n  "input your ${type} port: "
+        read -r PORT
         if [ -z ${PORT} ];then
             ((i++))
             continue
@@ -92,7 +97,8 @@ get_user_connect_info_username(){
     local type=$1
     local flag=1
     while [[ $flag == 1 ]];do
-        read -p "input your ${type} username: " USERNAME
+        echo -n "input your ${type} username: "
+        read -r USERNAME
         if [ -z ${USERNAME} ];then
             ((i++))
             continue
