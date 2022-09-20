@@ -21,7 +21,7 @@ class DealDemo:
 
     def uninstall_icmp(self):
         """ICMP协议卸载"""
-        check_result = 'ICM协议卸载失败'
+        check_result = 'Failed to uninstall the demo  using the ICM protocol.'
         status = False
         ssh_command = ['ovs-appctl' ,'hwoff/dump-hwoff-flows']
         value = subprocess_command(ssh_command)
@@ -39,7 +39,7 @@ class DealDemo:
         else:
             return status, check_result
         if num_2 > num_1:
-            check_result = 'ICMP协议卸载成功'
+            check_result = 'The demo is successfully uninstalled using the ICM protocol'
             status = True
         return status, check_result
 
