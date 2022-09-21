@@ -155,6 +155,57 @@ password_free_check(){
     fi
 }
 
+delete_vm(){
+  # delete vm
+  local vm_id="$1"
+  for port_id in ${port_id_list[@]};do
+    openstack server delete ${vm_id}
+    if [[ $? == 0 ]]; then
+      echo "The VM is successfully deleted"
+    else
+      echo "Failed to delete VM"
+    fi
+  done
+}
+
+delete_vm_port(){
+  # delete port
+  local port_id_list="$1"
+  for port_id in ${port_id_list[@]};do
+    openstack port delete ${port_id}
+    if [[ $? == 0 ]]; then
+      echo "The VM port is successfully deleted"
+    else
+      echo "Failed to delete VM port"
+    fi
+  done
+}
+
+clean_env(){
+  delete_vm "${vm_id_1} ${vm_id_2}"
+  delete_vm_port "${port_1} ${port_2}"
+}
+
+get_system_network(){
+  # 获取用户网络列表
+}
+get_system_image_name(){
+  # 获取用户image列表
+}
+get_system_flavor(){
+  # 获取用户flavor列表
+  flavor_list=$(openstack flavor list)
+  for flavor in
+}
+
+
+get_system_info(){
+  # 用户交互选择网络明、镜像名、flavor
+  get_system_network
+  get_system_image_name
+  get_system_flavor
+
+}
 # check env
 echo "start check controll server..."
 python3 ${current_dir}/../util/check_env_controll.py
@@ -238,20 +289,22 @@ create_vm(){
 }
 
 create_vm "port1" 'vm01' ${host_name1}
-vm_id=$(echo ${vm_id}|sed s/[[:space:]]//g )
-sed -i "s#port_first_id=''#port_first_id=${port_id}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#vm_first_id=''#vm_first_id=${vm_id}#g" $current_dir/../conf/demo_conf.cfg 
+port_1=${port_id}
+vm_id_1=$(echo ${vm_id}|sed s/[[:space:]]//g )
+sed -i "s#port_first_id=''#port_first_id=${port_1}#g" $current_dir/../conf/demo_conf.cfg
+sed -i "s#vm_first_id=''#vm_first_id=${vm_id_1}#g" $current_dir/../conf/demo_conf.cfg
 
 create_vm "port2" 'vm02' ${host_name2}
-vm_id=$(echo ${vm_id}|sed s/[[:space:]]//g )
-sed -i "s#port_second_id=''#port_second_id=${port_id}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#vm_second_id=''#vm_second_id=${vm_id}#g" $current_dir/../conf/demo_conf.cfg 
+port_2=${port_id}
+vm_id_2=$(echo ${vm_id}|sed s/[[:space:]]//g )
+sed -i "s#port_second_id=''#port_second_id=${port_2}#g" $current_dir/../conf/demo_conf.cfg
+sed -i "s#vm_second_id=''#vm_second_id=${vm_id_2}#g" $current_dir/../conf/demo_conf.cfg
 
 # 创建虚拟机后要等待
 flag=1
 i=0
 while [[ $flag == 1 ]]; do
-    res=$(openstack server list | grep ${vm_id})
+    res=$(openstack server list | grep ${vm_id_2})
     if [[ $res =~ "ACTIVE" ]]; then
         break
     fi
@@ -267,3 +320,5 @@ python3 ${current_dir}/../util/deal_demo.py
 if [[ $? == 0 ]];then
     echo "The demo execution is complete."
 fi
+# clean environment
+clean_env
