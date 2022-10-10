@@ -280,8 +280,12 @@ install_hyper_mpi() {
   logger "Hyper MPI is installed."
   if [[ ${hmpi_gcc_choose_status} == 1 ]]; then
     change_modules "HMPI-GCC"
+    sed -i "s#hyper_mpi_gcc=.*#hyper_mpi_gcc=${compiler_name}#g" ${current_dir}/configure_environment.sh
+    sed -i "s#hyper_mpi_gcc_install=.*#hyper_mpi_gcc_install=$PWD#g"  ${current_dir}/configure_environment.sh
   elif [[ ${hmpi_bisheng_choose_status} == 1 ]]; then
     change_modules "HMPI-BISHENG"
+    sed -i "s#hyper_mpi_bisheng=.*#hyper_mpi_bisheng=${compiler_name}#g" ${current_dir}/configure_environment.sh
+    sed -i "s#hyper_mpi_bisheng_install=.*#hyper_mpi_bisheng_install=$PWD#g"  ${current_dir}/configure_environment.sh
   fi
   change_directory_owner "${install_hmpi_path}/${hmpi_package_name}"
   change_directory_permissions "${install_hmpi_path}/${hmpi_package_name}" "hyper-mpi"
@@ -302,10 +306,7 @@ install_compiler() {
   # Install compiler
   local compiler_type=$1
   user_customize_path "${compiler_type} compiler"
-  logger "you choose install ${compiler_type} path is $(
-    cd ${customize_path}
-    pwd
-  )" ${TIP_COLOR_SUCCESS}
+  logger "you choose install ${compiler_type} path is $(cd ${customize_path};pwd)" ${TIP_COLOR_SUCCESS}
   del_compiler "${compiler_type}"
   if [[ $? == 1 ]];then
     return 1
@@ -319,8 +320,12 @@ install_compiler() {
   cd ${install_compiler_path}/${compiler_name}
   if [[ ${compiler_type} == "bisheng" ]]; then
     change_modules "BISHENG"
+    sed -i "s#compiler_bisheng=.*#compiler_bisheng=${compiler_name}#g" ${current_dir}/configure_environment.sh
+    sed -i "s#compiler_bisheng_install=.*#compiler_bisheng_install=${install_compiler_path}#g"  ${current_dir}/configure_environment.sh
   else
     change_modules "GCC"
+    sed -i "s#compiler_gcc=.*#compiler_gcc=${compiler_name}#g" ${current_dir}/configure_environment.sh
+    sed -i "s#compiler_gcc_install=.*#compiler_gcc_install=${install_compiler_path}#g" ${current_dir}/configure_environment.sh
   fi
   if [[ ${compiler_type} == "gcc" ]]; then
     command_env_path="  echo 'export PATH=${install_compiler_path}/${compiler_name}/bin:\$PATH' >>/etc/profile"
@@ -339,6 +344,7 @@ install_compiler() {
   [[ ${command_env_path} ]] && logger "${command_env_path}" ${TIP_COLOR_COMMAND}
   [[ ${command_env_include} && ${compiler_type} == "gcc" ]] && logger "${command_env_include}" ${TIP_COLOR_COMMAND}
   [[ ${command_env_ld_library_path} ]] && logger "${command_env_ld_library_path}" ${TIP_COLOR_COMMAND}
+
   logger "  source /etc/profile" ${TIP_COLOR_COMMAND}
   logger "use module set env for $compiler_type" ${TIP_COLOR_SUCCESS}
   logger "${command_module}" ${TIP_COLOR_COMMAND}
