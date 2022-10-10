@@ -67,7 +67,7 @@ bash install.sh
 ```
   module load /opt/modules/gcc/gcc_modulefiles
 ```
-> 4.3 Method 4: Make the environment variables take effect permanently.
+> 4.3 Method 3: Make the environment variables take effect permanently.
 
 > * 1、Open the ~/.bashrc.
 ```
@@ -83,8 +83,11 @@ bash install.sh
 ```
   source ~/.bashrc
 ```
-
-
+4.4 Method 4: Run the script to configure environment variables.
+```
+  cd kunpeng-hpc-xxx-aarch64-linux/script
+  bash configure_environment.sh
+```
 ## 4、Precautions
 
 #### 1、The free drive space for the installation must be greater than 3 GB.
