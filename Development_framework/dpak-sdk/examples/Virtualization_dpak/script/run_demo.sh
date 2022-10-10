@@ -301,6 +301,7 @@ sed -i "s#port_second_id=''#port_second_id=${port_2}#g" $current_dir/../conf/dem
 sed -i "s#vm_second_id=''#vm_second_id=${vm_id_2}#g" $current_dir/../conf/demo_conf.cfg
 
 # 创建虚拟机后要等待
+echo 'It may take a few minutes to start the virtual, please wait ...'
 flag=1
 i=0
 while [[ $flag == 1 ]]; do

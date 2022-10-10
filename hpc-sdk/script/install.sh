@@ -339,6 +339,7 @@ install_compiler() {
   [[ ${command_env_path} ]] && logger "${command_env_path}" ${TIP_COLOR_COMMAND}
   [[ ${command_env_include} && ${compiler_type} == "gcc" ]] && logger "${command_env_include}" ${TIP_COLOR_COMMAND}
   [[ ${command_env_ld_library_path} ]] && logger "${command_env_ld_library_path}" ${TIP_COLOR_COMMAND}
+
   logger "  source /etc/profile" ${TIP_COLOR_COMMAND}
   logger "use module set env for $compiler_type" ${TIP_COLOR_SUCCESS}
   logger "${command_module}" ${TIP_COLOR_COMMAND}
