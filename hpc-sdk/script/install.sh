@@ -280,12 +280,12 @@ install_hyper_mpi() {
   logger "Hyper MPI is installed."
   if [[ ${hmpi_gcc_choose_status} == 1 ]]; then
     change_modules "HMPI-GCC"
-    sed -i "s#hyper_mpi_gcc=.*#hyper_mpi_gcc=${compiler_name}#g" ${current_dir}/configure_environment.sh
-    sed -i "s#hyper_mpi_gcc_install=.*#hyper_mpi_gcc_install=$PWD#g"  ${current_dir}/configure_environment.sh
+    sed -i "s#hyper_mpi_gcc=.*#hyper_mpi_gcc=${hmpi_package_name}#g" ${current_dir}/configure_environment.sh
+    sed -i "s#hyper_mpi_gcc_install=.*#hyper_mpi_gcc_install=${install_hmpi_path}/${hmpi_package_name}#g"  ${current_dir}/configure_environment.sh
   elif [[ ${hmpi_bisheng_choose_status} == 1 ]]; then
     change_modules "HMPI-BISHENG"
-    sed -i "s#hyper_mpi_bisheng=.*#hyper_mpi_bisheng=${compiler_name}#g" ${current_dir}/configure_environment.sh
-    sed -i "s#hyper_mpi_bisheng_install=.*#hyper_mpi_bisheng_install=$PWD#g"  ${current_dir}/configure_environment.sh
+    sed -i "s#hyper_mpi_bisheng=.*#hyper_mpi_bisheng=${hmpi_package_name}#g" ${current_dir}/configure_environment.sh
+    sed -i "s#hyper_mpi_bisheng_install=.*#hyper_mpi_bisheng_install=${install_hmpi_path}/${hmpi_package_name}#g"  ${current_dir}/configure_environment.sh
   fi
   change_directory_owner "${install_hmpi_path}/${hmpi_package_name}"
   change_directory_permissions "${install_hmpi_path}/${hmpi_package_name}" "hyper-mpi"
