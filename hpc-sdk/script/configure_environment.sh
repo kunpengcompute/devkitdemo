@@ -27,14 +27,14 @@ hyper_mpi_bisheng_install=''
 configure_env(){
     # configure env
     if [[ "${compiler_gcc}${compiler_bisheng}${hyper_mpi_gcc}${hyper_mpi_bisheng}test" == 'test' ]];then
-        echo 'You have not installed any software. Please run the installation script before running the script'
+        echo -e "\e[1;33mYou have not installed any software. Please run the installation script before running the script.\e[0m"
         exit
     fi
     [[ ${hyper_mpi_bisheng} ]] && set_hyper_mpi_env ${hyper_mpi_bisheng_install}
     [[ ${hyper_mpi_gcc} ]] && set_hyper_mpi_env ${hyper_mpi_gcc_install}
     [[ ${compiler_gcc} ]] && set_compiler_gcc_env ${compiler_gcc_install}
     [[ ${compiler_bisheng} ]] && set_compiler_bisheng_env ${compiler_bisheng_install}
-    echo "To make the related commands take effect, run the following command:"
+    echo -e "\e[1;33mTo make the related commands take effect, run the following command:\e[0m"
     if [[ ${hyper_mpi_bisheng} || ${hyper_mpi_gcc} ]];then
         echo "source ~/.bashrc"
     fi
@@ -61,10 +61,10 @@ set_compiler_bisheng_env(){
 set_hyper_mpi_env(){
     local install_path=$1
     echo "hwmpi=${install_path}" >> ~/.bashrc
-    echo 'export OPAL_PREFIX=\${hwmpi}/ompi' >> ~/.bashrc
-    echo 'export PATH=\${hwmpi}/ompi/bin:\${hwmpi}/ucx/bin:\$PATH' >> ~/.bashrc
-    echo 'export INCLUDE=\${hwmpi}/ompi/include:\${hwmpi}/ucx/include:\$INCLUDE' >> ~/.bashrc
-    echo 'export LD_LIBRARY_PATH=\${hwmpi}/ompi/lib:\${hwmpi}/ucx/lib:\$LD_LIBRARY_PATH' >> ~/.bashrc
+    echo 'export OPAL_PREFIX=${hwmpi}/ompi' >> ~/.bashrc
+    echo 'export PATH=${hwmpi}/ompi/bin:${hwmpi}/ucx/bin:$PATH' >> ~/.bashrc
+    echo 'export INCLUDE=${hwmpi}/ompi/include:${hwmpi}/ucx/include:$INCLUDE' >> ~/.bashrc
+    echo 'export LD_LIBRARY_PATH=${hwmpi}/ompi/lib:${hwmpi}/ucx/lib:$LD_LIBRARY_PATH' >> ~/.bashrc
 }
 
 configure_env
