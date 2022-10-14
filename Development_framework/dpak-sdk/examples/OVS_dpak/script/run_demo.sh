@@ -6,7 +6,7 @@ get_local_ip(){
     local input_ip
     local_ips=$(ifconfig -a| grep inet | grep -v 127.0.0.1| grep -v inet6| awk '{print $2}'|tr -d "addr:")
     if [[ ${local_ips} =~ ${input_ip} ]];then
-        echo 'You do not need to configure password-free processing on then same computer'
+        echo 'You do not need to configure password-free processing on the same computer'
         return 1
     fi
 }

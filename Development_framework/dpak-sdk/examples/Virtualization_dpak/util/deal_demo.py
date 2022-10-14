@@ -21,7 +21,7 @@ class DealDemo:
     @staticmethod
     def check_run_demo_status(ssh_command, check_status):
         value = 'fail'
-        for i in range(20):
+        for i in range(40):
             value = subprocess_command(ssh_command)
             time.sleep(3)
             if check_status in value:
@@ -55,6 +55,9 @@ class DealDemo:
         if "ACTIVE" in value:
             print("  VM2 live migrated successfully")
             return True, 'migrate success'
+        elif "fail" in value:
+            print("  Performing live migration demo timed out.")
+            return False, 'migrate failed'
         else:
             print("  Failed to live migrated VM2")
             return False, 'migrate faild'
@@ -67,10 +70,13 @@ class DealDemo:
         value = self.check_run_demo_status(ssh_command, "DOWN")
         if "DOWN" in value:
             print("  The VM is hot removed successfully")
-            return True, 'migrate success'
+            return True, 'removed success'
+        elif "fail" in value:
+            print("  Performing VM hot removal demo timed out.")
+            return False, 'removed failed'
         else:
             print("  Failed to hot remove the VM")
-            return False, 'migrate failed'
+            return False, 'removed failed'
 
 
     def nova_interface_attach(self):
@@ -81,20 +87,23 @@ class DealDemo:
         value = self.check_run_demo_status(ssh_command, "ACTIVE")
         if "ACTIVE" in value:
             print("  The VM is hot-inserted successfully.")
-            return True, 'migrate success'
+            return True, 'hot-insert success'
+        elif "fail" in value:
+            print("  Performing VM hot insertion demo timed out.")
+            return False, 'hot-insert failed'
         else:
             print("  Failed to hot-insert the VM")
-            return False, 'migrate failed'
+            return False, 'hot-insert failed'
     
     def check_virtual_first_status(self):
         """Check the status of VM1 after the live migration"""
         print("Check the status of VM1 after the live migration")
         ssh_command = ['openstack','server', 'show', '{}'.format(self.vm_id_second)]
         value = subprocess_command(ssh_command)
-        if value == 'fail':
-            return False, 'mgigrate faild'
         if host_name_second in value:
             return True, 'mgigrate success'
+        else:
+            return False, 'mgigrate faild'
 
 
 def check_demo_server(ip,username,port):
