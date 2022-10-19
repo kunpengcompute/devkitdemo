@@ -1,3 +1,17 @@
+# Copyright 2022 Huawei Technologies Co., Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import re
 from common_util import subprocess_command, common_result_check_contain, common_result_check_not_contain
 
@@ -24,8 +38,8 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The os-release is openEuler release 20.03 (LTS-SP1) .")
-        return status,check_result
+            print("  The OS is openEuler release 20.03 (LTS-SP1).")
+        return status, check_result
     
     def check_remote_os(self):
         """check os"""
@@ -36,7 +50,7 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The os-release is openEuler release 20.03 (LTS-SP1). ")
+            print("  The OS is openEuler release 20.03 (LTS-SP1).")
         return status, check_result
 
     def check_cat_fstab(self):
@@ -48,8 +62,8 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The hugepage is config success.")
-        return status,check_result
+            print("  Succeeded in configuring hugepages.")
+        return status, check_result
 
     def check_status_firewalld(self):
         check_item = ["inactive"]
@@ -58,8 +72,8 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The firewalld status is inactive.")
-        return status,check_result
+            print("  The firewall status is inactive.")
+        return status, check_result
 
     def check_status_remote_firewalld(self):
         check_item = ["inactive"]
@@ -69,20 +83,20 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The firewalld status is inactive. ")                                                         
-        return status,check_result
+            print("  The firewall status is inactive. ")                                                         
+        return status, check_result
 
     
     def check_status_hinic3(self):
-        check_item = ["hisdk3", "mgmt_migration_","hiovs3","hinic3"]
+        check_item = ["hisdk3", "mgmt_migration_", "hiovs3", "hinic3"]
         software = "hinic3"
         ssh_command = self.ssh_command.split(' ')
         ssh_command.append('lsmod| grep hinic3')
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("   the SP680 OVS and live migration drivers are installed.")
-        return status,check_result
+            print("   Succeeded in installing the SP680 OVS live migration drivers.")
+        return status, check_result
 
     def check_openstack_neutron(self):
         check_item = ['X']
@@ -92,7 +106,7 @@ class CheckDemoEnvironment:
                                                          common_result_check_not_contain)
         if status:
             print("   Neutron configurations are normal.")
-        return status,check_result
+        return status, check_result
     
     def check_openstack_nova(self):
         check_item = ['disabled']
@@ -101,8 +115,8 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_not_contain)
         if status:
-            print("   the Nova configurations is normal.")
-        return status,check_result
+            print("   Nova configurations are normal.")
+        return status, check_result
     
     def check_openstack_ceph(self):
         check_item = ['disabled']
@@ -111,8 +125,8 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_not_contain)
         if status:
-            print("   the ceph configurations is normal.")
-        return status,check_result
+            print("   Ceph configurations are normal.")
+        return status, check_result
 
     def check_openstack_version(self):
         ssh_command = ["openstack", '--version']
@@ -139,8 +153,9 @@ class CheckDemoEnvironment:
         software = 'ovs'
         ssh_command = self.ssh_command.split(' ')
         ssh_command.append('ovs-vsctl show')
-        status, check_result = self.check_result_contain(check_item, software, ssh_command, common_result_check_contain)
+        status, check_result = self.check_result_contain(check_item, software, ssh_command, 
+                                                         common_result_check_contain)
 
         if status:
-            print("   the ovs configuration is normal.")
+            print("   Ovs configurations are normal.")
         return status, check_result
