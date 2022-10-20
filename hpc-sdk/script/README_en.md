@@ -86,7 +86,7 @@ bash install.sh
 4.4 Method 4: Run the script to configure environment variables.
 ```
   cd kunpeng-hpc-xxx-aarch64-linux/script
-  bash configure_environment.sh
+  bash configure_environment_xxxxx.sh
 ```
 ## 4、Precautions
 
