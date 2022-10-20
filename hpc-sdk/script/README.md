@@ -86,7 +86,7 @@ bash install.sh
 4.4 运行脚本配置环境变量
 ```
   cd kunpeng-hpc-xxx-aarch64-linux/script
-  bash configure_environment.sh
+  bash configure_environment_xxxx.sh
 ```
 
 ## 4、注意事项
