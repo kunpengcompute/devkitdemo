@@ -478,7 +478,7 @@ change_directory_permissions() {
 
 del_math_kml() {
   # Delete the original kml environment variables
-  read_answer "Before the installation, the existing software will be uninstalled. Are you sure want to authorize the script to continue?"
+  read_answer "Before the installation, the existing software will be uninstalled. Are you sure you want to authorize the script to continue?"
   if [[ $? != 0 ]];then 
     logger "Do not install the kml repeatedly." ${TIP_COLOR_ECHO}
     return 1

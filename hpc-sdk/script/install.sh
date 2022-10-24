@@ -218,7 +218,7 @@ install_compiler_env_check() {
   local compiler_type=$1
   [[ ${compiler_type} == "gcc" ]] && compiler_choose_status=${gcc_choose_status} || compiler_choose_status=${bisheng_choose_status}
   if [[ ${compiler_choose_status} == ${SUCCESS} ]]; then
-    [[ ${compiler_type} == "gcc" ]] && compiler_install_status=${gcc_install_status} || compiler_install_status=${bisheng_install_status}
+    [[ ${compiler_type} == "gcc" ]] && compiler_install_status=${gcc_install_status} || compiler_install_status=${bisheng_check_status}
     [[ ${compiler_type} == "gcc" ]] && compiler_name=${gcc_compiler_name} || compiler_name=${bisheng_compiler_name}
     check_precondition_compiler ${compiler_type}
     logger "Start installing the ${compiler_type^^}." ${TIP_COLOR_CHECKING}
