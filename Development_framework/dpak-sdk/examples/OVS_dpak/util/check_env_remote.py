@@ -72,7 +72,7 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The firewall status is incative.")                                                  
+            print("  The firewall status is inactive.")                                                  
         return status,check_result
 
     def check_status_hinic3(self):
