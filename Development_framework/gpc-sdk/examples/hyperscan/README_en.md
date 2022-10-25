@@ -9,9 +9,9 @@ English | [简体中文](README.md)
 
 ## Build Dependency
 1. Ensure **HyperScan** has been compiled;
-
 [Download](https://github.com/kunpengcompute/hyperscan)
 [Reference](https://support.huaweicloud.com/cg-hyperscan-kunpengaccel/kunpengaccel_hyperscan_02_0001.html)
+compile the source code dynamic library: -DBUILD_SHARED_LIBS=ON
 
 2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK
 

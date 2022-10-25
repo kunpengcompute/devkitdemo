@@ -9,9 +9,9 @@
 
 ## 编译依赖
 1. 确保先编译 **HyperScan**;
-
 [下载地址](https://github.com/kunpengcompute/hyperscan)
 [编译参考](https://support.huaweicloud.com/cg-hyperscan-kunpengaccel/kunpengaccel_hyperscan_02_0001.html)
+   cmake编译so编译选项：-DBUILD_SHARED_LIBS=ON
 
 2. 或者安装**kunpeng-gpc**和**kunpeng-gpc-devel** SDK
 

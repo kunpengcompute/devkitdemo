@@ -8,9 +8,9 @@
 
 ## 编译依赖
 1. 确保先编译 **Snappy**;
-
 [下载地址](https://github.com/kunpengcompute/snappy)
 [编译参考](https://github.com/kunpengcompute/snappy)
+   cmake编译so编译选项：-DBUILD_SHARED_LIBS=ON
 
 2. 或者安装**kunpeng-gpc**和**kunpeng-gpc-devel** SDK
 
@@ -40,7 +40,8 @@
 4. 运行demo
 
    ```shell
-    ./snappy_demo args
+    ./snappy_demo file   // 指定文件
+    args                 // 1: 压缩 2：解压
    ```
 
 5. 清理demo

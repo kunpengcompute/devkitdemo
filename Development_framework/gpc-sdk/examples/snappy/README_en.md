@@ -9,9 +9,9 @@ English | [简体中文](README.md)
 
 ## Build Dependency
 1. Ensure **Snappy** has been compiled;
-
 [Download](https://github.com/kunpengcompute/snappy)
 [Reference](https://github.com/kunpengcompute/snappy)
+compile the source code dynamic library: -DBUILD_SHARED_LIBS=ON
 
 2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK
 
@@ -41,7 +41,8 @@ English | [简体中文](README.md)
 4. Run the demo.
 
    ```shell
-    ./snappy_demo args
+    ./snappy_demo file    // select file
+    args                  // 1: compress 2: decompress
    ```
 
 5. Clean up the demo.

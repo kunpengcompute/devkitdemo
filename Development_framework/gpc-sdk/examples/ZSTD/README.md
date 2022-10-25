@@ -40,7 +40,8 @@
 4. 运行demo
 
    ```shell
-    ./zstd_demo args
+    ./zstd_demo file // 指定文件
+    args // 1：压缩 2：解压 3：多进程压缩 4：多进程解压 5：多进程字典压缩
    ```
 
 5. 清理demo

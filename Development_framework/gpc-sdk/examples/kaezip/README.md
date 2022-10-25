@@ -38,7 +38,9 @@
 4. 运行KAEzip demo
 
    ```shell
-    ./kaezip_demo -h
+    ./kaezip_demo -h // 查看帮助
+    ./kaezip_demo -czf filename.tar.gz filenaem // 压缩
+    ./kaezip_demo -xzf filename.tar.gz // 解压
    ```
 
 5. 清理demo

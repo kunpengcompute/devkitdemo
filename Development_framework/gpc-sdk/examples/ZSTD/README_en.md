@@ -41,7 +41,8 @@ English | [简体中文](README.md)
 4. Run the demo.
 
    ```shell
-    ./zstd_demo args
+    ./zstd_demo file // select file
+    args // 1: compress 2: decompress 3: multiple compress 4: multiple decompress 5: multiple dictionary compress
    ```
 
 5. Clean up the demo.

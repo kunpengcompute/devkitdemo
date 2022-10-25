@@ -39,7 +39,9 @@ English | [简体中文](README.md)
 4. Run KAEzip demo
 
    ```shell
-    ./kaezip_demo -h
+   ./kaezip_demo -h // help
+   ./kaezip_demo -czf filename.tar.gz filenaem // compress
+   ./kaezip_demo -xzf filename.tar.gz // decompress
    ```
 
 5. 清理demo
