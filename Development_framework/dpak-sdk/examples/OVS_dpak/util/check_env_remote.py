@@ -1,5 +1,19 @@
-import re
-from common_util import subprocess_command, common_result_check_contain, common_result_check_not_contain
+# Copyright 2022 Huawei Technologies Co., Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+from common_util import subprocess_command, common_result_check_contain
 
 
 class CheckDemoEnvironment:
@@ -35,7 +49,7 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The os os openEuler release 20.03 (LTS-SP1)")                                                        
+            print("  The OS is openEuler release 20.03 (LTS-SP1).")                                                        
         return status,check_result
     
     def check_cat_fstab(self):
@@ -58,7 +72,7 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print("  The firewalld status is incatiive")                                                  
+            print("  The firewall status is incative.")                                                  
         return status,check_result
 
     def check_status_hinic3(self):
@@ -69,7 +83,7 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print('  The SP680 OVS and live migration drivers are installed')
+            print('  Succeeded in installing the SP680 OVS live migration drivers.')
         return status,check_result
 
     def ovs_vsctl_show(self):
@@ -80,7 +94,7 @@ class CheckDemoEnvironment:
         status, check_result = self.check_result_contain(check_item, software,ssh_command,
                                                          common_result_check_contain)
         if status:
-            print('  The ovs configuration is normal')
+            print('  OVS configurations are normal.')
         return status,check_result
 
     def check_vf_status(self):
@@ -95,7 +109,7 @@ class CheckDemoEnvironment:
         return status,check_result
     
     def check_openv_switch_status(self):
-        """检查openvswitch服务状态"""
+        """check the openvswitch service status"""
         check_item = ['running']
         software = 'The openswitch service'
         ssh_command = ['service','openvswitch','status']
@@ -106,7 +120,7 @@ class CheckDemoEnvironment:
         return status,check_result
     
     def check_vm_ping(self, ip, show_message):
-        """虚拟机之间互ping连接"""
+        """ping between VMs"""
         check_item = ['1 received']
         software = 'VM ping'
         ssh_command = ['ping','-c 1', ip]

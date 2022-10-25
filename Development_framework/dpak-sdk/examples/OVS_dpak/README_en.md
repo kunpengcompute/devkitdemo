@@ -3,7 +3,7 @@
 English | [简体中文](README.md)
 
 ## Introduction
-The network acceleration fuction of the SP680 SmartNIC is used to cooperate with the server to offload the network. This demo checks the basic configurations of the server environment, such as the firewall status, hugepage configuration, and ICMP protocol offload (whether two VMs on the same host or different hosts can ping each other and methods to view the flow table).
+The network acceleration fuction of the SP680 SmartNIC is used to cooperate with the server to offload the network. This demo checks the basic configurations of the server environment, such as the firewall status, hugepage configuration, SP680 driver dependency installation, group configuration, and ICMP protocol offload (whether two VMs on the same host or different hosts can ping each other and methods to view the flow table).
 
 ## Prerequisites
 

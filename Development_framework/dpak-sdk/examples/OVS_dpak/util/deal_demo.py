@@ -1,3 +1,17 @@
+# Copyright 2022 Huawei Technologies Co., Ltd
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import sys
 import re
@@ -20,8 +34,8 @@ class DealDemo:
         subprocess_command(ssh_command)
 
     def uninstall_icmp(self):
-        """ICMP协议卸载"""
-        check_result = 'Failed to uninstall the demo  using the ICM protocol.'
+        """ICMP uninstall"""
+        check_result = 'Failed to uninstall ICMP.'
         status = False
         ssh_command = ['ovs-appctl' ,'hwoff/dump-hwoff-flows']
         value = subprocess_command(ssh_command)
@@ -39,7 +53,7 @@ class DealDemo:
         else:
             return status, check_result
         if num_2 > num_1:
-            check_result = 'The demo is successfully uninstalled using the ICM protocol'
+            check_result = 'Succeeded in uninstalling ICMP.'
             status = True
         return status, check_result
 
@@ -52,7 +66,7 @@ def check_demo_server(ip,username,port,eth0_ip):
 if __name__ == "__main__":
     cfg = ConfigParser()
     cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),"conf/demo_conf.cfg"))
-    # compute
+    # compute information
     port_compute_first = cfg['compute_first'].get('port_compute_first')
     username_compute_first = cfg['compute_first'].get('username_compute_first')
     ip_compute_first = cfg['compute_first'].get('ip_compute_first')
