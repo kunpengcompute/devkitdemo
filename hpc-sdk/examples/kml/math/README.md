@@ -16,6 +16,10 @@
 
 ## 使用教程
 
+KML_MATH有多个版本，若需要使用请修改编译选项：
+- 高性能版本：-L /usr/local/kml/lib -lkm -lm
+- 高精度版本：-L /usr/local/kml/lib -lkm_l9 -lm
+
 1. 获取代码
 
    ```shell

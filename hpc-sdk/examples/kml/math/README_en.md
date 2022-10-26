@@ -16,6 +16,10 @@ English | [简体中文](README.md)
 
 ## Guidance
 
+There are multiple versions of KML_MATH, please modify the compilation options if necessary:
+- High-performance version: -L /usr/local/kml/lib -lkm -lm
+- High-precision version: -L /usr/local/kml/lib -lkm_l9 -lm
+
 1. Obtain the code.
 
    ```shell

@@ -24,5 +24,8 @@ set(TARGET_FILE bcast_demo)
 # Set Compiler
 set(CMAKE_C_COMPILER mpicc)
 
+# Add openmp option
+add_compile_options(-fopenmp)
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})

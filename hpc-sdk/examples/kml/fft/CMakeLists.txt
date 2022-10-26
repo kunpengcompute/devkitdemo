@@ -30,7 +30,13 @@ include_directories(${KML_PATH}/include)
 # Add link library
 link_directories(${KML_PATH}/lib)
 
+# Find link library
+find_library(KFFT kfft HINTS ${KML_PATH}/lib)
+
+# Add openmp option
+add_compile_options(-fopenmp)
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
-target_link_libraries(${TARGET_FILE} kfft)
+target_link_libraries(${TARGET_FILE} ${KFFT})
 

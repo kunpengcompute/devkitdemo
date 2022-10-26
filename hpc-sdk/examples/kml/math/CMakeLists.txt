@@ -30,7 +30,14 @@ include_directories(${KML_PATH}/include)
 # Add link library
 link_directories(${KML_PATH}/lib)
 
+# Find link library
+find_library(MATH m HINTS ${KML_PATH}/lib)
+find_library(KMATH km HINTS ${KML_PATH}/lib)
+
+# Add openmp option
+add_compile_options(-fopenmp)
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
-target_link_libraries(${TARGET_FILE} km m)
+target_link_libraries(${TARGET_FILE} ${MATH} ${KMATH})
 
