@@ -1,0 +1,1 @@
+javac TestMemoryLeakKo.java编译后，运行java TestMemoryLeakKo。或java9及以后直接调用java TestMemoryLeakKo.java运行
