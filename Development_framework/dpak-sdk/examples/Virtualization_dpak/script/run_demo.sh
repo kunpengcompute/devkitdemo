@@ -171,7 +171,7 @@ delete_vm(){
   for vm_id in ${vm_id_list[@]};do
     openstack server delete ${vm_id}
     if [[ $? == 0 ]]; then
-      echo -e "\e[1;32mSucceeded in deleting the VM ${vm_name}.\e[0m"
+      echo -e "\e[1;32mSucceeded in deleting the VM ${vm_id}.\e[0m"
     else
       echo -e "\e[1;31mFailed to delete the VM ${vm_id}.\e[0m"
     fi
@@ -284,13 +284,6 @@ while [[ $flag == 1 ]]; do
     fi
 done
 
-# Restart VM.
-echo -e "\e[1;34mStart to execute the demo of restarting for VM lifecycle management ...\e[0m"
-python3 ${current_dir}/../util/deal_demo_reboot_vm.py
-if [[ $? == 0 ]];then
-  echo -e "\e[1;32mThe demo execution is complete.\e[0m"
-fi
-
 # Live migrating VM.
 echo -e "\e[1;34mStarted to execute the demo of the live migrating VM ...\e[0m"
 python3 ${current_dir}/../util/deal_demo_hot_migrate_vm.py
@@ -308,6 +301,13 @@ fi
 # Hot insert the network port.
 echo -e "\e[1;34mStarted to execute the demo of hot inserting the network port ...\e[0m"
 python3 ${current_dir}/../util/deal_demo_attach_vm.py
+if [[ $? == 0 ]];then
+  echo -e "\e[1;32mThe demo execution is complete.\e[0m"
+fi
+
+# Restart VM.
+echo -e "\e[1;34mStart to execute the demo of restarting for VM lifecycle management ...\e[0m"
+python3 ${current_dir}/../util/deal_demo_reboot_vm.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi
