@@ -1,0 +1,1 @@
+javac Lock.java编译后调用java Lock启动项目，JDK9及以后可直接java Lock.java启动
