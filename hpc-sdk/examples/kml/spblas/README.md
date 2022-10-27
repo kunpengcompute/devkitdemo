@@ -16,10 +16,11 @@
 
 ## 使用教程
 
-KML_SPBLAS有多个版本，若需要使用请修改编译选项：
-- 单线程版本：-L /usr/local/kml/lib/kspblas/single -lkspblas
-- 多线程版本：-L /usr/local/kml/lib/kspblas/multi -lkspblas
+KML_SPBLAS有多个版本：
+- 单线程版本：/usr/local/kml/lib/kspblas/single/libkspblas.so
+- 多线程版本：/usr/local/kml/lib/kspblas/multi/libkspblas.so
 
+**Demo使用单线程版本**
 1. 获取代码
 
    ```shell

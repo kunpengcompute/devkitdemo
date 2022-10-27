@@ -20,10 +20,11 @@ zero.
 
 ## Guidance
 
-There are multiple versions of KML_SPBLAS, please modify the compilation options if necessary:
-- Single-thread version: -L /usr/local/kml/lib/kspblas/single -lkspblas
-- Multi-thread version: -L /usr/local/kml/lib/kspblas/multi -lkspblas
+There are multiple versions of KML_SPBLAS:
+- Single-thread version: /usr/local/kml/lib/kspblas/single/libkspblas.so
+- Multi-thread version: /usr/local/kml/lib/kspblas/multi/libkspblas.so
 
+**Single-thread version is used by demo.**
 1. Obtain the code.
 
    ```shell
