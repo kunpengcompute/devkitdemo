@@ -30,7 +30,13 @@ include_directories(${KML_PATH}/include)
 # Add link library
 link_directories(${KML_PATH}/lib/kblas/nolocking)
 
+# Find link library
+find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/nolocking)
+
+# Add openmp option
+add_compile_options(-fopenmp)
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
-target_link_libraries(${TARGET_FILE} kblas)
+target_link_libraries(${TARGET_FILE} ${KBLAS})
 

@@ -17,6 +17,12 @@
 
 ## 使用教程
 
+KML_BLAS有多个版本，若需要使用请修改编译选项：
+- 单线程不加锁版本：-L /usr/local/kml/lib/kblas/nolocking -lkblas
+- 单线程加锁版本：-L /usr/local/kml/lib/kblas/locking -lkblas
+- pthread实现多线程版本：-L /usr/local/kml/lib/kblas/pthread -lkblas
+- OpenMP实现多线程版本：-L /usr/local/kml/lib/kblas/omp -lkblas
+
 1. 获取代码
 
    ```shell

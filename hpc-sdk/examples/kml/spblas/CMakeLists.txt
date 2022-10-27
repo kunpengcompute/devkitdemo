@@ -30,7 +30,13 @@ include_directories(${KML_PATH}/include)
 # Add link library
 link_directories(${KML_PATH}/lib/kspblas/single)
 
+# Find link library
+find_library(KSPBLAS kspblas HINTS ${KML_PATH}/lib/kspblas/single)
+
+# Add openmp option
+add_compile_options(-fopenmp)
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
-target_link_libraries(${TARGET_FILE} kspblas)
+target_link_libraries(${TARGET_FILE} ${KSPBLAS})
 

@@ -16,6 +16,10 @@
 
 ## 使用教程
 
+KML_FFT有多个版本，若需要使用请修改编译选项：
+- 单精度版本：-L /usr/local/kml/lib -lkfftf
+- 双精度版本：-L /usr/local/kml/lib -lkfft
+
 1. 获取代码
 
    ```shell

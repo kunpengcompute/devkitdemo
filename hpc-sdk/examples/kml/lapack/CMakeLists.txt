@@ -33,6 +33,9 @@ find_library(KSERVICE kservice HINTS ${KML_PATH}/lib)
 find_library(LAPACK_ADAPT liblapack_adapt.a HINTS ${KML_PATH}/lib)
 find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/omp)
 
+# Add openmp option
+add_compile_options(-fopenmp)
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
 target_link_libraries(${TARGET_FILE} ${KLAPACK} ${LAPACK_ADAPT} ${KBLAS} gfortran m ${KSERVICE})
