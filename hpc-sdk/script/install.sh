@@ -472,7 +472,10 @@ install_main() {
   for result in $(echo ${select_result} | tr ',' ' '); do
     check_software_installed $result
   done
-  cp ${current_dir}/configure_environment.sh ${current_dir}/configure_environment_${time_stamp}.sh
+  if [[ ${select_result} != 'KML' ]];then
+    # Do not need to configure the KML to be installed independently.
+    cp ${current_dir}/configure_environment.sh ${current_dir}/configure_environment_${time_stamp}.sh
+  fi
   # Handle the software installation process. 
   set_software_choose_status
   install_compiler_env_check "gcc"
@@ -480,9 +483,10 @@ install_main() {
   install_hyper_mpi_env_check "gcc"
   install_hyper_mpi_env_check "bisheng"
   install_kml_env_check
-  
-  # Execute the script for  configuring environment variables.
-  echo -e "\e[1;33mRun the script ${current_dir}/configure_environment_${time_stamp}.sh to configure environment variables.\e[0m"
+  if [[ ${select_result} != 'KML' ]];then
+    # Execute the script for configuring environment variables.
+    echo -e "\e[1;33mRun the script ${current_dir}/configure_environment_${time_stamp}.sh to configure environment variables.\e[0m"
+  fi
   exit 0
 }
 

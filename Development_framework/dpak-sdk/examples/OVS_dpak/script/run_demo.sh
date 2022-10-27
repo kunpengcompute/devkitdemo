@@ -84,9 +84,9 @@ fi
 
 
 echo ''
-echo 'Ensure that the IP address of the management port that can provide the bandwidth for the VM is SSH'
-echo 'If no configuration is performed, run the following command to configuration:'
-echo 'example: virsh attach-interface vm1 --type bridge --source virbr0 --model virtio --current'
+echo -e "\e[1;33mEnsure that the IP address of the management port that can provide the bandwidth for the VM is SSH\e[0m"
+echo -e "\e[1;33mIf no configuration is performed, run the following command to configuration:\e[0m"
+echo -e "\e[1;33mexample: virsh attach-interface vm1 --type bridge --source virbr0 --model virtio --current\e[0m"
 echo ''
 
 
@@ -109,24 +109,26 @@ password_free_check ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
 sed -i "s#eth0_ip_second=''#eth0_ip_second=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
-# check vm1 ping vm2
+# Check vm1 ping vm2
 python3 ${current_dir}/../util/check_env_compute.py  'compute_first'
 if [[ $? == 0 ]];then
-    echo -e "\e[1;32mVM1 and VM2 networks are connected..\e[0m"
+    echo -e "\e[1;32m  VM1 and VM2 networks are connected.\e[0m"
 else
-    echo -e "\e[1;32mVM1 and VM2 networks can't be connected.\e[0m"
+    echo -e "\e[1;31m  VM1 and VM2 networks can't be connected.\e[0m"
     exit 1
 fi
 
-# check vm2 ping vm1
+# Check vm2 ping vm1
 python3 ${current_dir}/../util/check_env_compute.py 'compute_second'
 if [[ $? == 0 ]];then
-    echo -e "\e[1;32mVM2 and VM1 networks are connected.\e[0m"
+    echo -e "\e[1;32m  VM2 and VM1 networks are connected.\e[0m"
 else
-    echo -e "\e[1;32mVM2 and VM1 networks can't be connected.\e[0m"
+    echo -e "\e[1;31m  VM2 and VM1 networks can't be connected.\e[0m"
     exit 1
 fi
 
+echo -e "\e[1;33mIt may take a few minutes to run the ICMP uninstallation demo, please wait...\e[0m"
+# Simulating traffic sending between VMs takes a long time.
 python3 ${current_dir}/../util/deal_demo.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
