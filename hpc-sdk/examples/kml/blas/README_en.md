@@ -19,12 +19,13 @@ English | [简体中文](README.md)
 
 ## Guidance
 
-There are multiple versions of KML_BLAS, please modify the compilation options if necessary:
-- Single-thread version without locking: -L /usr/local/kml/lib/kblas/nolocking -lkblas
-- Single-thread version with locking: -L /usr/local/kml/lib/kblas/locking -lkblas
-- Multi-thread version using pthread: -L /usr/local/kml/lib/kblas/pthread -lkblas
-- Multi-thread version using OpenMP: -L /usr/local/kml/lib/kblas/omp -lkblas
+There are multiple versions of KML_BLAS:
+- Single-thread version without locking: /usr/local/kml/lib/kblas/nolocking/libkblas.so
+- Single-thread version with locking: /usr/local/kml/lib/kblas/locking/libkblas.so
+- Multi-thread version using pthread: /usr/local/kml/lib/kblas/pthread/libkblas.so
+- Multi-thread version using OpenMP: /usr/local/kml/lib/kblas/omp/libkblas.so
 
+**Single-thread version without locking is used by demo.**
 1. Obtain the code.
 
    ```shell

@@ -16,10 +16,11 @@ English | [简体中文](README.md)
 
 ## Guidance
 
-There are multiple versions of KML_FFT, please modify the compilation options if necessary:
-- Single-precision version: -L /usr/local/kml/lib -lkfftf
-- Double-precision version: -L /usr/local/kml/lib -lkfft
+There are multiple versions of KML_FFT:
+- Single-precision version: /usr/local/kml/lib/libkfft.so
+- Double-precision version: -L /usr/local/kml/lib/libkfftf.so
 
+**Single-precision version is used by demo.**
 1. Obtain the code.
 
    ```shell
