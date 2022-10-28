@@ -281,10 +281,12 @@ install_hyper_mpi() {
   logger "Hyper MPI is installed."
   if [[ ${hmpi_gcc_choose_status} == 1 ]]; then
     change_modules "HMPI-GCC"
+    hmpi_gcc_installed=1
     sed -i "s#hyper_mpi_gcc=.*#hyper_mpi_gcc=${hmpi_package_name}#g" ${current_dir}/configure_environment_${time_stamp}.sh
     sed -i "s#hyper_mpi_gcc_install=.*#hyper_mpi_gcc_install=${install_hmpi_path}/${hmpi_package_name}#g"  ${current_dir}/configure_environment_${time_stamp}.sh
   elif [[ ${hmpi_bisheng_choose_status} == 1 ]]; then
     change_modules "HMPI-BISHENG"
+    hmpi_bisheng_installed=1
     sed -i "s#hyper_mpi_bisheng=.*#hyper_mpi_bisheng=${hmpi_package_name}#g" ${current_dir}/configure_environment_${time_stamp}.sh
     sed -i "s#hyper_mpi_bisheng_install=.*#hyper_mpi_bisheng_install=${install_hmpi_path}/${hmpi_package_name}#g"  ${current_dir}/configure_environment_${time_stamp}.sh
   fi
@@ -321,10 +323,12 @@ install_compiler() {
   cd ${install_compiler_path}/${compiler_name}
   if [[ ${compiler_type} == "bisheng" ]]; then
     change_modules "BISHENG"
+    bisheng_installed=1
     sed -i "s#compiler_bisheng=.*#compiler_bisheng=${compiler_name}#g" ${current_dir}/configure_environment_${time_stamp}.sh
     sed -i "s#compiler_bisheng_install=.*#compiler_bisheng_install=${install_compiler_path}#g"  ${current_dir}/configure_environment_${time_stamp}.sh
   else
     change_modules "GCC"
+    gcc_installed=1
     sed -i "s#compiler_gcc=.*#compiler_gcc=${compiler_name}#g" ${current_dir}/configure_environment_${time_stamp}.sh
     sed -i "s#compiler_gcc_install=.*#compiler_gcc_install=${install_compiler_path}#g" ${current_dir}/configure_environment_${time_stamp}.sh
   fi
@@ -472,10 +476,8 @@ install_main() {
   for result in $(echo ${select_result} | tr ',' ' '); do
     check_software_installed $result
   done
-  if [[ ${select_result} != 'KML' ]];then
-    # Do not need to configure the KML to be installed independently.
-    cp ${current_dir}/configure_environment.sh ${current_dir}/configure_environment_${time_stamp}.sh
-  fi
+  cp ${current_dir}/configure_environment.sh ${current_dir}/configure_environment_${time_stamp}.sh
+
   # Handle the software installation process. 
   set_software_choose_status
   install_compiler_env_check "gcc"
@@ -483,9 +485,11 @@ install_main() {
   install_hyper_mpi_env_check "gcc"
   install_hyper_mpi_env_check "bisheng"
   install_kml_env_check
-  if [[ ${select_result} != 'KML' ]];then
+  if [[ "${gcc_installed}${bisheng_installed}${hmpi_bisheng_installed}${hmpi_gcc_installed}" =~ '1' ]];then
     # Execute the script for configuring environment variables.
     echo -e "\e[1;33mRun the script ${current_dir}/configure_environment_${time_stamp}.sh to configure environment variables.\e[0m"
+  else
+    [[ -f "${current_dir}/configure_environment_${time_stamp}.sh" ]] && rm -f "${current_dir}/configure_environment_${time_stamp}.sh"
   fi
   exit 0
 }
