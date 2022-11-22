@@ -69,9 +69,9 @@ get_local_ip ${input_ip}
 if [[ $? == 1 ]];then
    echo -e "\e[1;32mThe IP addresses of the two active nodes are the same. You do not need to check the environment again. \e[0m"
 else
-    sed -i "s#port_host_second=''#port_host_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#username_host_first=''#username_host_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#ip_host_first=''#ip_host_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
+    sed -i "s#port_host_second=.*#port_host_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
+    sed -i "s#username_host_first=.*#username_host_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
+    sed -i "s#ip_host_first=.*#ip_host_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
     password_free_check ${input_username} ${input_ip} ${input_port} 
     python3 ${current_dir}/util/check_env_controll.py 'remote' 
     if [[ $? == 0 ]];then
@@ -92,22 +92,22 @@ echo ''
 
 echo -e "\e[1;34mStarted to check first virtual machine server...\e[0m"
 get_user_connect_info 'first virtual'
-sed -i "s#port_compute_first=''#port_compute_first=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#username_compute_first=''#username_compute_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#ip_compute_first=''#ip_compute_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#port_compute_first=.*#port_compute_first=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#username_compute_first=.*#username_compute_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#ip_compute_first=.*#ip_compute_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_first=''#eth0_ip_first=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_first=.*#eth0_ip_first=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
 
 echo -e "\e[1;34mStarted to check second virtual machine server...\e[0m"
 get_user_connect_info 'second virtual'
-sed -i "s#port_compute_second=''#port_compute_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#username_compute_second=''#username_compute_second=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
-sed -i "s#ip_compute_second=''#ip_compute_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#port_compute_second=.*#port_compute_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#username_compute_second=.*#username_compute_second=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#ip_compute_second=.*#ip_compute_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_second=''#eth0_ip_second=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_second=.*#eth0_ip_second=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
 # Check vm1 ping vm2
 python3 ${current_dir}/util/check_env_compute.py  'compute_first'

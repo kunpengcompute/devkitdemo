@@ -65,7 +65,8 @@ def check_demo_server(ip,username,port,eth0_ip):
 
 if __name__ == "__main__":
     cfg = ConfigParser()
-    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),"conf/demo_conf.cfg"))
+    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))),
+                          "conf/demo_conf.cfg"))
     # compute information
     port_compute_first = cfg['compute_first'].get('port_compute_first')
     username_compute_first = cfg['compute_first'].get('username_compute_first')
