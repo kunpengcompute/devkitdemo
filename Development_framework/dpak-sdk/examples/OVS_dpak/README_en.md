@@ -23,6 +23,15 @@ The network acceleration fuction of the SP680 SmartNIC is used to cooperate with
 
 8. A VM has been created and the VF device has been passed througe to the VM. Two VMs that can communicate with each other (can ping each other) have been created and password-free communication between physical machines and VMs has beeb configure.
 
+```
+-------------          -------------
+|192.168.1.2|          |192.168.1.3|
+|           |----------|           |
+-------------          -------------
+     |                       |
+ ---------              ----------
+```
+
 9. The IP address of the management port that supports SSH bandwidth has been configured for the VM by running the 'virsh attach-interface vm1 --type bridge --source virbr0 --model virtio --current' command.
 
 ## Usage Guidance

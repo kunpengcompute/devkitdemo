@@ -110,7 +110,7 @@ class CheckDemoEnvironment:
     
     def check_openv_switch_status(self):
         """check the openvswitch service status"""
-        check_item = ['running']
+        check_item = ['running','active']
         software = 'The openswitch service'
         ssh_command = ['service','openvswitch','status']
         ssh_command = self.deal_ssh_command(ssh_command,self.ssh_command,self.flag)
