@@ -40,7 +40,7 @@ find_library(LAPACK_ADAPT liblapack_adapt.a HINTS ${KML_PATH}/lib)
 find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/omp)
 
 # Set debug compilation option
-if(${CMAKE_BUILD_TYPE} STAREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_compile_options(-g -o0)
 endif()
 

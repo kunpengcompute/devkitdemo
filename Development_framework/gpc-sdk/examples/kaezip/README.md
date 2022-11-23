@@ -39,7 +39,7 @@
 
    ```shell
     ./kaezip_demo -h // 查看帮助
-    ./kaezip_demo -czf filename.tar.gz filenaem // 压缩
+    ./kaezip_demo -czf filename.tar.gz filename // 压缩
     ./kaezip_demo -xzf filename.tar.gz // 解压
    ```
 

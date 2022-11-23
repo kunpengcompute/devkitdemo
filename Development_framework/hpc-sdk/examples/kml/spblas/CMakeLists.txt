@@ -37,7 +37,7 @@ include_directories(${KML_PATH}/include)
 set(CMAKE_BUILD_TYPE "Debug")
 
 # Set conditional compilation
-if(${SPBLAS} STAREQUAL "multi")
+if(${SPBLAS} STREQUAL "multi")
     message(STATUS "The SPBLAS version used by demo is: multi.")
     # Add link library
     link_directories(${KML_PATH}/lib/kspblas/multi)
@@ -52,7 +52,7 @@ else()
 endif()
 
 # Set debug compilation option
-if(${CMAKE_BUILD_TYPE} STAREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_compile_options(-g -o0)
 endif()
 

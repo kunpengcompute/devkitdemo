@@ -40,7 +40,7 @@ set(CMAKE_BUILD_TYPE "Debug")
 link_directories(${KML_PATH}/lib)
 
 # Set conditional compilation
-if(${FFT} STAREQUAL "single")
+if(${FFT} STREQUAL "single")
     message(STATUS "The FFT version used by demo is: single.")
     # Find link library
     find_library(KFFT kfftf HINTS ${KML_PATH}/lib)
@@ -51,7 +51,7 @@ else()
 endif()
 
 # Set debug compilation option
-if(${CMAKE_BUILD_TYPE} STAREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_compile_options(-g -o0)
 endif()
 

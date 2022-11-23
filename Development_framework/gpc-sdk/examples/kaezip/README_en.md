@@ -40,7 +40,7 @@ English | [简体中文](README.md)
 
    ```shell
    ./kaezip_demo -h // help
-   ./kaezip_demo -czf filename.tar.gz filenaem // compress
+   ./kaezip_demo -czf filename.tar.gz filename // compress
    ./kaezip_demo -xzf filename.tar.gz // decompress
    ```
 

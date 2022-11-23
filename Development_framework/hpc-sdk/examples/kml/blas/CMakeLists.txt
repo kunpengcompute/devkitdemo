@@ -37,19 +37,19 @@ include_directories(${KML_PATH}/include)
 set(CMAKE_BUILD_TYPE "Debug")
 
 # Set conditional compilation
-if(${BLAS} STAREQUAL "omp")
+if(${BLAS} STREQUAL "omp")
     message(STATUS "The BLAS version used by demo is: omp.")
     # Find link library
     find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/omp)
     # Add link library
     link_directories(${KML_PATH}/lib/kblas/omp)   
-elseif(${BLAS} STAREQUAL "locking")
+elseif(${BLAS} STREQUAL "locking")
     message(STATUS "The BLAS version used by demo is: locking.")
     # Find link library
     find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/locking)
     # Add link library
     link_directories(${KML_PATH}/lib/kblas/locking)
-elseif(${BLAS} STAREQUAL "pthread")
+elseif(${BLAS} STREQUAL "pthread")
     message(STATUS "The BLAS version used by demo is: pthread.")
     # Find link library
     find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/pthread)
@@ -64,7 +64,7 @@ else()
 endif()
 
 # Set debug compilation option
-if(${CMAKE_BUILD_TYPE} STAREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_compile_options(-g -o0)
 endif()
 
