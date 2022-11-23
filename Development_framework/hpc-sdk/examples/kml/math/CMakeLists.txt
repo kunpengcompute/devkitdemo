@@ -42,7 +42,7 @@ link_directories(${KML_PATH}/lib)
 # Find link library
 find_library(MATH_L m HINTS ${KML_PATH}/lib)
 
-if(${MATH} STAREQUAL "precision")
+if(${MATH} STREQUAL "precision")
     message(STATUS "The MATH version used by demo is: precision.")
     find_library(KMATH km_l9 HINTS ${KML_PATH}/lib)
 else()
@@ -51,7 +51,7 @@ else()
 endif()
 
 # Set debug compilation option
-if(${CMAKE_BUILD_TYPE} STAREQUAL "Debug")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     add_compile_options(-g -o0)
 endif()
 

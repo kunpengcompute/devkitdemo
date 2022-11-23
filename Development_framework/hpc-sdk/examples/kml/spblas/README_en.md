@@ -49,10 +49,10 @@ There are multiple versions of KML_SPBLAS:
 4. Run the demo.
 
    ```shell
-   # 单独执行
+   # Run the demo independently.
    ./spblas_demo
-   # mpirun 执行
-   mpirun -n rank数 spblas_demo
+   # Run the demo using the mpirun command.
+   mpirun -n rank numbers spblas_demo
    ```
 
 5. Clean up the demo.
