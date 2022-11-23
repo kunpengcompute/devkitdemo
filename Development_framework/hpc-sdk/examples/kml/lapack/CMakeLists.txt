@@ -41,7 +41,7 @@ find_library(KBLAS kblas HINTS ${KML_PATH}/lib/kblas/omp)
 
 # Set debug compilation option
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_compile_options(-g -o0)
+    add_compile_options(-g -O0)
 endif()
 
 # Add openmp option
