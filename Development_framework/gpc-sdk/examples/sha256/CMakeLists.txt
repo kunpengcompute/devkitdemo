@@ -16,4 +16,12 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 # ADD compiler option
 add_definitions("-march=armv8-a+crypto")
 
+# Default build type is debug
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Set debug compilation option
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(-g)
+endif()
+
 add_executable(${TARGET_FILE} ${SRC} ${SHA256_C} ${SHA256_ASM})

@@ -53,7 +53,7 @@ endif()
 
 # Set debug compilation option
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    add_compile_options(-g -O0)
+    add_compile_options(-g)
 endif()
 
 # Add openmp option
