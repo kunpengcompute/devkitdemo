@@ -18,6 +18,14 @@ include_directories(
     include
 )
 
+# Default build type is debug
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Set debug compilation option
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(-g)
+endif()
+
 add_executable(sm4_demo ${SRCS})
 
 target_link_libraries(sm4_demo wd)

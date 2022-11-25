@@ -31,6 +31,14 @@ include_directories(${KAEZIP_PATH}/include)
 # Set lib path
 link_directories(${KAEZIP_PATH}/lib)
 
+# Default build type is debug
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Set debug compilation option
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(-g)
+endif()
+
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
 

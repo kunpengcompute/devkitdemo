@@ -37,5 +37,13 @@ link_directories(${HYPERSCAN_PATH}/lib)
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
 
+# Default build type is debug
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Set debug compilation option
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(-g)
+endif()
+
 # link library
 target_link_libraries(${TARGET_FILE} hs)

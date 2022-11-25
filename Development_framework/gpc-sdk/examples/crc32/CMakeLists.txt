@@ -31,5 +31,13 @@ set(TARGET_FILE crc32_demo)
 set(CMAKE_C_COMPILER gcc)
 set(CMAKE_C_FLAGS "-march=armv8-a+crc")
 
+# Default build type is debug
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Set debug compilation option
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(-g)
+endif()
+
 #Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
