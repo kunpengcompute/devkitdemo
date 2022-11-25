@@ -31,10 +31,10 @@ Here we describe key features of the SP680 SmartNIC managed by OpenStack Train, 
 
 
    ```shell
-   cd ./devkitdemo/Development_framework/dpak-sdk/examples/Virtualization_dpak/script
+   cd ./devkitdemo/Development_framework/dpak-sdk/examples/Virtualization_dpak/Virtualization_offload
    ```
 
 3. Run the demo.
    ```shell
-   bash run_demo.sh
+   bash Virtualization_offload.sh
    ```
