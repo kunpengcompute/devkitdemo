@@ -29,7 +29,8 @@ exit_or_not(){
 # install dependencies
 yum install -y cmake rpcgen glib2-devel gnutls-devel libudev-devel libpciaccess-devel libxml2-devel libtirpc-devel \
     yajl-devel librbd-devel pixman-devel python3-docutils meson openssl openssl-devel autoconf automake libtool \
-    python3-pyelftools libmlx5  libatomic unbound lubunwind pkgconfig rdma-core-devel libcap* python3-pkgconfig
+    python3-pyelftools libmlx5 libatomic unbound libunwind pkgconfig rdma-core-devel libcap* python3-pkgconfig librte* \ 
+    libfdt
 
 # 1 install dpak
 rpm -e `rpm -qa | grep in220-sdk` --nodeps
@@ -47,20 +48,20 @@ rpm -ivh ${package_dir}/dpdk-devel-21.11-1.aarch64.rpm
 ldconfig
 
 # 3 install openvswitch(ovs)
-rpm -e --nodeps openvswitch-2.12.0.13.oe1.arrch64
-rpm -e --nodeps openvswitch-devel-2.12.0.13.oe1.arrch64
+rpm -e --nodeps openvswitch-2.14.2-1.aarch64.rpm
+rpm -e --nodeps openvswitch-devel-2.14.2-1.aarch64.rpm
 
 rpm -ivh ${package_dir}/openvswitch-2.14.2-1.aarch64.rpm
-rpm -ivh ${package_dir}/openvswitch-devel-2.14.2-1.arrch64.rpm
+rpm -ivh ${package_dir}/openvswitch-devel-2.14.2-1.aarch64.rpm
 
 systemctl restart rsyslog
 # create ovs log directory
 mkdir -p /var/log/openvswitch
-ln -s /usr/lib64/libevent-2.1.so.6 /usr/lib64/libevent-2.0.so.5
-ln -s /usr/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.10
+[ ! -f /usr/lib64/libevent-2.0.so.5 ] && ln -s /usr/lib64/libevent-2.1.so.6 /usr/lib64/libevent-2.0.so.5
+[ ! -f /usr/lib64/libevent-2.0.so.5 ] && ln -s /usr/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.10
 
 # configure OVS startup items
-hwoff-pf-pci=$(hinicadm3 info | grep NIC | cut -c 19-30 | awk 'NR==1')
+hwoff_pf_pci=$(hinicadm3 info | grep NIC | cut -c 19-30 | awk 'NR==1')
 service openvswitch start
 
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
@@ -69,12 +70,12 @@ ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask=0x6
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-lcore-mask=0x6
 ovs-vsctl --no-wait set Open_vSwitch . other_config:offload-cpu-mask=0x18
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-socket-mem="8192"
-ovs-vsctl --no-wait set Open_vSwitch . other_config:hwoff-pf-pci=${hwoff-pf-pci}
+ovs-vsctl --no-wait set Open_vSwitch . other_config:hwoff-pf-pci=${hwoff_pf_pci}
 ovs-vsctl --no-wait set Open_vSwitch . other_config:hw-offload=true
 service openvswitch restart
 
-virtio_1=$(hinicadm3 info | grep VirtIO | awk -f "(" '{print $1}' | awk -f "--------" '{print $2}' sed -n '1p')
-virtio_2=$(hinicadm3 info | grep VirtIO | awk -f "(" '{print $1}' | awk -f "--------" '{print $2}' sed -n '2p')
+virtio_1=$(hinicadm3 info | grep VirtIO | awk -F "(" '{print $1}' | awk -F "--------" '{print $2}' | sed -n '1p')
+virtio_2=$(hinicadm3 info | grep VirtIO | awk -F "(" '{print $1}' | awk -F "--------" '{print $2}' | sed -n '2p')
 
 echo 2 > /sys/bus/pci/devices/${virtio_1}/sriov_numvfs
 echo 2 > /sys/bus/pci/devices/${virtio_2}/sriov_numvfs
@@ -96,6 +97,6 @@ for i in {1..4};do
     random_2=$(head -20 /dev/urandom | cksum | cut -c 1)
     random_3=$(head -20 /dev/urandom | cksum | cut -c 1)
     vf_pci=$(echo ${vfs} | awk "{print \$${i}}")
-    ovs-vsctl add-port br0 vf${i} --set interface vf${i} type=dpdk \ 
+    ovs-vsctl add-port br0 vf${i} -- set interface vf${i} type=dpdk \ 
     options:dpdk-devargs=0000:${vf_pci},vf_mac=02:05:0${random_1}:0${random_2}:0${random_3}:0c
 done
