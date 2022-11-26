@@ -48,15 +48,42 @@ password_free_check(){
     fi
 }
 
+get_system_network_interface(){
+  # The image list is displayed, prompting users to select a image.
+  network_interface_list=$(ip a | grep -v lo | awk -F": " '/^[^ ]/{print$2}')
+  echo -e "\e[1;34mSelect the network port that supports transmission from the following list:\e[0m"
+  i=1
+  for network_interface in $network_interface_list;do
+    echo $i ${network_interface}
+    ((i++))
+  done
+  len_network_interface_list=$(echo ${network_interface_list} | awk -F ' ' '{print NF}')
+  while true
+  do
+    echo -n 'Enter the sequence number from the network interface list: '
+    read -r image_number
+    
+    if echo $image_number | grep -E '^[0-9]+$' >/dev/null;then
+        if [[ $network_number -le ${len_network_interface_list} ]] && [[ $network_number -ge 1 ]];then
+            user_choose_image=$(echo ${network_interface_list} | cut -d ' ' -f $network_number)
+            break
+        fi
+    fi
+    echo -e "\e[1;31mIncorrect input information.\e[0m"
+    continue
+  done
+  echo -e "\e[1;32mThe selected network interface is ${user_choose_network_interface}.\e[0m"
+}
+
 get_vm_eth0_ip(){
     local user=$1
     local ip=$2
     local port=$3
-    eth0_ip=$(ssh -p ${port} $user@$ip ip -4 addr show eth0 | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
+    network_ip=$(ssh -p ${port} $user@$ip ip -4 addr show ${user_choose_network_interface} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 }
 # check env
 echo -e "\e[1;34mStart to check the controll node environment ...\e[0m"
-python3 ${current_dir}/../util/check_env_controll.py 'local'
+python3 ${current_dir}/util/check_env_controll.py 'local'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32mCheck the the controll node environment.\e[0m"
 else
@@ -73,7 +100,7 @@ else
     sed -i "s#username_host_first=.*#username_host_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
     sed -i "s#ip_host_first=.*#ip_host_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
     password_free_check ${input_username} ${input_ip} ${input_port} 
-    python3 ${current_dir}/../util/check_env_controll.py 'remote' 
+    python3 ${current_dir}/util/check_env_controll.py 'remote' 
     if [[ $? == 0 ]];then
         echo -e "\e[1;32mCheck the environment of the second host node.\e[0m"
     else
@@ -96,8 +123,9 @@ sed -i "s#port_compute_first=.*#port_compute_first=${input_port}#g" $current_dir
 sed -i "s#username_compute_first=.*#username_compute_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_compute_first=.*#ip_compute_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
+get_system_network_interface
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_first=.*#eth0_ip_first=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_first=.*#eth0_ip_first=${network_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
 
 echo -e "\e[1;34mStarted to check second virtual machine server...\e[0m"
@@ -106,11 +134,12 @@ sed -i "s#port_compute_second=.*#port_compute_second=${input_port}#g" $current_d
 sed -i "s#username_compute_second=.*#username_compute_second=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_compute_second=.*#ip_compute_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
+get_system_network_interface
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_second=.*#eth0_ip_second=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_second=.*#eth0_ip_second=${network_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
 # Check vm1 ping vm2
-python3 ${current_dir}/../util/check_env_compute.py  'compute_first'
+python3 ${current_dir}/util/check_env_compute.py  'compute_first'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32m  VM1 and VM2 networks are connected.\e[0m"
 else
@@ -119,7 +148,7 @@ else
 fi
 
 # Check vm2 ping vm1
-python3 ${current_dir}/../util/check_env_compute.py 'compute_second'
+python3 ${current_dir}/util/check_env_compute.py 'compute_second'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32m  VM2 and VM1 networks are connected.\e[0m"
 else
@@ -129,7 +158,7 @@ fi
 
 echo -e "\e[1;33mIt may take a few minutes to run the ICMP uninstallation demo, please wait...\e[0m"
 # Simulating traffic sending between VMs takes a long time.
-python3 ${current_dir}/../util/deal_demo.py
+python3 ${current_dir}/util/deal_demo.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi
