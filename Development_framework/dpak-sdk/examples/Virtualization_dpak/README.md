@@ -36,5 +36,6 @@
 3. 运行demo
 
    ```shell
+   source /root/.admin-openrc
    bash Virtualization_offload.sh
    ```

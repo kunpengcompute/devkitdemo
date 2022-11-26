@@ -36,5 +36,6 @@ Here we describe key features of the SP680 SmartNIC managed by OpenStack Train, 
 
 3. Run the demo.
    ```shell
+   source /root/.admin-openrc
    bash Virtualization_offload.sh
    ```
