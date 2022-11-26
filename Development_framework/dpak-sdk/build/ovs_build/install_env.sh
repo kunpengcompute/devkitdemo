@@ -40,19 +40,15 @@ rpm -ivh ${package_dir}/dpak*.rpm
 exit_or_not 'install dpak'
 
 #2 install dpdk
-rpm -e --nodeps dpdk-21.11-1.aarch64.rpm
-rpm -e --nodeps dpdk-devel-21.11-1.aarch64.rpm
- 
-rpm -ivh ${package_dir}/dpdk-21.11-1.aarch64.rpm
-rpm -ivh ${package_dir}/dpdk-devel-21.11-1.aarch64.rpm
+rpm -e --nodeps `rpm -qa | grep dpdk`
+
+rpm -ivh ${package_dir}/dpdk*.rpm
 ldconfig
 
 # 3 install openvswitch(ovs)
-rpm -e --nodeps openvswitch-2.14.2-1.aarch64.rpm
-rpm -e --nodeps openvswitch-devel-2.14.2-1.aarch64.rpm
+rpm -e --nodeps `rpm -qa | grep openvswitch`
 
-rpm -ivh ${package_dir}/openvswitch-2.14.2-1.aarch64.rpm
-rpm -ivh ${package_dir}/openvswitch-devel-2.14.2-1.aarch64.rpm
+rpm -ivh ${package_dir}/openvswitch*.rpm
 
 systemctl restart rsyslog
 # create ovs log directory
