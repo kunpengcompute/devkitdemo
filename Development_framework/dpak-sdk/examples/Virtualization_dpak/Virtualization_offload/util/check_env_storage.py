@@ -36,7 +36,8 @@ def check_storage_server(ip, username, port):
 
 if __name__ == "__main__":
     cfg = ConfigParser()
-    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))),"conf/demo_conf.cfg"))
+    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), 
+                          "conf/demo_conf.cfg"))
     port_storage = cfg.get('storage', 'port_storage')
     username_storage = cfg.get('storage', 'username_storage')
     ip_storage = cfg.get('storage', 'ip_storage')
