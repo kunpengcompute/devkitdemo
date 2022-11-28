@@ -49,8 +49,11 @@ password_free_check(){
 }
 
 get_system_network_interface(){
-  # The image list is displayed, prompting users to select a image.
-  network_interface_list=$(ip a | grep -v lo | awk -F": " '/^[^ ]/{print$2}')
+  # the network port that supports transmission
+   local user=$1
+   local ip=$2
+   local port=$3
+  network_interface_list=$(ssh -p ${port} $user@$ip ip a | grep -v lo | awk -F": " '/^[^ ]/{print$2}')
   echo -e "\e[1;34mSelect the network port that supports transmission from the following list:\e[0m"
   i=1
   for network_interface in $network_interface_list;do
@@ -61,11 +64,11 @@ get_system_network_interface(){
   while true
   do
     echo -n 'Enter the sequence number from the network interface list: '
-    read -r image_number
+    read -r network_number
     
-    if echo $image_number | grep -E '^[0-9]+$' >/dev/null;then
+    if echo $network_number | grep -E '^[0-9]+$' >/dev/null;then
         if [[ $network_number -le ${len_network_interface_list} ]] && [[ $network_number -ge 1 ]];then
-            user_choose_image=$(echo ${network_interface_list} | cut -d ' ' -f $network_number)
+            user_choose_network_interface=$(echo ${network_interface_list} | cut -d ' ' -f $network_number)
             break
         fi
     fi
@@ -123,7 +126,7 @@ sed -i "s#port_compute_first=.*#port_compute_first=${input_port}#g" $current_dir
 sed -i "s#username_compute_first=.*#username_compute_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_compute_first=.*#ip_compute_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
-get_system_network_interface
+get_system_network_interface ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
 sed -i "s#eth0_ip_first=.*#eth0_ip_first=${network_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
@@ -134,7 +137,7 @@ sed -i "s#port_compute_second=.*#port_compute_second=${input_port}#g" $current_d
 sed -i "s#username_compute_second=.*#username_compute_second=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_compute_second=.*#ip_compute_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
-get_system_network_interface
+get_system_network_interface ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
 sed -i "s#eth0_ip_second=.*#eth0_ip_second=${network_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
