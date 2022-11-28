@@ -6,26 +6,29 @@
 # include <errno.h>
 # include <sys/timeb.h>
 # include <stdatomic.h>
-static atomic_int num=0;
+static atomic_int num = 0;
 static int count = 50000000;
-void Perror(const char *s){
+void Perror(const char *s)
+{
 	perror(s);
 	exit(EXIT_FAILURE);
 }
-long long getSystemTime(){
+long long getSystemTime()
+{
 	struct timeb t;
 	ftime(&t);
-	return 1000*t.time+t.millitm;
+	return 1000*t.time + t.millitm;
 }
 void* fun2(void *arg){
-	pthread_t thread_id=pthread_self();
+	pthread_t thread_id = pthread_self();
 	printf("the thread2 id is %1d\n",(long)thread_id);
 	int i=1;
 	for (i;i<=count;i++){
 		num+=1;
 	}
 }
-int main(){
+int main()
+{
 	int err;
 	pthread_t thread1;
 	pthread_t thread2;
