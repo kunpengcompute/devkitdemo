@@ -24,6 +24,14 @@ set(TARGET_FILE bcast_demo)
 # Set Compiler
 set(CMAKE_C_COMPILER mpicc)
 
+# Default build type is debug
+set(CMAKE_BUILD_TYPE "Debug")
+
+# Set debug compilation option
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    add_compile_options(-g)
+endif()
+
 # Add openmp option
 add_compile_options(-fopenmp)
 
