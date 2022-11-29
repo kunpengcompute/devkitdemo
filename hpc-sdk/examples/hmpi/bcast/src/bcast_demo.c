@@ -80,6 +80,13 @@ int main(int argc, char** argv)
 	// This function gives the rank of the process in the particular communicator’s group.
 	MPI_Comm_rank(MPI_COMM_WORLD, &rankNum);
 
+	// Determine color based on row
+	int color = rankNum / 2;
+
+	// Split the communicator based on the color and use the original rank for ordering
+	MPI_Comm row_comm;
+	MPI_Comm_split(MPI_COMM_WORLD, color, rankNum, &row_comm);
+
 	totalMPIBcastTime = BcastData(trialsNum, elementsNum, sendData);
 
 	if (rankNum == 0)
