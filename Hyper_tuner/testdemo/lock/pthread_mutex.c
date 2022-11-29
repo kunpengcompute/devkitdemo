@@ -1,81 +1,61 @@
-/*
- * Copyright 2020 Huawei Technologies Co., Ltd
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 // gcc -g pthread_mutex.c -o pthread_mutex -lpthread
-#include <pthread.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <sys/timeb.h>
+# include <pthread.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <errno.h>
+# include <sys/timeb.h>
 
-static long g_num = 1;
-static long g_count = 10000000000;
+static int num=0;
+static int count = 200000000;
+static int millisecond_coefficient = 1000;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-long long GetSystemTime()
+void Perror(const char *s)
 {
-    struct timeb t;
-    ftime(&t);
-    return 1000 * t.time + t.millitm;
+	perror(s);
+	exit(EXIT_FAILURE);
 }
 
-void* Func(void *arg)
+long long getSystemTime()
 {
-    pthread_t thread_id = pthread_self();
-    printf("The thread2 id is %ld\n", (long)thread_id);
-    int i = 1;
-    for (; i <= g_count; ++i) {
-        pthread_mutex_lock(&mutex);
-        g_num++;
-        g_num *= 2;
-        pthread_mutex_unlock(&mutex);
-    }
+	struct timeb t;
+	ftime(&t);
+	return millisecond_coefficient * t.time + t.millitm;
+}
+
+void* fun2(void *arg)
+{
+	pthread_t thread_id = pthread_self();
+	printf("the thread2 id is %1d\n",(long)thread_id);
+	int i = 1;
+	for (i; i <= count; i++){
+		pthread_mutex_lock(&mutex);
+		num += 1;
+		pthread_mutex_unlock(&mutex);
+	}
 }
 
 int main()
 {
-    int err;
-    pthread_t thread1;
-    pthread_t thread2;
-
-    thread1 = pthread_self();
-    printf("The thread1 id is %ld\n", (long)thread1);
-
-    long long start = GetSystemTime();
-
-    // create thread
-    err = pthread_create(&thread2, NULL, Func, NULL);
-    if (err != 0) {
-        perror("can't create thread2\n");
-        exit(EXIT_FAILURE);
-    }
-
-    int i = 1;
-    for (; i <= g_count; ++i) {
-        pthread_mutex_lock(&mutex);
-        g_num++;
-        g_num *= 2;
-        pthread_mutex_unlock(&mutex);
-    }
-    
-    pthread_join(thread2, NULL);
-    long long end = GetSystemTime();
-
-    printf("The num is %d, pay %lld ms\n", g_num, (end - start));
-
-    return 0;
+	int err;
+	pthread_t thread1;
+	pthread_t thread2;
+	thread1 = pthread_self();
+	printf("the thread1 id is %1d\n",(long)thread1);
+	long long start = getSystemTime();
+	err = pthread_create(&thread2, NULL, fun2, NULL);
+	if(err != 0){
+		Perror("cant create thread2\n");
+	}
+	int i = 1;
+	for (i;i <= count;i++){
+		pthread_mutex_lock(&mutex);
+		num += 1;
+		pthread_mutex_unlock(&mutex);
+	}
+	pthread_join(thread2, NULL);
+	long long end = getSystemTime();
+	printf("The num is %d,pay %11d ms\n", num, (end-start));
+	return 0;
 }
