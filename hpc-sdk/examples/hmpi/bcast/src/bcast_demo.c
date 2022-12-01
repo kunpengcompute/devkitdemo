@@ -32,7 +32,7 @@ int InputParameterParse(int argc, char** argv)
 	return -1;
 }
 
-double BcastData(int trialsNum, int elementsNum, int* sendData)
+double BcastData(int trialsNum, int elementsNum, int* sendData, MPI_Comm comm)
 {
 	if (trialsNum == 0)
 	{
@@ -48,7 +48,7 @@ double BcastData(int trialsNum, int elementsNum, int* sendData)
 		// MPI_Wtime returns a floating-point number of seconds, representing elapsed wall-clock time since some time in the past.
 		totalMPIBcastTime -= MPI_Wtime();
 		// MPI_Bcast broadcasts a message from the process with rank root to all processes of the group, itself included.
-		MPI_Bcast(sendData, elementsNum, MPI_INT, 0, MPI_COMM_WORLD);
+		MPI_Bcast(sendData, elementsNum, MPI_INT, 0, comm);
 		MPI_Barrier(MPI_COMM_WORLD);
 		totalMPIBcastTime += MPI_Wtime();
 	}
@@ -66,6 +66,7 @@ int main(int argc, char** argv)
 	int trialsNum = 10;
 	int rankNum;
 	int sizeOfInt = sizeof(int);
+	int groupRank;
 	double totalMPIBcastTime = 0.0;
 	int* sendData = (int*)malloc(sizeof(int) * elementsNum);
 	if (sendData == NULL)
@@ -86,10 +87,12 @@ int main(int argc, char** argv)
 	// Split the communicator based on the color and use the original rank for ordering
 	MPI_Comm row_comm;
 	MPI_Comm_split(MPI_COMM_WORLD, color, rankNum, &row_comm);
+	MPI_Comm_rank(row_comm, &groupRank);
 
-	totalMPIBcastTime = BcastData(trialsNum, elementsNum, sendData);
+	totalMPIBcastTime = BcastData(trialsNum, elementsNum, sendData, row_comm);
+	MPI_Comm_free(&row_comm);
 
-	if (rankNum == 0)
+	if (groupRank == 0)
 	{
 		printf("Data size = %d, Trials = %d\n", elementsNum * sizeOfInt, trialsNum);
 		printf("Average of MPI_Bcast time = %lf seconds\n", totalMPIBcastTime / trialsNum);
