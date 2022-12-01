@@ -19,7 +19,7 @@ ip_pattern="^\([1-9]\|[1-9][0-9]\|1[0-9][0-9]\|2[0-4][0-9]\|25[0-5]\)\.\([0-9]\|
 
 get_local_ip(){
     local input_ip=$1
-    local_ips=$(ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}')
+    local_ips=$(ip a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}')
     if [[ ${local_ips} =~ ${input_ip} ]]; then
         echo 'No need to check the environment again because the two servers have the same IP address.'
         return 1
