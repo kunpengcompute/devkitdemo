@@ -1,0 +1,11 @@
+server:
+  port: 9118
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans,metrics,configprops,httptrace
+      base-path: /checkgcinfo
+  endpoints:
+    health:
+      show-details: always	
