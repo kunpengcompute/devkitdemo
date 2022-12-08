@@ -4,16 +4,16 @@ English | [简体中文](README.md)
 
 ## Introduction
 
-1. [HAF](https://www.hikunpeng.com/document/detail/en/kunpengbds/appAccelFeatures/sqlqueryaccelf/kunpengomnidata_20_0002.html) the homogeneous acceleration framework  to replace the server/client interface of the original gRPC communication pushdown framework, and implements pushdown using annotations..
+1. [HAF](https://kunpeng-repo.obs.cn-north-4.myhuaweicloud.com/Kunpeng%20BoostKit/Kunpeng%20BoostKit%2022.0.RC3/BoostKit-haf_1.2.0.zip) the homogeneous acceleration framework  to replace the server/client interface of the original gRPC communication pushdown framework, and implements pushdown using annotations..
 
 ## Compile Dependencies
 
 1. Ensure that **maven** has been installed, and repository mirror could connect.
-2. Ensure that **BiSheng JDK 1.8** has been installed.
-3. Ensure that **haf-1.3.0.jar** has been installed.
+2. Ensure that [BiShengJDK 1.8](https://mirror.iscas.ac.cn/kunpeng/archive/compiler/bisheng_jdk/bisheng-jdk-8u262-linux-aarch64.tar.gz) has been installed.
+3. Ensure that **haf-1.2.0.jar** has been installed，this file is contained by [HAF](https://kunpeng-repo.obs.cn-north-4.myhuaweicloud.com/Kunpeng%20BoostKit/Kunpeng%20BoostKit%2022.0.RC3/BoostKit-haf_1.2.0.zip) haf-host package .
 
 ## Run Dependencies
-1. Ensure that both of offload node and host node [HAF](https://www.hikunpeng.com/document/detail/en/kunpengbds/appAccelFeatures/sqlqueryaccelf/kunpengomnidata_20_0018.html) have been installed.
+1. Ensure that both of offload node and host node [HAF](https://kunpeng-repo.obs.cn-north-4.myhuaweicloud.com/Kunpeng%20BoostKit/Kunpeng%20BoostKit%2022.0.RC3/BoostKit-haf_1.2.0.zip) have been installed, you can reffer to [document](https://www.hikunpeng.com/document/detail/en/kunpengbds/appAccelFeatures/sqlqueryaccelf/kunpengomnidata_20_0018.html).
 
 
 
