@@ -1,5 +1,5 @@
 Package: kunpeng-sc
-Version: 1.0.1
+Version: 1.1.0
 Section: utils
 Priority: optional
 Depends: libssl-dev, zlib1g-dev
@@ -8,5 +8,5 @@ Suggests:
 Architecture: arm64
 Installed-Size: 4096
 Maintainer: kunpengcompute
-Description: Kunpeng-sc Package for Secure Computing Application Development.
+Description: Kunpeng-sc Package for Secure Computing Application Development. Support os: UOS 20 SP1.
 

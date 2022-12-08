@@ -11,7 +11,7 @@ This demo is used to issue an X509 certificate to users. It creates a root certi
 
 ## Dependencies
 
-1. Ensure that `kunpeng-sc-1.0.1` and `kunpeng-sc-devel-1.0.1` have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
+1. Ensure that `kunpeng-sc-1.1.0` and `kunpeng-sc-devel-1.1.0` have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
 2. Run the `lsmod | grep tzdriver` command to check whether the tzdriver is properly loaded.
 3. Run the  `ps -ef | grep teecd` command to check whether the daemon is started properly.
 
@@ -41,7 +41,7 @@ This demo is used to issue an X509 certificate to users. It creates a root certi
 
 4. Replace the `manifest.txt` file in the `./TA/` directory with the `manifest.txt` file used for applying for a developer certificate.
 
-5. Install the TA demo. When compiling the TA, you need to statically link the OpenSSL encryption and decryption library applicable to the TEE. After `kunpeng-sc-devel-1.0.1` is installed, the OpenSSL encryption and decryption library applicable to the TEE is installed to `/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a`. For reference, see **Compiling and Generating the libcrypto.a File for TEE**.
+5. Install the TA demo. When compiling the TA, you need to statically link the OpenSSL encryption and decryption library applicable to the TEE. After `kunpeng-sc-devel-1.1.0` is installed, the OpenSSL encryption and decryption library applicable to the TEE is installed to `/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a`. For reference, see **Compiling and Generating the libcrypto.a File for TEE**.
 
    ```shell
    cd ./TA/
