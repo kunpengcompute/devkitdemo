@@ -91,18 +91,22 @@ function apply_patch() {
     echo "apply itrustee sdk patch"
     cd ${SrcPath}/itrustee_sdk
     git am ${patchDir}/itrustee_sdk/*.patch
+    rm -rf *.patch
 
     echo "apply itrustee client patch"
     cd ${SrcPath}/itrustee_client
     git am ${patchDir}/itrustee_client/*.patch
+    rm -rf *.patch
 
     echo "apply itrustee tzdriver patch"
     cd ${SrcPath}/itrustee_tzdriver
     git am ${patchDir}/itrustee_tzdriver/*.patch
+    rm -rf *.patch
 
     echo "apply libboundscheck patch"
     cd ${SrcPath}/libboundscheck
     git am ${patchDir}/libboundscheck/*.patch
+    rm -rf *.patch
 
     # recover git config
     if [[ ${cnt1} -eq 0 ]] || [[ ${cnt2} -eq 0 ]]; then
@@ -157,11 +161,46 @@ function get_src_code() {
     cd ${SrcPath}
     # download source code
     git clone -b itrustee_sdk-1.0 https://gitee.com/openeuler/itrustee_sdk.git
+    if [[ $? -ne 0 ]]; then
+        echo "itrustee_sdk download failed."
+        rm -rf ${SrcPath}
+        exit 1
+    fi
+
     git clone -b itrustee_client-1.0 https://gitee.com/openeuler/itrustee_client.git
+    if [[ $? -ne 0 ]]; then
+        echo "itrustee_client download failed."
+        rm -rf ${SrcPath}
+        exit 1
+    fi
+
     git clone -b itrustee_tzdriver-1.0 https://gitee.com/openeuler/itrustee_tzdriver.git
+    if [[ $? -ne 0 ]]; then
+        echo "itrustee_tzdriver download failed."
+        rm -rf ${SrcPath}
+        exit 1
+    fi
+
     git clone https://gitee.com/openeuler/libboundscheck.git
+    if [[ $? -ne 0 ]]; then
+        echo "libboundscheck download failed."
+        rm -rf ${SrcPath}
+        exit 1
+    fi
+
     git clone https://github.com/kunpengcompute/devkitdemo.git
+    if [[ $? -ne 0 ]]; then
+        echo "devkitdemo download failed."
+        rm -rf ${SrcPath}
+        exit 1
+    fi
+
     wget https://gitee.com/lsjhw/devkitdemo/releases/download/1.0.1/libcrypto.a
+    if [[ $? -ne 0 ]]; then
+        echo "libcrypto.a download failed."
+        rm -rf ${SrcPath}
+        exit 1
+    fi
 
     # modify source code
     apply_patch
@@ -258,15 +297,15 @@ function output() {
 
     cd ${OutputPath}
     if [[ ${OsArch} =~ "Redhat" ]]; then
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-1.0.1-1.aarch64.rpm ${OutputPath}
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-1.0.1-1.aarch64.rpm ${OutputPath}
-        sha256sum kunpeng-sc-1.0.1-1.aarch64.rpm > kunpeng-sc-1.0.1-1.aarch64.rpm.sha256sum
-        sha256sum kunpeng-sc-devel-1.0.1-1.aarch64.rpm > kunpeng-sc-devel-1.0.1-1.aarch64.rpm.sha256sum
+        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-1.1.0-1.aarch64.rpm ${OutputPath}
+        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-1.1.0-1.aarch64.rpm ${OutputPath}
+        sha256sum kunpeng-sc-1.1.0-1.aarch64.rpm > kunpeng-sc-1.1.0-1.aarch64.rpm.sha256sum
+        sha256sum kunpeng-sc-devel-1.1.0-1.aarch64.rpm > kunpeng-sc-devel-1.1.0-1.aarch64.rpm.sha256sum
     elif [[ ${OsArch} =~ "Debian" ]]; then
-        cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_1.0.1_arm64.deb ${OutputPath}
-        cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_1.0.1_arm64.deb ${OutputPath}
-        sha256sum kunpeng-sc_1.0.1_arm64.deb > kunpeng-sc_1.0.1_arm64.deb.sha256sum
-        sha256sum kunpeng-sc-devel_1.0.1_arm64.deb > kunpeng-sc-devel_1.0.1_arm64.deb.sha256sum
+        cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_1.1.0_arm64.deb ${OutputPath}
+        cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_1.1.0_arm64.deb ${OutputPath}
+        sha256sum kunpeng-sc_1.1.0_arm64.deb > kunpeng-sc_1.1.0_arm64.deb.sha256sum
+        sha256sum kunpeng-sc-devel_1.1.0_arm64.deb > kunpeng-sc-devel_1.1.0_arm64.deb.sha256sum
     fi
     echo "/*** The package create successfully, please go to ${OutputPath} to get it. ***/"
 }

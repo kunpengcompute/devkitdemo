@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           kunpeng-sc
-Version:        1.0.1
+Version:        1.1.0
 Release:        1
 Summary:        kunpeng sc
 License:        Apache-2.0
@@ -15,7 +15,7 @@ Requires:       openssl-devel zlib-devel kernel-devel
 Conflicts:      TEE_SDK TEE-devel_SDK
 
 %description
-Kunpeng sc for Secure Computing Application Development.
+Kunpeng sc for Secure Computing Application Development. Support os: openEuer 20.03 LTS SP1.
 
 %prep
 BuildDir=%{_builddir}/%{name}-%{version}
@@ -125,9 +125,9 @@ fi
 cnt1=$(lsmod | grep tzdriver | wc -l)
 if [ ${cnt1} -eq 0 ]; then
     cd /usr/local/%{name}/driver/itrustee_tzdriver
-    touch build_log.txt
-    make -C libboundscheck >> build_log.txt
-    make >> build_log.txt
+    touch build_tzdriver.log
+    make -C libboundscheck >> build_tzdriver.log  2>&1
+    make >> build_tzdriver.log 2>&1
     
     # insmod should disable enforce
     cnt2=$(getenforce | grep -i "Enforcing" | wc -l)
@@ -142,7 +142,7 @@ fi
 
 cnt3=$(lsmod | grep tzdriver | wc -l)
 if [ ${cnt3} -eq 0 ]; then
-    echo "At present, you can only compile the code. If you want to run it, you need to ensure the tzdriver is loaded successfully."
+    echo "At present, you can only compile the code. If you want to run it, you need to ensure the tzdriver is loaded successfully. For details, please see build_driver.log in the kunpeng-sc/driver/itrustee_tzdriver directory."
 fi
 
 # lanuch teecd

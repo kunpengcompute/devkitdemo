@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           kunpeng-sc-devel
-Version:        1.0.1
+Version:        1.1.0
 Release:        1
 Summary:        kunpeng sc devel
 License:        Apache-2.0
@@ -11,12 +11,12 @@ Source2:        libboundscheck.tar.gz
 Source3:        demo.tar.gz
 
 BuildRequires:  gcc
-Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 1.0.1
+Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 1.1.0
 
 Conflicts: TEE_SDK TEE-devel_SDK
 
 %description
-Kunpeng sc devel for Secure Computing Application Development.
+Kunpeng sc devel for Secure Computing Application Development. Support os: CentOS 7.6.18.10.
 
 %prep
 BuildDir=%{_builddir}/%{name}-%{version}

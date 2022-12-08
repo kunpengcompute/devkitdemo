@@ -16,15 +16,15 @@
 cnt1=$(lsmod | grep tzdriver | wc -l )
 if [ ${cnt1} -eq 0 ]; then
     cd /usr/local/kunpeng-sc/driver/itrustee_tzdriver
-    touch build.log
-    make -C libboundscheck >> build.log
-    make >> build.log  2>&1
+    touch build_tzdriver.log
+    make -C libboundscheck >> build_tzdriver.log  2>&1
+    make >> build_tzdriver.log  2>&1
     insmod tzdriver.ko
 fi
 
 cnt2=$(lsmod | grep tzdriver | wc -l )
 if [ ${cnt2} -eq 0 ]; then
-    echo "At present, you can only compile the code. If you want to run it, you neede to ensure that the tzdriver is loaded successfully."
+    echo "At present, you can only compile the code. If you want to run it, you neede to ensure that the tzdriver is loaded successfully. For details, please see build_driver.log in the kunpeng-sc/driver/itrustee_tzdriver directory."
 fi
 
 /usr/bin/teecd &
