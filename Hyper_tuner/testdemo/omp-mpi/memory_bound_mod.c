@@ -39,6 +39,6 @@ int main()
        MemoryBoundBench_OPT(pointA, ret, MAX_ARRAY_SIZE);
    }
    uint64_t ts_end = GetTime_ns();
-   printf("Total Cost Time = %f ms\n", (ts_end - ts_start) / 1000000.0)
+   printf("Total Cost Time = %f ms\n", (ts_end - ts_start) / 1000000.0);
    return 0;
 }
