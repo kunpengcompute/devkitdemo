@@ -55,10 +55,18 @@ get_hyper_mpi_package_name() {
       hmpi_package_name=${centos7_6_hmpi_bisheng_name}
     fi
   elif [[ "${os_name}" =~ "openEuler20.03" ]]; then
-    if [[ ${select_result} =~ "HMPI-GCC" ]]; then
-      hmpi_package_name=${openeuler20_03_lts_hmpi_gcc_name}
-    elif [[ ${select_result} =~ "HMPI-BISHENG" ]]; then
-      hmpi_package_name=${openeuler20_03_lts_hmpi_bisheng_name}
+    if [[ "${os_name}" == "openEuler20.03(LTS-SP1)" ]]; then
+      if [[ ${select_result} =~ "HMPI-GCC" ]]; then
+        hmpi_package_name=${openeuler20_03_SP1_hmpi_gcc_name}
+      elif [[ ${select_result} =~ "HMPI-BISHENG" ]]; then
+        hmpi_package_name=${openeuler20_03_SP1_hmpi_bisheng_name}
+      fi
+    else
+      if [[ ${select_result} =~ "HMPI-GCC" ]]; then
+        hmpi_package_name=${openeuler20_03_lts_hmpi_gcc_name}
+      elif [[ ${select_result} =~ "HMPI-BISHENG" ]]; then
+        hmpi_package_name=${openeuler20_03_lts_hmpi_bisheng_name}
+      fi
     fi
   fi
 }
@@ -251,13 +259,40 @@ install_compiler_env_check() {
   fi
 }
 
+authorization_configure_env(){
+  local software_name=$1
+  local configure_type=$2
+  [[ $configure_type == 'profile' ]] && configure_file='/etc/profile' || configure_file="${HOME}/.bashrc"
+  n=1
+  while true;do
+    read -p "The script automatically adds the environment variables of the ${software_name} software to the ${configure_file} file. [Y/N]: " Y_N
+    if [[ ${Y_N} =~ ^y$|^Y$ ]];then
+      [[ ${software_name} =~ 'HMPI' ]] && add_hyper_mpi_enviroment
+      [[ ${software_name} =~ gcc|bisheng ]] && add_compiler_enviroment
+      break
+    elif [[ ${Y_N} =~ ^n$|^N$ ]];then
+      echo 'You do not allow scripts to automatically configure environment variables.'
+      echo ''
+      break
+    else
+      echo 'Incorrect input. Enter y/Y or n/N'
+    fi
+  done
+}
+
+add_hyper_mpi_enviroment(){
+  cd ${install_hmpi_path}/${hmpi_package_name}
+  echo "hwmpi=$PWD" >> ~/.bashrc
+  echo "export OPAL_PREFIX=\${hwmpi}/ompi" >> ~/.bashrc
+  echo "export PATH=\${hwmpi}/ompi/bin:\${hwmpi}/ucx/bin:\$PATH" >> ~/.bashrc
+  echo "export INCLUDE=\${hwmpi}/ompi/include:\${hwmpi}/ucx/include:\$INCLUDE" >> ~/.bashrc
+  echo "export LD_LIBRARY_PATH=\${hwmpi}/ompi/lib:\${hwmpi}/ucx/lib:\$LD_LIBRARY_PATH" >> ~/.bashrc
+}
+
 install_hyper_mpi() {
   # Install Hyper MPI
   user_customize_path 'hyper-mpi'
-  logger "You choose to install Hyper MPI in the $(
-    cd ${customize_path}
-    pwd
-  ) directory." ${TIP_COLOR_SUCCESS}
+  logger "You choose to install Hyper MPI in the $(cd ${customize_path};pwd) directory." ${TIP_COLOR_SUCCESS}
   cd ${install_package_dir}/hyper_mpi
   [[ ${hmpi_gcc_choose_status} == 1 ]] && install_hyper_mpi_name="hyper_mpi_gcc"
   [[ ${hmpi_bisheng_choose_status} == 1 ]] && install_hyper_mpi_name="hyper_mpi_bisheng"
@@ -293,6 +328,7 @@ install_hyper_mpi() {
   change_directory_owner "${install_hmpi_path}/${hmpi_package_name}"
   change_directory_permissions "${install_hmpi_path}/${hmpi_package_name}" "hyper-mpi"
   [[ "${install_hyper_mpi_name}" == "hyper_mpi_bisheng" ]] && install_hyper_mpi_tip="HMPI-BISHENG" || install_hyper_mpi_tip="HMPI-GCC"
+  authorization_configure_env ${install_hyper_mpi_tip} 'bashrc'
   logger "To make the related commands take effect, run the following command:" ${TIP_COLOR_WARNING}
   logger "${command_pwd}" ${TIP_COLOR_COMMAND}
   logger "${command_opal_prefix}" ${TIP_COLOR_COMMAND}
@@ -303,6 +339,20 @@ install_hyper_mpi() {
   logger "Use module set env for ${install_hyper_mpi_tip}" ${TIP_COLOR_SUCCESS}
   logger "  module load ${show_modulefile_path}" ${TIP_COLOR_COMMAND}
   logger "The ${install_hyper_mpi_tip} is installed." ${TIP_COLOR_SUCCESS}
+}
+
+
+add_compiler_enviroment(){
+  cd ${install_compiler_path}/${compiler_name}
+  if [[ ${compiler_type} == "gcc" ]]; then
+    echo "export PATH=${install_compiler_path}/${compiler_name}/bin:\$PATH" >>/etc/profile
+    echo "export INCLUDE=${install_compiler_path}/${compiler_name}/INCLUDE:\$INCLUDE" >>/etc/profile
+    echo "export LD_LIBRARY_PATH=${install_compiler_path}/${compiler_name}/lib64:\$LD_LIBRARY_PATH" >>/etc/profile
+  fi
+  if [[ ${compiler_type} == "bisheng" ]]; then
+    echo "export PATH=${install_compiler_path}/${compiler_name}/bin:\$PATH" >>/etc/profile
+    echo "export LD_LIBRARY_PATH=${install_compiler_path}/${compiler_name}/lib:\$LD_LIBRARY_PATH" >>/etc/profile
+  fi
 }
 
 install_compiler() {
@@ -345,11 +395,11 @@ install_compiler() {
   fi
   change_directory_owner "${install_compiler_path}/${compiler_name}"
   change_directory_permissions "${install_compiler_path}/${compiler_name}" "${compiler_type}"
+  authorization_configure_env ${compiler_type} 'profile'
   logger "To make the related commands take effect, run the following command:" ${TIP_COLOR_WARNING}
   [[ ${command_env_path} ]] && logger "${command_env_path}" ${TIP_COLOR_COMMAND}
   [[ ${command_env_include} && ${compiler_type} == "gcc" ]] && logger "${command_env_include}" ${TIP_COLOR_COMMAND}
   [[ ${command_env_ld_library_path} ]] && logger "${command_env_ld_library_path}" ${TIP_COLOR_COMMAND}
-
   logger "  source /etc/profile" ${TIP_COLOR_COMMAND}
   logger "use module set env for $compiler_type" ${TIP_COLOR_SUCCESS}
   logger "${command_module}" ${TIP_COLOR_COMMAND}
@@ -422,10 +472,7 @@ change_modules_compiler(){
   local compiler_type="$1"
   logger "Set modules for ${compiler_type^^}." ${TIP_COLOR_ECHO}
   old_msg=$(sed -n '/set prefix/p' ${module_file_dir}/${compiler_type}_modulefiles)
-  sed -i s"#${old_msg}#set prefix $(
-    cd ${install_compiler_path}
-    pwd
-  )/${compiler_name}#" ${module_file_dir}/${compiler_type}_modulefiles
+  sed -i s"#${old_msg}#set prefix $(cd ${install_compiler_path};pwd)/${compiler_name}#" ${module_file_dir}/${compiler_type}_modulefiles
   if [ ! -d ${customize_path}/modules/${compiler_type} ]; then
     mkdir -p ${customize_path}/modules/${compiler_type}
   fi

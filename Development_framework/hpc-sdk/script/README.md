@@ -17,7 +17,7 @@
 |----| ----  | ---- | ---- | ----  |
 | centos 7  | Y (GCC= 9.3,毕昇) | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 LTS  | Y (毕昇) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp1  | N | Y | Y | Y (GCC >= 7.3) |
+| openEuler20.03 sp1  |(GCC= 9.3,毕昇) | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 sp2  | N | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 sp3  | N | Y | Y | Y (GCC >= 7.3) |
 | 麒麟V10 SP1  | Y (GCC = 9.3,毕昇) | Y | Y | N  |
@@ -45,8 +45,8 @@
 ## 3、使用教程
 
 ####  1、获取kunpeng-hpc-xxx-aarc64-linux.tar.gz包  
-[https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.0-aarch64-linux.tar.gz]
-(https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.0-aarch64-linux.tar.gz)
+[https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.1-aarch64-linux.tar.gz]
+(https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HPC/kunpeng-hpc-1.0.1-aarch64-linux.tar.gz)
 ####  2、执行如下命令进行安装
 ```
 tar -xf kunpeng-hpc-xxx-aarch64-linux.tar.gz
