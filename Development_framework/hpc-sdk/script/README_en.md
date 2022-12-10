@@ -17,7 +17,7 @@ English | [简体中文](README.md)
 |  ---- | ----  | ---- | ---- | ----  |
 | centos 7  | Y (GCC >= 9.3,BISHENG) | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 LTS  | Y (BISHNEG) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp1  | N | Y | Y | Y (GCC >= 7.3) |
+| openEuler20.03 sp1  | Y (GCC >= 9.3,BISHENG) | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 sp2  | N | Y | Y | Y (GCC >= 7.3) |
 | openEuler20.03 sp3  | N | Y | Y | Y (GCC >= 7.3) |
 | kylin V10 SP1  | Y (GCC >= 9.3,BISHENG) | Y | Y | N  |
