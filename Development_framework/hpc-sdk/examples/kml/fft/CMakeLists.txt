@@ -44,6 +44,7 @@ if(${FFT} STREQUAL "single")
     message(STATUS "The FFT version used by demo is: single.")
     # Find link library
     find_library(KFFT kfftf HINTS ${KML_PATH}/lib)
+    add_definitions(-DSINGLE)
 else()
     message(STATUS "The FFT version used by demo is: double.")
     # Find link library
