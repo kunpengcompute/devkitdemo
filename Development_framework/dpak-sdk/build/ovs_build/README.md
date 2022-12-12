@@ -11,7 +11,7 @@ SP680智能网卡，适用于虚拟化、协议解析场景。本文档为SP680�
 #### 使用说明
 
 1. 安装网卡驱动：
-安装前请先获取相关驱动包和Hinic3_flash.bin 文件，放到'driver'目录中。
+安装前请先获取相关驱动包和Hinic3_flash.bin 文件，放到'ovs_build/driver'目录中。
 
 | 驱动 | 
 | ---- | 
@@ -49,11 +49,12 @@ WantedBy=multi-user.target
 
 其中，<path>替换为脚本所在的绝对路径。
 
-2).将virtio-enable.service文件放入“/usr/lib/systemd/system” 目录，设置开机自启动。
+2).将virtio-enable.service文件放入'/usr/lib/systemd/system' 目录，设置开机自启动。
 systemctl enable virtio-enable
 
 3. 部署ovs：
-安装前请先获取DPU-solution-dpak-runtime-host-repo_1.0.0_aarch64.zip 软件包，解压并放到package目录中。
+安装前请先获取DPU-solution-dpak-runtime-host-repo_1.0.0_aarch64.zip 软件包，解压并放到'ovs_build/../package'目录中。
+如果dpak、dpdk和openvswitch均使用自己的包，请把对应的rpm包放到空的'ovs_build/package'目录中。
 ```
 cd ovs_studio
 bash install_env.sh

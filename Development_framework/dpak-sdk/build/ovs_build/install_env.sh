@@ -27,28 +27,50 @@ exit_or_not(){
 }
 
 # install dependencies
-yum install -y cmake rpcgen glib2-devel gnutls-devel libudev-devel libpciaccess-devel libxml2-devel libtirpc-devel \
-    yajl-devel librbd-devel pixman-devel python3-docutils meson openssl openssl-devel autoconf automake libtool \
-    python3-pyelftools libmlx5 libatomic unbound libunwind pkgconfig rdma-core-devel libcap* python3-pkgconfig librte* \ 
-    libfdt
-
+yum install -y dtc rdma-core libatomic rdma-core-devel libpcap-devel zlib-devel openssl-devel unbound libunwind
+if [ $? -ne 0 ];then
+    echo "Failed to install the dependency.Check the network and original yum configuration."
+    exit 1
+fi
 # 1 install dpak
 rpm -e `rpm -qa | grep in220-sdk` --nodeps
 rpm -e `rpm -qa | grep dpak | grep ovs` --nodeps
-rpm -ivh ${package_dir}/dpak*.rpm
+if [ -d ${current_dir}/package ];then
+    if [ -f ${current_dir}/package/dpak*.rpm ];then
+        rpm -ivh ${package_dir}/dpak*.rpm
+    fi
+else
+    # default install
+    rpm -Uvh ${package_dir}/dpak*.rpm
+fi
 
 exit_or_not 'install dpak'
 
 #2 install dpdk
 rpm -e --nodeps `rpm -qa | grep dpdk`
+if [ -d ${current_dir}/package ];then
+    if [ -f ${current_dir}/package/dpdk*.rpm ];then
+        rpm -Uvh ${package_dir}/dpdk*.rpm --force
+    fi
+else
+    # default install
+    rpm -Uvh ${package_dir}/dpdk/dpdk-21.11-1.aarch64.rpm --force
+    rpm -Uvh ${package_dir}/dpdk/dpdk-devel-21.11-1.aarch64.rpm --force
+fi
 
-rpm -ivh ${package_dir}/dpdk*.rpm
 ldconfig
 
 # 3 install openvswitch(ovs)
 rpm -e --nodeps `rpm -qa | grep openvswitch`
-
-rpm -ivh ${package_dir}/openvswitch*.rpm
+if [ -d ${current_dir}/package ];then
+    if [ -f ${current_dir}/package/openvswitch*.rpm ];then
+        rpm -Uvh ${package_dir}/package/openvswitch*.rpm --force
+    fi
+else
+    # default install
+    rpm -Uvh ${package_dir}/openvswitch/openvswitch-2.14.2-1.aarch64.rpm --force
+    rpm -Uvh ${package_dir}/openvswitch/openvswitch-devel-2.14.2-1.aarch64.rpm --force
+fi
 
 systemctl restart rsyslog
 # create ovs log directory
@@ -93,6 +115,6 @@ for i in {1..4};do
     random_2=$(head -20 /dev/urandom | cksum | cut -c 1)
     random_3=$(head -20 /dev/urandom | cksum | cut -c 1)
     vf_pci=$(echo ${vfs} | awk "{print \$${i}}")
-    ovs-vsctl add-port br0 vf${i} -- set interface vf${i} type=dpdk \ 
+    ovs-vsctl add-port br0 vf${i} -- set interface vf${i} type=dpdk \
     options:dpdk-devargs=0000:${vf_pci},vf_mac=02:05:0${random_1}:0${random_2}:0${random_3}:0c
 done
