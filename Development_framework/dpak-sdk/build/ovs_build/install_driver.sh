@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 current_dir=$(cd $(dirname $0);pwd)
-driver_dir=${current_dir}/../driver 
+driver_dir=${current_dir}/driver 
 
 exit_or_not(){
     if [ $(echo $?) -ne 0 ];then
