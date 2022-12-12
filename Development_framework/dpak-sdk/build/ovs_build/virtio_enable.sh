@@ -26,9 +26,9 @@ get_bdf(){
 
 	b2=${a%(*}
 	VIRTIO_DEV_BDF2=${b2##*-}
-	if [ "${VIRTIO_DEV_BDF1:4:1}" != ":" ] || [ "${VIRTIO_DEV_BDF2:4:1}" != ":" ] || \ 
-		[ "${VIRTIO_DEV_BDF1:7:1}" != ":" ]|| [ "${VIRTIO_DEV_BDF2:7:1}" != ":" ] || \ 
-		[ "${VIRTIO_DEV_BDF1:10:1}" != "." ] || [ "${VIRTIO_DEV_BDF2:10:1}" != "." ];then
+	if [ "${VIRTIO_DEV_BDF1:4:1}" != ":" ] || [ "${VIRTIO_DEV_BDF2:4:1}" != ":" ] || \
+    [ "${VIRTIO_DEV_BDF1:7:1}" != ":" ]|| [ "${VIRTIO_DEV_BDF2:7:1}" != ":" ] || \
+    [ "${VIRTIO_DEV_BDF1:10:1}" != "." ] || [ "${VIRTIO_DEV_BDF2:10:1}" != "." ];then
 		echo "[$(date +%Y-%m-%d\ %H:%M:%S)][ERROR] Get bdf failed. Check pci dev or hinicadm3 tool."
         exit -1
 	fi
