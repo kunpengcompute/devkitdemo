@@ -13,17 +13,17 @@
 
 #### 1、服务器兼容性如下
 
-| OS  | HYPER-MPI  | 毕昇2.1 | GCC  | 数学库   |  
+| OS  | Hyper MPI  | 毕昇 | GCC for openEuler  | 数学库   |  
 |----| ----  | ---- | ---- | ----  |
-| centos 7  | Y (GCC= 9.3,毕昇) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 LTS  | Y (毕昇) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp1  |(GCC= 9.3,毕昇) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp2  | N | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp3  | N | Y | Y | Y (GCC >= 7.3) |
-| 麒麟V10 SP1  | Y (GCC = 9.3,毕昇) | Y | Y | N  |
-| 麒麟V10 SP2  | Y (GCC = 9.3,毕昇) | Y | Y | N  |
-| unbuntu18.04  | N | Y | Y | Y (GCC >= 7.3)| 
-| unbuntu20.04  | N | Y | Y | Y (GCC >= 7.3) |
+| centos 7  | Y (GCC9.3,毕昇2.1.0) | Y | Y | Y (GCC7.3及以上) |
+| openEuler20.03 LTS  | Y (毕昇2.1.0) | Y | Y | Y (GCC7.3及以上) |
+| openEuler20.03 sp1  |Y (GCC9.3,毕昇2.1.0) | Y | Y | Y (GCC7.3及以上) |
+| openEuler20.03 sp2  | N | Y | Y | Y (GCC7.3及以上) |
+| openEuler20.03 sp3  | N | Y | Y | Y (GCC7.3及以上) |
+| 麒麟V10 SP1  | Y (GCC9.3,毕昇2.1.0) | Y | Y | N  |
+| 麒麟V10 SP2  | Y (GCC9.3,毕昇2.1.0) | Y | Y | N  |
+| unbuntu18.04  | N | Y | Y | Y (GCC7.3及以上)| 
+| unbuntu20.04  | N | Y | Y | Y (GCC7.3及以上) |
 | UOS 1020e | N | Y | Y | N  |  
 
 说明：以上表中均为aarch64架构;小括号中为GCC、毕昇编译器的版本代表依赖最小版本，表中的Y代表系统支持安装，N代表不支持安装。
@@ -31,16 +31,16 @@
 #### 2、软件依赖列表
 
 
-|  依赖  | HYPER-MPI  | 毕昇2.1 | GCC  | 数学库   |  
+|  依赖  | Hyper MPI  | 毕昇 | GCC for openEuler  | 数学库   |  
 |  ---- | ----  | ---- | ---- | ----  |
-| gcc  | Y(9.3.0) | Y(>=4.8.5)| N | N |
+| gcc  | Y(9.3.0) | Y(GCC4.8.5及以上)| N | N |
 | bisheng  | Y | N | N | N  |
-| glibc-devel(libc-dev-bin) | N  | N | Y(>=2.17) | N  |
-| glibc  | N | Y(>=2.17)| Y(>=2.17) | N  |
-| libatomic  | N | Y(>=1.2.0) | N | N  |  
+| glibc-devel(libc-dev-bin) | N  | N | Y(glibc-devel2.17及以上) | N  |
+| glibc  | N | Y(glibc2.17及以上)| Y(glibc2.17及以上) | N  |
+| libatomic  | N | Y(libatomic1.2.0及以上) | N | N  |  
 | libgomp  | N | N | N | Y  |  
 
-说明：以上表中内容为hyper-mpi、数学库、GCC、毕昇编译器安装所需要的依赖，表中的Y代表系统依赖，N代表不依赖。redhat系安裝毕昇编译的rpm包时需确保系统已经安装libgomp。
+说明：以上表中内容为Hyper MPI、数学库、GCC for openEuler、毕昇编译器安装所需要的依赖，表中的Y代表系统依赖，N代表不依赖。redhat系安裝毕昇编译的rpm包时需确保系统已经安装libgomp。
 
 ## 3、使用教程
 
