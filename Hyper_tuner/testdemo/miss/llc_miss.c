@@ -21,13 +21,13 @@ int main(void)
 void llcMiss3Array(int *** pArr, int x, int y, int z, int m){
     int i, j, k;
     pArr = (int ***)malloc(m * sizeof(int **));
-    for(i=0;i<x;i++){
-        pArr[i] = (int **)malloc(y*sizeof(int **));
-        for (j =0;j<y;j++){
+    for(i = 0;i < x;i++){
+        pArr[i] = (int **)malloc(y * sizeof(int **));
+        for (j = 0;j < y;j++){
             pArr[i][j] = (int *)malloc(y * sizeof(int));
-            for(k =0; k<z; k++){
-                pArr[i][j][k] = 100*(i+j+k+1)+1000*x+100*y+10*z+101*m+19999999999;
-                printf("%d",pArr[i][j][k]);
+            for(k = 0; k < z; k++){
+                pArr[i][j][k] = 100 * (i + j + k + 1) + 1000*x + 100*y + 10*z + 101*m + 19999999999;
+                printf("%d ", pArr[i][j][k]);
             }
             printf("\n");
         }

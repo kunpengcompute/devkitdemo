@@ -13,18 +13,18 @@ int main(void)
 {
 	int i, j;
 	int *p = (int*) malloc(sizeof(int) * N);
-	double msecs =0;
+	double msecs = 0;
 	struct timeval before, after;
 	gettimeofday(&before, NULL);
-	for (i=0; i<COL; i++)
+	for (i = 0; i < COL; i++)
 	{
-		for (j=0; j<ROW; j++)
+		for (j = 0; j < ROW; j++)
 		{
-			p[i + j*COL]++;
+			p[i + j * COL]++;
 		}
 	}
 	gettimeofday(&after, NULL);
-	msecs = (after.tv_sec - before.tv_sec) *1000.0+(after.tv_sec-before.tv_sec)/1000.0;
-	printf("execution time = %2.3lf ms\n",msecs);
+	msecs = (after.tv_sec - before.tv_sec) * 1000.0+(after.tv_sec - before.tv_sec)/1000.0;
+	printf("execution time = %2.3lf ms\n", msecs);
 	return 0;
 }
