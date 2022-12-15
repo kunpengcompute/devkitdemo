@@ -20,6 +20,7 @@ from check_env_remote import CheckDemoEnvironment
 
 
 def check_compute_server(ip, username, port):
+    """Check the connection between VMS"""
     compute = CheckDemoEnvironment(ip, username, port, 'remote')
     status, result = compute.check_vm_ping(eth0_ip)
 

@@ -18,6 +18,16 @@ from check_env_remote import CheckDemoEnvironment
 
 
 def check_control_server():
+    """
+    Verifying the Control Node Environment
+    1.Ensure that the operating system version.
+    2.Ensure that the firewall is disabled.
+    3.Ensure that the neutron is deployed.
+    4.Ensure that the nova is deployed.
+    5.Ensure that the cephis deployed.
+    6.Ensure that the openstack version.
+    """
+
     control = CheckDemoEnvironment()
     check_list = {
         control.check_local_os:(),
