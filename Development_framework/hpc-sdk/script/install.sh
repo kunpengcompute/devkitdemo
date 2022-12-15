@@ -265,7 +265,7 @@ authorization_configure_env(){
   [[ $configure_type == 'profile' ]] && configure_file='/etc/profile' || configure_file="${HOME}/.bashrc"
   n=1
   while true;do
-     read -p "The script automatically adds the environment variables of the ${software_name} software to the ${configure_file} file. [Y/N]: " Y_N
+     read -p "The script automatically adds the environment variables of the ${software_name^^} software to the ${configure_file} file. [Y/N]: " Y_N
     if [[ ${Y_N} =~ ^y$|^Y$ ]];then
       [[ ${software_name} =~ 'HMPI' ]] && add_hyper_mpi_enviroment
       [[ ${software_name} =~ gcc|bisheng ]] && add_compiler_enviroment
@@ -346,7 +346,7 @@ add_compiler_enviroment(){
   cd ${install_compiler_path}/${compiler_name}
   if [[ ${compiler_type} == "gcc" ]]; then
     echo "export PATH=${install_compiler_path}/${compiler_name}/bin:\$PATH" >>/etc/profile
-    echo "export INCLUDE=${install_compiler_path}/${compiler_name}/INCLUDE:\$INCLUDE" >>/etc/profile
+    echo "export INCLUDE=${install_compiler_path}/${compiler_name}/include:\$INCLUDE" >>/etc/profile
     echo "export LD_LIBRARY_PATH=${install_compiler_path}/${compiler_name}/lib64:\$LD_LIBRARY_PATH" >>/etc/profile
   fi
   if [[ ${compiler_type} == "bisheng" ]]; then
@@ -384,7 +384,7 @@ install_compiler() {
   fi
   if [[ ${compiler_type} == "gcc" ]]; then
     command_env_path="  echo 'export PATH=${install_compiler_path}/${compiler_name}/bin:\$PATH' >>/etc/profile"
-    command_env_include="  echo 'export INCLUDE=${install_compiler_path}/${compiler_name}/INCLUDE:\$INCLUDE' >>/etc/profile"
+    command_env_include="  echo 'export INCLUDE=${install_compiler_path}/${compiler_name}/include:\$INCLUDE' >>/etc/profile"
     command_env_ld_library_path="  echo 'export LD_LIBRARY_PATH=${install_compiler_path}/${compiler_name}/lib64:\$LD_LIBRARY_PATH' >>/etc/profile"
     command_module=" module load ${show_modulefile_path}"
   fi

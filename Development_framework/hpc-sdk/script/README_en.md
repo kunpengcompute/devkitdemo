@@ -13,17 +13,17 @@ English | [简体中文](README.md)
 
 #### 1、The server compatibility is as follows:
 
-|  OS  | HYPER-MPI  | BISHENG 2.1 | GCC  | KML   |  
+|  OS  | Hyper MPI  | BISHENG | GCC for openEuler  | KML   |  
 |  ---- | ----  | ---- | ---- | ----  |
-| centos 7  | Y (GCC >= 9.3,BISHENG) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 LTS  | Y (BISHNEG) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp1  | Y (GCC >= 9.3,BISHENG) | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp2  | N | Y | Y | Y (GCC >= 7.3) |
-| openEuler20.03 sp3  | N | Y | Y | Y (GCC >= 7.3) |
-| kylin V10 SP1  | Y (GCC >= 9.3,BISHENG) | Y | Y | N  |
-| kylin V10 SP2  | Y (GCC >= 9.3,BISHENG) | Y | Y | N  |
-| unbuntu18.04  | N | Y | Y | Y (GCC >= 7.3)| 
-| unbuntu20.04  | N | Y | Y | Y (GCC >= 7.3) |
+| centos 7  | Y (GCC 9.3,BISHENG 2.1.0) | Y | Y | Y (GCC 7.3 or later) |
+| openEuler20.03 LTS  | Y (BISHNEG 2.1.0) | Y | Y | Y (GCC 7.3 or later) |
+| openEuler20.03 sp1  | Y (GCC 9.3,BISHENG 2.1.0) | Y | Y | Y (GCC 7.3 or later) |
+| openEuler20.03 sp2  | N | Y | Y | Y (GCC 7.3 or later) |
+| openEuler20.03 sp3  | N | Y | Y | Y (GCC 7.3 or later) |
+| kylin V10 SP1  | Y (GCC 9.3,BISHENG 2.1.0) | Y | Y | N  |
+| kylin V10 SP2  | Y (GCC 9.3,BISHENG 2.1.0) | Y | Y | N  |
+| unbuntu18.04  | N | Y | Y | Y (GCC 7.3 or later)| 
+| unbuntu20.04  | N | Y | Y | Y (GCC 7.3 or later) |
 | UOS 1020e | N | Y | Y | N  | 
 
 Note: The OSs listed in the preceding table use the AArch64 architecture. The versions of the GCC and Bisheng Compiler in parentheses indicate the earliest supported versions. Y indicates supported installation and N indicates the installation is not supported.
@@ -31,16 +31,16 @@ Note: The OSs listed in the preceding table use the AArch64 architecture. The ve
 #### 2、Software dependency list
 
 
-|  Dependency  | HYPER-MPI  | BISHENG2.1 | GCC  | KML   |  
+|  Dependency  | Hyper MPI  | BISHENG | GCC for openEuler  | KML   |  
 |  ---- | ----  | ---- | ---- | ----  |
-| gcc  | Y(9.3.0) | Y(>4.8.5)| N | N |
+| gcc  | Y(GCC 9.3.0) | Y(GCC 4.8.5 or later)| N | N |
 | bisheng  | Y | N | N | N  |
-| glibc-devel(libc-dev-bin) | N  | N | Y(>2.17) | N  |
-| glibc  | N | Y(>2.17)| Y(>2.17) | N  |
-| libatomic  | N | Y(>=1.2) | N | N  |
+| glibc-devel(libc-dev-bin) | N  | N | Y(glibc-devel 2.17 or later) | N  |
+| glibc  | N | Y(glibc 2.17 or later)| Y(glibc 2.17 or later) | N  |
+| libatomic  | N | Y(libatomic 1.2 or later) | N | N  |
 | libgomp  | N | N | N | Y  | 
 
-Note: The preceding table lists the dependencies required for installing the HYPER-MPI, math library, GCC, and Bisheng Compiler. Y indicates required dependency for the software and N indicates the dependency is not required. Before installing the RPM　package compiled by Bisheng in the Red Hat system, ensure that libgomp has been installed in the system.
+Note: The preceding table lists the dependencies required for installing the Hyper MPI, math library, GCC for openEuler, and Bisheng Compiler. Y indicates required dependency for the software and N indicates the dependency is not required. Before installing the RPM　package compiled by Bisheng in the Red Hat system, ensure that libgomp has been installed in the system.
 
 ## 3、Usage Guide
 
