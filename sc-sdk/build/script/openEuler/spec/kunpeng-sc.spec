@@ -15,7 +15,7 @@ Requires:       openssl-devel zlib-devel kernel-devel
 Conflicts:      TEE_SDK TEE-devel_SDK
 
 %description
-Kunpeng sc for Secure Computing Application Development. Support os: openEuer 20.03 LTS SP1.
+Kunpeng sc for Secure Computing Application Development. Support os: openEuler 20.03 LTS SP1.
 
 %prep
 BuildDir=%{_builddir}/%{name}-%{version}
