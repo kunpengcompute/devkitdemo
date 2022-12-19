@@ -33,10 +33,10 @@ def common_result_check_contain(software, value, check_item):
     
     for item in check_item:
         if item in value:
-            message = '{} is OK'.format(software)
+            message = 'Check {} succeeded'.format(software)
             return True, message
     
-    message = '{} is not OK, {}'.format(software, value)
+    message = 'Failed to check {},{}'.format(software, value)
     return False, message
                 
 
@@ -48,10 +48,10 @@ def common_result_check_not_contain(software, value, check_item):
     
     for item in check_item:
         if item not in value:
-            message = '{} is OK'.format(software)
+            message = 'Check {} succeeded'.format(software)
             return True, message
     
-    message = '{} is not OK, {}'.format(software, value)
+    message = 'Failed to check {},{}'.format(software, value)
     return False, message
 
 

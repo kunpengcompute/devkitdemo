@@ -23,6 +23,11 @@ from common_util import subprocess_command
 
 
 class DealDemo:
+    """
+    1.ping the two VMS from each other.
+    2.check whether the flow table is uninstalled.
+    3.keep pinging the flow table and check whether the number of packets in the flow table keeps increasing.
+    """
     def __init__(self, ip=None, username=None,port=None):
         self.ssh_command = 'ssh -p {} {}@{}'.format(port,username,ip)
         self.port = port

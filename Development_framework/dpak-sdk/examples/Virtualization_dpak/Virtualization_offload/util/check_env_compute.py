@@ -20,6 +20,15 @@ from check_env_remote import CheckDemoEnvironment
 
 
 def check_compute_server(ip, username, port):
+    """
+    Verifying the Compute Node Environment
+    1.Ensure that the operating system version.
+    2.Ensure that the huge page has been configured.
+    3.Ensure that the firewall is disabled.
+    4.Ensure that the hinic3 driver has been installed.
+    5.Ensure that the OVS is running.
+    """
+
     compute = CheckDemoEnvironment(ip, username, port)
     check_list = {
         compute.check_remote_os:(),

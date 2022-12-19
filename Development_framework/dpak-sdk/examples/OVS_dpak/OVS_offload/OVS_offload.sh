@@ -85,33 +85,30 @@ get_vm_eth0_ip(){
     network_ip=$(ssh -p ${port} $user@$ip ip -4 addr show ${user_choose_network_interface} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 }
 # check env
-echo -e "\e[1;34mStart to check the controll node environment ...\e[0m"
+echo -e "\e[1;34mStart to check the control node environment ...\e[0m"
 python3 ${current_dir}/util/check_env_controll.py 'local'
 if [[ $? == 0 ]];then
-    echo -e "\e[1;32mCheck the the controll node environment.\e[0m"
+    echo -e "\e[1;32mCompleted the control node environment.\e[0m"
 else
-    echo -e "\e[1;31mFailed to check the controll node environment.\e[0m"
+    echo -e "\e[1;31mFailed to check the control node environment.\e[0m"
     exit 1
 fi
 
-get_user_connect_info 'second host'
+get_user_connect_info 'the host'
 get_local_ip ${input_ip}
-if [[ $? == 1 ]];then
-   echo -e "\e[1;32mThe IP addresses of the two active nodes are the same. You do not need to check the environment again. \e[0m"
-else
+if [[ $? != 1 ]];then
     sed -i "s#port_host_second=.*#port_host_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
     sed -i "s#username_host_first=.*#username_host_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
     sed -i "s#ip_host_first=.*#ip_host_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
     password_free_check ${input_username} ${input_ip} ${input_port} 
     python3 ${current_dir}/util/check_env_controll.py 'remote' 
     if [[ $? == 0 ]];then
-        echo -e "\e[1;32mCheck the environment of the second host node.\e[0m"
+        echo -e "\e[1;32mCompleted the environment of the host node.\e[0m"
     else
-        echo -e "\e[1;31mFailed to check the environment of the second host node.\e[0m"
+        echo -e "\e[1;31mFailed to check the environment of the host node.\e[0m"
         exit 1
     fi
 fi
-
 
 echo ''
 echo -e "\e[1;33mEnsure that the IP address of the management port that can provide the bandwidth for the VM is SSH\e[0m"
