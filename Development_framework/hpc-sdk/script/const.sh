@@ -50,6 +50,7 @@ kylinv10_hmpi_bisheng_name=$(sed '/^KYLINV10_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//
 centos7_6_linux_hmpi_gcc_name=$(sed '/^CENTOS7.6_LINUX_HMPI_GCC_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 centos7_6_hmpi_bisheng_name=$(sed '/^CENTOS7.6_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 openeuler20_03_lts_hmpi_bisheng_name=$(sed '/^OPENEULER20.03_LTS_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
+hyper_mpi_install_filter_system=$(sed '/^HYPER_MPI_INSTALL_FILTER_SYSTEM=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 hyper_mpi_gcc_package_names=(${kylinv10_hmpi_gcc_name} ${centos7_6_linux_hmpi_gcc_name})
 hyper_mpi_bisheng_package_names=(${kylinv10_hmpi_bisheng_name} ${centos7_6_hmpi_bisheng_name} ${openeuler20_03_lts_hmpi_bisheng_name})
 # List of software to be installed

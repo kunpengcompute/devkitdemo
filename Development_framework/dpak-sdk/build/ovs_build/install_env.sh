@@ -79,9 +79,10 @@ mkdir -p /var/log/openvswitch
 [ ! -f /usr/lib64/libevent-2.0.so.5 ] && ln -s /usr/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.10
 
 # configure OVS startup items
-hwoff_pf_pci=$(hinicadm3 info | grep NIC | cut -c 19-30 | awk 'NR==1')
+echo -e "\e[1;33mIt may take a few minutes to deploy the OVS environment, please wait...\e[0m"
 service openvswitch start
 
+hwoff_pf_pci=$(hinicadm3 info | grep NIC | cut -c 19-30 | awk 'NR==1')
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="--iova-mode=pa"
 ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask=0x6

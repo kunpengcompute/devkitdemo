@@ -226,7 +226,7 @@ user_choose() {
       continue
     fi
     # Only one Hyper MPI can be installed.
-    if [[ "${os_name}" =~ "KylinLinux" ]] || [[ "${os_name}" =~ "CentOSLinux" ]]; then
+    if [[  ${hyper_mpi_install_filter_system} =~ "${os_name}" ]]; then
       if [[ ${choose_install} =~ "1" ]] && [[ ${choose_install} =~ "2" ]]; then
         logger "Only one hyper-mpi can be installed." ${TIP_COLOR_FAILED}
         continue

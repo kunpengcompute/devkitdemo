@@ -39,8 +39,8 @@ class DealDemo:
         subprocess_command(ssh_command)
 
     def uninstall_icmp(self):
-        """ICMP uninstall"""
-        check_result = 'Failed to uninstall the ICMP protocol.'
+        """ICMP offload"""
+        check_result = 'Failed to offload the ICMP protocol.'
         status = False
         ssh_command = ['ovs-appctl' ,'hwoff/dump-hwoff-flows']
         value = subprocess_command(ssh_command)
@@ -58,7 +58,7 @@ class DealDemo:
         else:
             return status, check_result
         if num_2 > num_1:
-            check_result = 'Succeeded in uninstalling the ICMP protocol.'
+            check_result = 'ICMP protocol offload successfully executed.'
             status = True
         return status, check_result
 

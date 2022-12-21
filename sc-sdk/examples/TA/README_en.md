@@ -8,7 +8,7 @@ The **TA demo** shows the example on the security side. Run the TA demo together
 
 ## Dependencies
 
-1. Ensure that kunpeng-sc-devel-1.0.0 has been installed.
+1. Ensure that kunpeng-sc-devel has been installed.
 2. Run the **lsmod | grep tzdriver** command to ensure that the tzdriver is properly loaded.
 3. Run the **ps -ef | grep teecd** command to ensure that the daemon process is started properly.
 
