@@ -16,5 +16,5 @@
 
 for i in {1..200}
 do
-	taskset -c 1 ./multiply_simd
+	taskset -c 2 ./multiply_simd
 done
