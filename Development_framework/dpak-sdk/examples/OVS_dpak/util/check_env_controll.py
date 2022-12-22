@@ -19,13 +19,22 @@ from check_env_remote import CheckDemoEnvironment
 
 
 def check_control_server(ip,usermae, port,flag):
+    """
+    Verifying the Controller Node Environment
+    1.Ensure that the operating system version.
+    2.Ensure that the firewall is disabled.
+    3.Ensure that The hinic3 driver has been installed.
+    4.Ensure that The VF device has been loaded.
+    5.Ensure that the network bridge and port are configured.
+    6.Ensure that the OVS is running.
+    """
     control = CheckDemoEnvironment(ip,usermae, port,flag)
     check_list = {
         control.check_os:(),
         control.check_status_firewalld:(),
+        control.check_status_hinic3:(),
         control.check_vf_status:(),
         control.ovs_vsctl_show:(),
-        control.check_status_hinic3:(),
         control.check_openv_switch_status:()
     }
     for function, args in check_list.items():

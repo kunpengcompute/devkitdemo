@@ -27,32 +27,50 @@ exit_or_not(){
 }
 
 # install dependencies
-yum install -y cmake rpcgen glib2-devel gnutls-devel libudev-devel libpciaccess-devel libxml2-devel libtirpc-devel \
-    yajl-devel librbd-devel pixman-devel python3-docutils meson openssl openssl-devel autoconf automake libtool \
-    python3-pyelftools libmlx5 libatomic unbound libunwind pkgconfig rdma-core-devel libcap* python3-pkgconfig librte* \ 
-    libfdt
-
+yum install -y dtc rdma-core libatomic rdma-core-devel libpcap-devel zlib-devel openssl-devel unbound libunwind
+if [ $? -ne 0 ];then
+    echo "Failed to install the dependency.Check the network and original yum configuration."
+    exit 1
+fi
 # 1 install dpak
 rpm -e `rpm -qa | grep in220-sdk` --nodeps
 rpm -e `rpm -qa | grep dpak | grep ovs` --nodeps
-rpm -ivh ${package_dir}/dpak*.rpm
+if [ -d ${current_dir}/package ];then
+    if [ -f ${current_dir}/package/dpak*.rpm ];then
+        rpm -ivh ${package_dir}/dpak*.rpm
+    fi
+else
+    # default install
+    rpm -Uvh ${package_dir}/dpak*.rpm
+fi
 
 exit_or_not 'install dpak'
 
 #2 install dpdk
-rpm -e --nodeps dpdk-21.11-1.aarch64.rpm
-rpm -e --nodeps dpdk-devel-21.11-1.aarch64.rpm
- 
-rpm -ivh ${package_dir}/dpdk-21.11-1.aarch64.rpm
-rpm -ivh ${package_dir}/dpdk-devel-21.11-1.aarch64.rpm
+rpm -e --nodeps `rpm -qa | grep dpdk`
+if [ -d ${current_dir}/package ];then
+    if [ -f ${current_dir}/package/dpdk*.rpm ];then
+        rpm -Uvh ${package_dir}/dpdk*.rpm --force
+    fi
+else
+    # default install
+    rpm -Uvh ${package_dir}/dpdk/dpdk-21.11-1.aarch64.rpm --force
+    rpm -Uvh ${package_dir}/dpdk/dpdk-devel-21.11-1.aarch64.rpm --force
+fi
+
 ldconfig
 
 # 3 install openvswitch(ovs)
-rpm -e --nodeps openvswitch-2.14.2-1.aarch64.rpm
-rpm -e --nodeps openvswitch-devel-2.14.2-1.aarch64.rpm
-
-rpm -ivh ${package_dir}/openvswitch-2.14.2-1.aarch64.rpm
-rpm -ivh ${package_dir}/openvswitch-devel-2.14.2-1.aarch64.rpm
+rpm -e --nodeps `rpm -qa | grep openvswitch`
+if [ -d ${current_dir}/package ];then
+    if [ -f ${current_dir}/package/openvswitch*.rpm ];then
+        rpm -Uvh ${package_dir}/package/openvswitch*.rpm --force
+    fi
+else
+    # default install
+    rpm -Uvh ${package_dir}/openvswitch/openvswitch-2.14.2-1.aarch64.rpm --force
+    rpm -Uvh ${package_dir}/openvswitch/openvswitch-devel-2.14.2-1.aarch64.rpm --force
+fi
 
 systemctl restart rsyslog
 # create ovs log directory
@@ -61,9 +79,10 @@ mkdir -p /var/log/openvswitch
 [ ! -f /usr/lib64/libevent-2.0.so.5 ] && ln -s /usr/lib64/libcrypto.so.1.1 /usr/lib64/libcrypto.so.10
 
 # configure OVS startup items
-hwoff_pf_pci=$(hinicadm3 info | grep NIC | cut -c 19-30 | awk 'NR==1')
+echo -e "\e[1;33mIt may take a few minutes to deploy the OVS environment, please wait...\e[0m"
 service openvswitch start
 
+hwoff_pf_pci=$(hinicadm3 info | grep NIC | cut -c 19-30 | awk 'NR==1')
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
 ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-extra="--iova-mode=pa"
 ovs-vsctl --no-wait set Open_vSwitch . other_config:pmd-cpu-mask=0x6
@@ -97,6 +116,6 @@ for i in {1..4};do
     random_2=$(head -20 /dev/urandom | cksum | cut -c 1)
     random_3=$(head -20 /dev/urandom | cksum | cut -c 1)
     vf_pci=$(echo ${vfs} | awk "{print \$${i}}")
-    ovs-vsctl add-port br0 vf${i} -- set interface vf${i} type=dpdk \ 
+    ovs-vsctl add-port br0 vf${i} -- set interface vf${i} type=dpdk \
     options:dpdk-devargs=0000:${vf_pci},vf_mac=02:05:0${random_1}:0${random_2}:0${random_3}:0c
 done

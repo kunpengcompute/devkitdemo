@@ -20,6 +20,11 @@ from check_env_remote import CheckDemoEnvironment
 
 
 def check_storage_server(ip, username, port):
+    """
+    Verifying the storage Node Environment
+    1.Ensure that the operating system version.
+    2.Ensure that the firewall is disabled.
+    """
     storage = CheckDemoEnvironment(ip, username, port)
 
     check_list = {

@@ -19,6 +19,8 @@ Here we describe key features of the SP680 SmartNIC managed by OpenStack Train, 
 
 6. Password-free connections between the controller node and the storage node and compute nodes are configured.
 
+7. If local compilation is involved in the process of configuring the target server, configure password-free login for the local host and the controller node.
+
 ## Usage Guidance
 
 1. Obtain the code.
