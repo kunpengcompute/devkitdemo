@@ -84,32 +84,22 @@ get_vm_eth0_ip(){
     local port=$3
     network_ip=$(ssh -p ${port} $user@$ip ip -4 addr show ${user_choose_network_interface} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 }
+
 # check env
-echo -e "\e[1;34mStart to check the controll node environment ...\e[0m"
+echo -e "\e[1;34mStart to check the host machine environment ...\e[0m"
 python3 ${current_dir}/util/check_env_controll.py 'local'
 if [[ $? == 0 ]];then
-    echo -e "\e[1;32mCheck the the controll node environment.\e[0m"
+    echo -e "\e[1;32mCompleted the host machine environment.\e[0m"
 else
-    echo -e "\e[1;31mFailed to check the controll node environment.\e[0m"
+    echo -e "\e[1;31mFailed to check the host machine environment.\e[0m"
     exit 1
 fi
 
-get_user_connect_info 'second host'
-get_local_ip ${input_ip}
-if [[ $? == 1 ]];then
-   echo -e "\e[1;32mThe IP addresses of the two active nodes are the same. You do not need to check the environment again. \e[0m"
-else
-    sed -i "s#port_host_second=.*#port_host_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#username_host_first=.*#username_host_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#ip_host_first=.*#ip_host_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
-    password_free_check ${input_username} ${input_ip} ${input_port} 
-    python3 ${current_dir}/util/check_env_controll.py 'remote' 
-    if [[ $? == 0 ]];then
-        echo -e "\e[1;32mCheck the environment of the second host node.\e[0m"
-    else
-        echo -e "\e[1;31mFailed to check the environment of the second host node.\e[0m"
-        exit 1
-    fi
+# check whther there are two running VMs
+vm_num=$(virsh list | grep  'running' | wc -l)
+if [ ${vm_num} -lt 2 ];then
+    echo -e "\e[1;31mEnsure that the host machine has two running VMs.\e[0m"
+    exit 1
 fi
 
 echo ''
@@ -158,7 +148,7 @@ else
     exit 1
 fi
 
-echo -e "\e[1;33mIt may take a few minutes to run the ICMP uninstallation demo, please wait...\e[0m"
+echo -e "\e[1;33mIt may take a few minutes to run the ICMP protocol offload demo, please wait...\e[0m"
 # Simulating traffic sending between VMs takes a long time.
 python3 ${current_dir}/util/deal_demo.py
 if [[ $? == 0 ]];then

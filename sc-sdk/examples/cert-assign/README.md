@@ -11,7 +11,7 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 ## 使用依赖
 
-1. 确保环境上以安装机密计算SDK，需要同时安装 `kunpeng-sc-1.0.1` 和 `kunpeng-sc-devel-1.0.1` ，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
+1. 确保环境上已安装机密计算SDK，需要同时安装相同版本的 `kunpeng-sc` 和 `kunpeng-sc-devel`，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
 2. 确保tzdriver正常加载，执行 `lsmod | grep tzdriver` 查看
 3. 确保守护进程正常启动，执行 `ps -ef | grep teecd` 查看
 
