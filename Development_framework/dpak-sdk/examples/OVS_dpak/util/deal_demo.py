@@ -23,6 +23,11 @@ from common_util import subprocess_command
 
 
 class DealDemo:
+    """
+    1.ping the two VMS from each other.
+    2.check whether the flow table is uninstalled.
+    3.keep pinging the flow table and check whether the number of packets in the flow table keeps increasing.
+    """
     def __init__(self, ip=None, username=None,port=None):
         self.ssh_command = 'ssh -p {} {}@{}'.format(port,username,ip)
         self.port = port
@@ -34,8 +39,8 @@ class DealDemo:
         subprocess_command(ssh_command)
 
     def uninstall_icmp(self):
-        """ICMP uninstall"""
-        check_result = 'Failed to uninstall the ICMP protocol.'
+        """ICMP protocol offload """
+        check_result = 'Failed to perform the ICMP protocol offload.'
         status = False
         ssh_command = ['ovs-appctl' ,'hwoff/dump-hwoff-flows']
         value = subprocess_command(ssh_command)
@@ -53,7 +58,7 @@ class DealDemo:
         else:
             return status, check_result
         if num_2 > num_1:
-            check_result = 'Succeeded in uninstalling the ICMP protocol.'
+            check_result = 'ICMP protocol offload successfully executed.'
             status = True
         return status, check_result
 

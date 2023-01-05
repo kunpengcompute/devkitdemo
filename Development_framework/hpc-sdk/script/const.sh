@@ -52,6 +52,7 @@ centos7_6_hmpi_bisheng_name=$(sed '/^CENTOS7.6_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=
 openeuler20_03_lts_hmpi_bisheng_name=$(sed '/^OPENEULER20.03_LTS_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 openeuler20_03_SP1_hmpi_bisheng_name=$(sed '/^OPENEULER20.03_SP1_LINUX_HMPI_BISHENG_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 openeuler20_03_SP1_hmpi_gcc_name=$(sed '/^OPENEULER20.03_SP1_LINUX_HMPI_GCC_NAME=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
+hyper_mpi_install_filter_system=$(sed '/^HYPER_MPI_INSTALL_FILTER_SYSTEM=/!d;s/.*=//;s/\r//' ${current_dir}/const.conf)
 hyper_mpi_gcc_package_names=(${kylinv10_hmpi_gcc_name} ${centos7_6_linux_hmpi_gcc_name} \
 ${openeuler20_03_SP1_hmpi_gcc_name})
 hyper_mpi_bisheng_package_names=(${kylinv10_hmpi_bisheng_name} ${centos7_6_hmpi_bisheng_name} \

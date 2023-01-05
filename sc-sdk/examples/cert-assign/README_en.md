@@ -11,7 +11,7 @@ This demo is used to issue an X509 certificate to users. It creates a root certi
 
 ## Dependencies
 
-1. Ensure that `kunpeng-sc-1.1.0` and `kunpeng-sc-devel-1.1.0` have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
+1. Ensure that `kunpeng-sc` and `kunpeng-sc-devel` of the same version have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
 2. Run the `lsmod | grep tzdriver` command to check whether the tzdriver is properly loaded.
 3. Run the  `ps -ef | grep teecd` command to check whether the daemon is started properly.
 

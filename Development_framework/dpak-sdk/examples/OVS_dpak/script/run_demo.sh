@@ -94,24 +94,13 @@ else
     exit 1
 fi
 
-get_user_connect_info 'second host'
-get_local_ip ${input_ip}
-if [[ $? == 1 ]];then
-   echo -e "\e[1;32mThe IP addresses of the two active nodes are the same. You do not need to check the environment again. \e[0m"
-else
-    sed -i "s#port_host_second=.*#port_host_second=${input_port}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#username_host_first=.*#username_host_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
-    sed -i "s#ip_host_first=.*#ip_host_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
-    password_free_check ${input_username} ${input_ip} ${input_port} 
-    python3 ${current_dir}/../util/check_env_controll.py 'remote' 
-    if [[ $? == 0 ]];then
-        echo -e "\e[1;32mCheck the environment of the second host node.\e[0m"
-    else
-        echo -e "\e[1;31mFailed to check the environment of the second host node.\e[0m"
-        exit 1
-    fi
-fi
 
+# check whther there are two running VMs
+vm_num=$(virsh list | grep  'running' | wc -l)
+if [ ${vm_num} -lt 2 ];then
+    echo -e "\e[1;31mEnsure that the host machine has two running VMs.\e[0m"
+    exit 1
+fi
 
 echo ''
 echo -e "\e[1;33mEnsure that the IP address of the management port that can provide the bandwidth for the VM is SSH\e[0m"
