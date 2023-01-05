@@ -54,6 +54,8 @@ class DealDemo:
         status, check_result = self.check_virtual_first_config_status()
         print(check_result)
         if status:
+            print("  Start restaring the VM.")
+            print("  The VM has been restarted.")
             print("  Succeeded in restarting the VM for lifecyle successfully.")
         return status, check_result
 
@@ -67,6 +69,7 @@ class DealDemo:
         ssh_command = ['openstack', 'server', 'show', '{}'.format(self.vm_id_second)]
         value = self.check_run_demo_status(ssh_command, "ACTIVE")
         if "ACTIVE" in value:
+            print("  VM {} is alive after live migration.".format(self.vm_id_second))
             print("  Succeeded in live migrating the second VM.")
             return True, 'Succeeded in live migrating the second VM.'
         else:
@@ -82,6 +85,7 @@ class DealDemo:
         ssh_command = ['openstack',"port", "show", "{}".format(self.port_id_first)]
         value = self.check_run_demo_status(ssh_command, "DOWN")
         if "DOWN" in value:
+            print("  The passthrough network port {} is down.".format(self.port_id_first))
             print("  Succeeded in hot removing passthrough network port.")
             return True, 'Succeeded in hot removing passthrough network port.'
         else:
@@ -99,6 +103,7 @@ class DealDemo:
         ssh_command = ['openstack',"port", 'show', "{}".format(self.port_id_first)]
         value = self.check_run_demo_status(ssh_command, "ACTIVE")
         if "ACTIVE" in value:
+            print("  The passthrough network port {} is active.".format(self.port_id_first))
             print("  Succeeded in hot inserting the passthrough network port.")
             return True, 'Succeeded in hot inserting the passthrough network port.'
         else:
