@@ -33,10 +33,11 @@
 2. 进入到项目根路径
 
    ```shell
-   cd ./devkitdemo/Development_framework/dpak-sdk/examples/Virtualization_dpak/script
+   cd ./devkitdemo/Development_framework/dpak-sdk/examples/Virtualization_dpak/Virtualization_offload
    ```
 3. 运行demo
 
    ```shell
-   bash run_demo.sh
+   source /root/.admin-openrc
+   bash Virtualization_offload.sh
    ```

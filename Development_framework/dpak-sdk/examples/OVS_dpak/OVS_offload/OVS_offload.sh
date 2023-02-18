@@ -85,15 +85,14 @@ get_vm_eth0_ip(){
     network_ip=$(ssh -p ${port} $user@$ip ip -4 addr show ${user_choose_network_interface} | grep -oP '(?<=inet\s)\d+(\.\d+){3}')
 }
 # check env
-echo -e "\e[1;34mStart to check the controll node environment ...\e[0m"
-python3 ${current_dir}/../util/check_env_controll.py 'local'
+echo -e "\e[1;34mStart to check the host machine environment ...\e[0m"
+python3 ${current_dir}/util/check_env_controll.py 'local'
 if [[ $? == 0 ]];then
-    echo -e "\e[1;32mCheck the the controll node environment.\e[0m"
+    echo -e "\e[1;32mCompleted the host machine environment.\e[0m"
 else
-    echo -e "\e[1;31mFailed to check the controll node environment.\e[0m"
+    echo -e "\e[1;31mFailed to check the host machine environment.\e[0m"
     exit 1
 fi
-
 
 # check whther there are two running VMs
 vm_num=$(virsh list | grep  'running' | wc -l)
@@ -117,7 +116,7 @@ sed -i "s#ip_compute_first=.*#ip_compute_first=${input_ip}#g" $current_dir/../co
 password_free_check ${input_username} ${input_ip} ${input_port}
 get_system_network_interface ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_first=.*#eth0_ip_first=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_first=.*#eth0_ip_first=${network_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
 
 echo -e "\e[1;34mStarted to check second virtual machine server...\e[0m"
@@ -128,10 +127,10 @@ sed -i "s#ip_compute_second=.*#ip_compute_second=${input_ip}#g" $current_dir/../
 password_free_check ${input_username} ${input_ip} ${input_port}
 get_system_network_interface ${input_username} ${input_ip} ${input_port}
 get_vm_eth0_ip ${input_username} ${input_ip} ${input_port}
-sed -i "s#eth0_ip_second=.*#eth0_ip_second=${eth0_ip}#g" $current_dir/../conf/demo_conf.cfg 
+sed -i "s#eth0_ip_second=.*#eth0_ip_second=${network_ip}#g" $current_dir/../conf/demo_conf.cfg 
 
 # Check vm1 ping vm2
-python3 ${current_dir}/../util/check_env_compute.py  'compute_first'
+python3 ${current_dir}/util/check_env_compute.py  'compute_first'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32m  VM1 and VM2 networks are connected.\e[0m"
 else
@@ -140,7 +139,7 @@ else
 fi
 
 # Check vm2 ping vm1
-python3 ${current_dir}/../util/check_env_compute.py 'compute_second'
+python3 ${current_dir}/util/check_env_compute.py 'compute_second'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32m  VM2 and VM1 networks are connected.\e[0m"
 else
@@ -148,9 +147,9 @@ else
     exit 1
 fi
 
-echo -e "\e[1;33mIt may take a few minutes to run the ICMP uninstallation demo, please wait...\e[0m"
+echo -e "\e[1;33mIt may take a few minutes to run the ICMP protocol offload demo, please wait...\e[0m"
 # Simulating traffic sending between VMs takes a long time.
-python3 ${current_dir}/../util/deal_demo.py
+python3 ${current_dir}/util/deal_demo.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi

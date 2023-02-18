@@ -42,6 +42,7 @@ class CheckDemoEnvironment:
         return ssh_cmd_
 
     def check_os(self):
+        """check the system type and version of the server"""
         check_item = ['openEuler release 20.03 (LTS-SP1)']
         software = "os_system"
         ssh_command = ['cat', '/etc/system-release']
@@ -53,7 +54,7 @@ class CheckDemoEnvironment:
         return status,check_result
     
     def check_cat_fstab(self):
-        """huge mount"""
+        """Configuring memory hugepages"""
         check_item = ["/mnt/huge"]
         software = "huge"
         ssh_command = ['cat', '/etc/fstab']
@@ -65,6 +66,7 @@ class CheckDemoEnvironment:
         return status,check_result
 
     def check_status_firewalld(self):
+        """check whether the system firewall is disabled"""
         check_item = ["inactive"]
         software = "firewalld"
         ssh_command = ['systemctl', 'status', 'firewalld']
@@ -76,6 +78,7 @@ class CheckDemoEnvironment:
         return status,check_result
 
     def check_status_hinic3(self):
+        """check whether the hinic3 drivers are installed"""
         check_item = ["hisdk3","hiovs3","hinic3"]
         software = "hinic3"
         ssh_command = ['lsmod']
@@ -87,6 +90,7 @@ class CheckDemoEnvironment:
         return status,check_result
 
     def ovs_vsctl_show(self):
+        """Check the network configuration"""
         check_item = ["dpdk","vf"]
         software = "ovs_vsctl_show"
         ssh_command = ['ovs-vsctl','show']
@@ -98,6 +102,7 @@ class CheckDemoEnvironment:
         return status,check_result
 
     def check_vf_status(self):
+        """check whether VF device is configured"""
         check_item = ["VirtIO"]
         software = "VF device"
         ssh_command = ['hinicadm3','info']

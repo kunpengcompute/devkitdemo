@@ -20,6 +20,7 @@ from check_env_remote import CheckDemoEnvironment
 
 
 def check_compute_server(ip, username, port):
+    """Check the connection between VMS"""
     compute = CheckDemoEnvironment(ip, username, port, 'remote')
     status, result = compute.check_vm_ping(eth0_ip)
 
@@ -29,7 +30,8 @@ def check_compute_server(ip, username, port):
 if __name__ == "__main__":
     compute_num = sys.argv[1]
     cfg = ConfigParser()
-    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "conf/demo_conf.cfg"))
+    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), 
+                          "conf/demo_conf.cfg"))
     # compute 
     if compute_num == 'compute_first':
         port_compute = cfg['compute_first'].get('port_compute_first')
