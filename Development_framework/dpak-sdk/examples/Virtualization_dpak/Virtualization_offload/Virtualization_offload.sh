@@ -197,7 +197,7 @@ clean_env(){
 
 # Check the environment configuration of the control node.
 echo -e "\e[1;34mStarted to check the control node environment ...\e[0m"
-python3 ${current_dir}/../util/check_env_controll.py
+python3 ${current_dir}/util/check_env_controll.py
 if [[ $? == 0 ]];then
     echo -e "\e[1;32mCompleted the environment check of the control node.\e[0m"
 else
@@ -212,7 +212,7 @@ sed -i "s#port_storage=.*#port_storage=${input_port}#g" $current_dir/../conf/dem
 sed -i "s#username_storage=.*#username_storage=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_storage=.*#ip_storage=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
-python3 ${current_dir}/../util/check_env_storage.py
+python3 ${current_dir}/util/check_env_storage.py
 if [[ $? == 0 ]];then
     echo -e "\e[1;32mCompleted the environment check of the storage node.\e[0m"
 else
@@ -227,7 +227,7 @@ sed -i "s#port_compute_first=.*#port_compute_first=${input_port}#g" $current_dir
 sed -i "s#username_compute_first=.*#username_compute_first=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_compute_first=.*#ip_compute_first=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
-python3 ${current_dir}/../util/check_env_compute.py 'compute_first'
+python3 ${current_dir}/util/check_env_compute.py 'compute_first'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32mCompleted the environment check of first compute node.\e[0m"
 else
@@ -242,7 +242,7 @@ sed -i "s#port_compute_second=.*#port_compute_second=${input_port}#g" $current_d
 sed -i "s#username_compute_second=.*#username_compute_second=${input_username}#g" $current_dir/../conf/demo_conf.cfg 
 sed -i "s#ip_compute_second=.*#ip_compute_second=${input_ip}#g" $current_dir/../conf/demo_conf.cfg 
 password_free_check ${input_username} ${input_ip} ${input_port}
-python3 ${current_dir}/../util/check_env_compute.py 'compute_second'
+python3 ${current_dir}/util/check_env_compute.py 'compute_second'
 if [[ $? == 0 ]];then
     echo -e "\e[1;32mCompleted the environment check of the second compute node.\e[0m"
 else
@@ -286,28 +286,28 @@ done
 
 # Live migrating VM.
 echo -e "\e[1;34mStarted to execute the demo of the live migrating VM ...\e[0m"
-python3 ${current_dir}/../util/deal_demo_hot_migrate_vm.py
+python3 ${current_dir}/util/deal_demo_hot_migrate_vm.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi
 
 # Hot remove the network port.
 echo -e "\e[1;34mStarted to execute the demo of hot removing the network port ...\e[0m"
-python3 ${current_dir}/../util/deal_demo_detach_vm.py
+python3 ${current_dir}/util/deal_demo_detach_vm.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi
 
 # Hot insert the network port.
 echo -e "\e[1;34mStarted to execute the demo of hot inserting the network port ...\e[0m"
-python3 ${current_dir}/../util/deal_demo_attach_vm.py
+python3 ${current_dir}/util/deal_demo_attach_vm.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi
 
 # Restart VM.
 echo -e "\e[1;34mStart to execute the demo of restarting for VM lifecycle management ...\e[0m"
-python3 ${current_dir}/../util/deal_demo_reboot_vm.py
+python3 ${current_dir}/util/deal_demo_reboot_vm.py
 if [[ $? == 0 ]];then
   echo -e "\e[1;32mThe demo execution is complete.\e[0m"
 fi

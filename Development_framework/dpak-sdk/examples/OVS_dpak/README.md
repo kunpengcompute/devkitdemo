@@ -45,10 +45,10 @@ SP680智能网卡的网络加速功能用于配合服务器完成网络的卸载
 2. 进入到项目根路径
 
    ```shell
-   cd ./devkitdemo/Development_framework/dpak-sdk/examples/OVS_dpak/script
+   cd ./devkitdemo/Development_framework/dpak-sdk/examples/OVS_dpak/OVS_offload
    ```
 3. 运行demo
 
    ```shell
-   bash run_demo.sh
+   bash OVS_offload.sh
    ```

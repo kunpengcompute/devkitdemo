@@ -39,8 +39,8 @@ class DealDemo:
         subprocess_command(ssh_command)
 
     def uninstall_icmp(self):
-        """ICMP protocol offload """
-        check_result = 'Failed to perform the ICMP protocol offload.'
+        """ICMP offload"""
+        check_result = 'Failed to offload the ICMP protocol.'
         status = False
         ssh_command = ['ovs-appctl' ,'hwoff/dump-hwoff-flows']
         value = subprocess_command(ssh_command)
@@ -70,7 +70,8 @@ def check_demo_server(ip,username,port,eth0_ip):
 
 if __name__ == "__main__":
     cfg = ConfigParser()
-    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "conf/demo_conf.cfg"))
+    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), 
+                          "conf/demo_conf.cfg"))
     # compute information
     port_compute_first = cfg['compute_first'].get('port_compute_first')
     username_compute_first = cfg['compute_first'].get('username_compute_first')

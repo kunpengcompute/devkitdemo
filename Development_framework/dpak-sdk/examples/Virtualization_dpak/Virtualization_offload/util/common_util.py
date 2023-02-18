@@ -36,7 +36,7 @@ def common_result_check_contain(software, value, check_item):
             message = 'Check {} succeeded'.format(software)
             return True, message
     
-    message = 'Failed to check {}, {}'.format(software, value)
+    message = 'Failed to check {},{}'.format(software, value)
     return False, message
                 
 
@@ -51,14 +51,15 @@ def common_result_check_not_contain(software, value, check_item):
             message = 'Check {} succeeded'.format(software)
             return True, message
     
-    message = 'Failed to check {}, {}'.format(software, value)
+    message = 'Failed to check {},{}'.format(software, value)
     return False, message
 
 
 class ReadConfig:
     # Obtain the server information by loading the configuration file.
     cfg = ConfigParser()
-    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "conf/demo_conf.cfg"))
+    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), 
+                          "conf/demo_conf.cfg"))
     # first compute
     port_compute_first = cfg.get('compute_first', 'port_compute_first')
     username_compute_first = cfg.get('compute_first', 'username_compute_first')

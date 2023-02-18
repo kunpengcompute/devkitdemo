@@ -46,10 +46,10 @@ The network acceleration function of the SP680 SmartNIC is used to cooperate wit
 
 
    ```shell
-   cd ./devkitdemo/Development_framework/dpak-sdk/examples/OVS_dpak/script
+   cd ./devkitdemo/Development_framework/dpak-sdk/examples/OVS_dpak/OVS_offload
    ```
 
 3. Run the demo.
    ```shell
-   bash run_demo.sh
+   bash OVS_offload.sh
    ```

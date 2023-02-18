@@ -1,4 +1,7 @@
-# Copyright 2022 Huawei Technologies Co., Ltd
+
+"""
+
+"""# Copyright 2022 Huawei Technologies Co., Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,7 +50,8 @@ def check_control_server(ip,usermae, port,flag):
 if __name__ == "__main__":
     flag = sys.argv[1]
     cfg = ConfigParser()
-    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "conf/demo_conf.cfg"))
+    cfg.read(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))), 
+                          "conf/demo_conf.cfg"))
     ip_compute = None
     username_compute = None
     port_compute = None
