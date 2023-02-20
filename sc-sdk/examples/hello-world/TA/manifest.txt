@@ -1,0 +1,7 @@
+gpd.ta.appID:                5c73d821-e598-440a-95b3-5b5f18c51b20
+gpd.ta.service_name:         hello-world
+gpd.ta.singleInstance:       true
+gpd.ta.multiSession:         false
+gpd.ta.instanceKeepAlive:    false
+gpd.ta.dataSize:             67928064
+gpd.ta.stackSize:            40960
