@@ -25,7 +25,7 @@ void MemBandwidth(int *arg)
 int main()
 {
 	int i;
-	pthread_t *thread = (pthread_t*)malloc(sizeof(pthread_t) * NUM_THREADS);
+	pthread_t *threads = (pthread_t*)malloc(sizeof(pthread_t) * NUM_THREADS);
 	uint64_t ts_start = GetTime_ns();
 	for (i = START_CORE_ID; i < START_CORE_ID + NUM_THREADS; i++) {
 		pthread_create(threads + i - START_CORE_ID, NULL, (void*)MemBandwidth, &i);
