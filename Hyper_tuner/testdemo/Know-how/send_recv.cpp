@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 				MPI_Recv(message, 100, MPI_CHAR, source, 99, MPI_COMM_WORLD, &status);
 				//MPI_Irecv(message, 100, MPI_CHAR, source, 99, MPI_COMM_WORLD, &request);
 				if (i % 1000000 == 0) {
-					printf("第%d次接收到第%d号进程发送的消息：%s\n", i, source, message);
+					printf("No:%d, receive message from %d: %s\n", i, source, message);
 				}
 			}
 		}
