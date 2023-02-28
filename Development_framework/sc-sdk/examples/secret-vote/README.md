@@ -62,7 +62,7 @@ CA和TA需要编译使用，CA需要使用openssl，Web服务需要依赖Python�
 | Python  | 3.7     |
 | sqlite3 | 3.8.3   |
 
-1. 确保环境上以安装机密计算SDK，需要同时安装 `kunpeng-sc` 和 `kunpeng-sc-devel` ，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
+1. 确保环境上已安装机密计算SDK，需要同时安装相同版本的 `kunpeng-sc-1.3.0` 和 `kunpeng-sc-devel-1.3.0`，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
 2. 确保tzdriver正常加载，执行 `lsmod | grep tzdriver` 查看
 3. 确保守护进程正常启动，执行 `ps -ef | grep teecd` 查看
 
@@ -79,7 +79,7 @@ git clone https://github.com/kunpengcompute/devkitdemo.git
 2. 切换到secret-vote demo对应的文件夹中
 
 ```
-cd devkitdemo/sc-sdk/examples/secret-vote/
+cd devkitdemo/Development_framework/sc-sdk/examples/secret-vote/
 ```
 
 3. 将CA/secret_vote_ca.h中的TA_UUID修改为开发者申请证书的uuid
@@ -105,6 +105,14 @@ bash build/build_ca.sh
 7. 将 ./TA/ 目录下的manifest.txt 文件替换成，申请开发者证书时使用的manifest.txt文件
 
 8. 修改TA/config_cloud.ini中的开发者私钥和config文件路径
+
+   ```shell
+   vim TA/config_cloud.ini
+   # 修改signKey为private_key.pem绝对路径
+   # secSignKey = /usr/local/kunpeng-sc-devel/examples/secret-vote/TA/TA_cert/private_key.pem
+   # 修改configPath为config绝对路径
+   # configPath = /usr/local/kunpeng-sc-devel/examples/secret-vote/TA/signed_config/config
+   ```
 
 9. 编译TA
 

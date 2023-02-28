@@ -11,7 +11,7 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 ## 使用依赖
 
-1. 确保环境上已安装机密计算SDK，需要同时安装相同版本的 `kunpeng-sc` 和 `kunpeng-sc-devel`，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
+1. 确保环境上已安装机密计算SDK，需要同时安装相同版本的 `kunpeng-sc-1.3.0` 和 `kunpeng-sc-devel-1.3.0`，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
 2. 确保tzdriver正常加载，执行 `lsmod | grep tzdriver` 查看
 3. 确保守护进程正常启动，执行 `ps -ef | grep teecd` 查看
 
@@ -26,17 +26,17 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 2. 进入到项目根路径
 
    ```shell
-   cd ./devkitdemo/sc-sdk/examples/cert-assign/
+   cd ./devkitdemo/Development_framework/sc-sdk/examples/cert-assign/
    ```
 
-3. 修改`./TA/config_cloud.ini`中的开发者私钥和config文件的绝对路径
+3. 修改`TA/config_cloud.ini`中的开发者私钥和config文件的绝对路径
 
    ```shell
-   vim ./TA/config_cloud.ini
+   vim TA/config_cloud.ini
    # 修改signKey为private_key.pem绝对路径
-   # signKey = /home/kunpeng/devkitdemo/sc-sdk/examples/cert-assign/TA/TA_cert/private_key.pem
+   # secSignKey = /usr/local/kunpeng-sc-devel/examples/cert-assign/TA/TA_cert/private_key.pem
    # 修改configPath为config绝对路径
-   # configPath = /home/kunpeng/devkitdemo/sc-sdk/examples/cert-assign/TA/signed_config/config
+   # configPath = /usr/local/kunpeng-sc-devel/examples/cert-assign/TA/signed_config/config
    ```
 
 4. 将 `./TA/` 目录下的 `manifest.txt` 文件替换成申请开发者证书时使用的 `manifest.txt` 文件

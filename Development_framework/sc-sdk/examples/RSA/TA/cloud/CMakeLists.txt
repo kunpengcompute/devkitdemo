@@ -43,7 +43,7 @@ set_target_properties(combine PROPERTIES LINK_FLAGS ${CMAKE_RSA_LD_FLAGS})
 add_custom_command(TARGET combine
     POST_BUILD
     COMMAND cp -f ${PROJECT_SOURCE_DIR}/../manifest.txt ${PROJECT_SOURCE_DIR}
-    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --config ${PROJECT_SOURCE_DIR}/config_cloud.ini
+    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --privateCfg ${PROJECT_SOURCE_DIR}/config_cloud.ini
 )
 
 # Clean output

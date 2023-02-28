@@ -11,7 +11,7 @@ This demo is used to issue an X509 certificate to users. It creates a root certi
 
 ## Dependencies
 
-1. Ensure that `kunpeng-sc` and `kunpeng-sc-devel` of the same version have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
+1. Ensure that `kunpeng-sc-1.3.0` and `kunpeng-sc-devel-1.3.0` of the same version have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
 2. Run the `lsmod | grep tzdriver` command to check whether the tzdriver is properly loaded.
 3. Run the  `ps -ef | grep teecd` command to check whether the daemon is started properly.
 
@@ -26,17 +26,17 @@ This demo is used to issue an X509 certificate to users. It creates a root certi
 2. Go to the project root directory.
 
    ```shell
-   cd ./devkitdemo/sc-sdk/examples/cert-assign/
+   cd ./devkitdemo/Development_framework/sc-sdk/examples/cert-assign/
    ```
 
 3. Set the absolute paths of the developer private key and config file in `./TA/config_cloud.ini`.
 
    ```shell
-   vim ./TA/config_cloud.ini
-   # Set signKey to the absolute path of private_key.pem
-   # signKey = /home/kunpeng/devkitdemo/sc-sdk/examples/cert-assign/TA/TA_cert/private_key.pem
-   # Set configPath to the absolute path of config
-   # configPath = /home/kunpeng/devkitdemo/sc-sdk/examples/cert-assign/TA/signed_config/config
+   vim TA/config_cloud.ini
+   # Change signKey to the absolute path of private_key.pem.
+   # secSignKey = /usr/local/kunpeng-sc-devel/examples/cert-assign/TA/TA_cert/private_key.pem
+   # Change configPath to the absolute path of config.
+   # configPath = /usr/local/kunpeng-sc-devel/examples/cert-assign/TA/signed_config/config
    ```
 
 4. Replace the `manifest.txt` file in the `./TA/` directory with the `manifest.txt` file used for applying for a developer certificate.
