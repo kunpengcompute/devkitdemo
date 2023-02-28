@@ -4,7 +4,7 @@
       <div class="title">
         匿名投票应用
         <a
-          href="https://gitee.com/kunpengcompute/devkitdemo/tree/main/sc-sdk/examples/secret-vote"
+          href="https://gitee.com/kunpengcompute/devkitdemo/tree/main/Development_framework/sc-sdk/examples/secret-vote"
           target="_blank"
           rel="noopener noreferrer"
           >查看说明文档</a
