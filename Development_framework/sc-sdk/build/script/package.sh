@@ -151,7 +151,7 @@ function modify_src_code() {
 
     # tee sdk demo
     cd ${SrcPath}
-    cp -r devkitdemo/sc-sdk/examples/* demo
+    cp -r devkitdemo/Development_framework/sc-sdk/examples/* demo
 }
 
 function get_src_code() {
@@ -219,7 +219,7 @@ function get_src_code() {
     rm -rf itrustee_sdk/.git
     tar zcvf itrustee_sdk.tar.gz itrustee_sdk
 
-    cp -r devkitdemo/sc-sdk/examples/* demo
+    cp -r devkitdemo/Development_framework/sc-sdk/examples/* demo
     # copy libcrypto.a for demo cert-assign
     mkdir -p demo/cert-assign/lib
     cp libcrypto.a demo/cert-assign/lib
