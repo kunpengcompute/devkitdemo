@@ -62,9 +62,9 @@ The CA and TA need to be compiled before use. Use OpenSSL for the CA. The web se
 | Python   | 3.7              |
 | sqlite3  | 3.8.3            |
 
-1. Ensure that the confidential computing SDK is installed in the environment. You need to install both kunpeng-sc and kunpeng-sc-devel. [Download at Confidential Computing SDK.](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
+1. Ensure that `kunpeng-sc-1.3.0` and `kunpeng-sc-devel-1.3.0` of the same version have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
 2. Run the `lsmod | grep tzdriver` command to check whether the tzdriver is properly loaded.
-3. Run the `ps -ef | grep teecd` command to check whether the daemon process is started properly.
+3. Run the  `ps -ef | grep teecd` command to check whether the daemon is started properly.
 
 ## Usage Guide
 
@@ -79,7 +79,7 @@ git clone https://github.com/kunpengcompute/devkitdemo.git
 2. Go to the folder where the secret-vote demo is stored.
 
 ```
-cd devkitdemo/sc-sdk/examples/secret-vote/
+cd devkitdemo/Development_framework/sc-sdk/examples/secret-vote/
 ```
 
 3. Change TA_UUID in CA/secret_vote_ca.h to the UUID used by the developer to apply for the certificate.
@@ -105,6 +105,14 @@ bash build/build_ca.sh
 7. Replace the manifest.txt file in the ./TA/ directory with the manifest.txt file used for applying for a developer certificate.
 
 8. Change the developer private key and config file path in TA/config_cloud.ini.
+
+   ```shell
+   vim TA/config_cloud.ini
+   # Change signKey to the absolute path of private_key.pem.
+   # secSignKey = /usr/local/kunpeng-sc-devel/examples/secret-vote/TA/TA_cert/private_key.pem
+   # Change configPath to the absolute path of config.
+   # configPath = /usr/local/kunpeng-sc-devel/examples/secret-vote/TA/signed_config/config
+   ```
 
 9. Compile the TA.
 

@@ -22,7 +22,7 @@
 #include "tee_defines.h"
 
 #define SECRET_VOTE_TA_VERSION     "v1.0.0"
-#define PYTHON3_PATH               "/home/kunpeng/devkitdemo/sc-sdk/examples/secret-vote/venv/bin/python3"
+#define PYTHON3_PATH               "/usr/local/kunpeng-sc-devel/examples/secret-vote/venv/bin/python3"
 
 #define PARAMS_IDX0                0            // Subscript index 0 of the params parameter.
 #define PARAMS_IDX1                1            // Subscript index 1 of the params parameter.

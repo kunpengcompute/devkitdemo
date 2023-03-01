@@ -56,5 +56,5 @@ set_target_properties(combine PROPERTIES LINK_FLAGS ${CMAKE_LD_FLAGS})
 
 add_custom_command(TARGET combine
     POST_BUILD
-    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --config ${PROJECT_SOURCE_DIR}/config_cloud.ini
+    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --privateCfg ${PROJECT_SOURCE_DIR}/config_cloud.ini
 )

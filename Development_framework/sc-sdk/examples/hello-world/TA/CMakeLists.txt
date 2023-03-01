@@ -63,7 +63,7 @@ target_link_libraries(
 
 add_custom_command(TARGET combine
     POST_BUILD
-    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --config ${PROJECT_SOURCE_DIR}/config_cloud.ini
+    COMMAND python3 -B ${SIGNTOOL_DIR}/signtool_v3.py ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR} --privateCfg ${PROJECT_SOURCE_DIR}/config_cloud.ini
 )
 
 # Clean output
