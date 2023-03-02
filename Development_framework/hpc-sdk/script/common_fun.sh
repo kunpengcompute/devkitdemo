@@ -164,10 +164,7 @@ check_customize_path() {
   [[ -z ${customize_path} ]] && customize_path="/"
   mark_customize_path_status
   mkdir -p ${customize_path}
-  [[ ${customize_path} == "/" ]] || customize_path=$(
-    cd ${customize_path}
-    pwd
-  )/
+  [[ ${customize_path} == "/" ]] || customize_path=$(cd ${customize_path};pwd)
 }
 
 mark_customize_path_status() {
