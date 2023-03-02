@@ -28,7 +28,7 @@ public class HafDemo {
     // runInHostIfFailed 如果执行失败是否在主机测执行，默认为true 可选
     // exception 指定异常处理函数，默认为执行失败后本地执行  可选
     // app 卸载的应用名称，默认为jar包名称 可选
-    @HafTarget(target = "127.0.0.1", to = {"a", "b"}, from = {"c"}, timeout = 600, runInHostIfFailed = true, exception = Exception.class, app = "add")
+    @HafTarget(target = "127.0.0.1", to = {"a", "b"}, from = {"c"}, timeout = "600", runInHostIfFailed = true, exception = Exception.class, app = "add")
     int sum(int a, int b) {
         c = 100;
         return a + b;
