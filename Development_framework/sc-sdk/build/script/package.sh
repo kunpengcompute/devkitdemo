@@ -22,6 +22,7 @@ PatchPath=${RootPath}/patch
 ScriptPath=${RootPath}/script
 SrcPath=${RootPath}/src
 OutputPath=${RootPath}/output
+PackageVersion="1.3.0"
 
 # workdir
 DebBuild="/root/debbuild"
@@ -115,66 +116,27 @@ function apply_patch() {
     fi
 }
 
-function modify_src_code() {
-    local srcDir=""
-    local distDir=${SrcPath}
-
-    if [[ ${OsName} =~ "openEuler" ]]; then
-        srcDir="${CodePath}/after-modify/openEuler"
-    elif [[ ${OsName} =~ "centOS" ]]; then
-        srcDir="${CodePath}/after-modify/centos"
-    elif [[ ${OsName} =~ "uos" ]]; then
-        srcDir="${CodePath}/after-modify/uos"
-    fi
-    echo "srcDir is ${srcDir}"
-
-    # itrustee_sdk
-    yes | cp ${srcDir}/itrustee_sdk/Makefile ${distDir}/itrustee_sdk
-
-    # itrustee_client
-    yes | cp ${srcDir}/itrustee_client/Makefile ${distDir}/itrustee_client
-
-    # itrustee_tzdriver
-    yes | cp ${srcDir}/itrustee_tzdriver/Makefile ${distDir}/itrustee_tzdriver
-    yes | cp ${srcDir}/itrustee_tzdriver/CMakeLists.txt ${distDir}/itrustee_tzdriver
-    yes | cp ${srcDir}/itrustee_tzdriver/README.md ${distDir}/itrustee_tzdriver
-    yes | cp ${srcDir}/itrustee_tzdriver/README.en.md ${distDir}/itrustee_tzdriver
-
-    # libboundscheck
-    yes | cp ${srcDir}/libboundscheck/Makefile ${distDir}/libboundscheck
-    yes | cp ${srcDir}/libboundscheck/CMakeLists.txt ${distDir}/libboundscheck
-
-    if [[ ${OsName} =~ "uos" ]]; then
-        yes | cp ${srcDir}/itrustee_tzdriver/core/gp_ops.c ${distDir}/itrustee_tzdriver/core
-        yes | cp ${srcDir}/itrustee_tzdriver/tlogger/tlogger.c ${distDir}/itrustee_tzdriver/tlogger
-    fi
-
-    # tee sdk demo
-    cd ${SrcPath}
-    cp -r devkitdemo/Development_framework/sc-sdk/examples/* demo
-}
-
 function get_src_code() {
     mkdir ${SrcPath}
     mkdir ${SrcPath}/demo
 
     cd ${SrcPath}
     # download source code
-    git clone -b itrustee_sdk-1.0 https://gitee.com/openeuler/itrustee_sdk.git
+    git clone https://gitee.com/openeuler/itrustee_sdk.git
     if [[ $? -ne 0 ]]; then
         echo "itrustee_sdk download failed."
         rm -rf ${SrcPath}
         exit 1
     fi
 
-    git clone -b itrustee_client-1.0 https://gitee.com/openeuler/itrustee_client.git
+    git clone https://gitee.com/openeuler/itrustee_client.git
     if [[ $? -ne 0 ]]; then
         echo "itrustee_client download failed."
         rm -rf ${SrcPath}
         exit 1
     fi
 
-    git clone -b itrustee_tzdriver-1.0 https://gitee.com/openeuler/itrustee_tzdriver.git
+    git clone https://gitee.com/openeuler/itrustee_tzdriver.git
     if [[ $? -ne 0 ]]; then
         echo "itrustee_tzdriver download failed."
         rm -rf ${SrcPath}
@@ -188,7 +150,7 @@ function get_src_code() {
         exit 1
     fi
 
-    git clone https://github.com/kunpengcompute/devkitdemo.git
+    git clone -b devkitdemo-23.0.0 https://github.com/kunpengcompute/devkitdemo.git
     if [[ $? -ne 0 ]]; then
         echo "devkitdemo download failed."
         rm -rf ${SrcPath}
@@ -297,15 +259,11 @@ function output() {
 
     cd ${OutputPath}
     if [[ ${OsArch} =~ "Redhat" ]]; then
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-1.1.0-1.aarch64.rpm ${OutputPath}
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-1.1.0-1.aarch64.rpm ${OutputPath}
-        sha256sum kunpeng-sc-1.1.0-1.aarch64.rpm > kunpeng-sc-1.1.0-1.aarch64.rpm.sha256sum
-        sha256sum kunpeng-sc-devel-1.1.0-1.aarch64.rpm > kunpeng-sc-devel-1.1.0-1.aarch64.rpm.sha256sum
+        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-${PackageVersion}-1.aarch64.rpm ${OutputPath}
+        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-${PackageVersion}-1.aarch64.rpm ${OutputPath}
     elif [[ ${OsArch} =~ "Debian" ]]; then
-        cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_1.1.0_arm64.deb ${OutputPath}
-        cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_1.1.0_arm64.deb ${OutputPath}
-        sha256sum kunpeng-sc_1.1.0_arm64.deb > kunpeng-sc_1.1.0_arm64.deb.sha256sum
-        sha256sum kunpeng-sc-devel_1.1.0_arm64.deb > kunpeng-sc-devel_1.1.0_arm64.deb.sha256sum
+        cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_${PackageVersion}_arm64.deb ${OutputPath}
+        cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_${PackageVersion}_arm64.deb ${OutputPath}
     fi
     echo "/*** The package create successfully, please go to ${OutputPath} to get it. ***/"
 }
@@ -351,7 +309,7 @@ function make_package() {
         rpmbuild -ba kunpeng-sc-devel.spec
 
         recover_auto_compile_python
-        
+
     elif [[ ${OsArch} =~ "Debian" ]]; then
         # make kunpeng-sc package
         cd ${DebBuild}/kunpeng-sc/buildroot/DEBIAN

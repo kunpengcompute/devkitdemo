@@ -1,4 +1,4 @@
-From 1709e39af424855df874a1daeedd2d1569d5341e Mon Sep 17 00:00:00 2001
+From 1709c851349b7ecfb74201c36816015a9d25a27a Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 15:28:32 +0800
 Subject: [PATCH] add link to so
@@ -8,7 +8,7 @@ Subject: [PATCH] add link to so
  1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index ee92d02..4d78402 100644
+index 9b2e9da..c3829f1 100644
 --- a/Makefile
 +++ b/Makefile
 @@ -1,9 +1,11 @@
@@ -23,8 +23,8 @@ index ee92d02..4d78402 100644
 +
 +TARGET_LIB_SO_NAME := libteec.so
  
- LIB_CFLAGS := -DSEC_STORAGE_DATA_KUNPENG_PATH -DSECURITY_AUTH_ENHANCE
- LIB_CFLAGS += -Iinclude -Iinclude/cloud -Iext_include -Ilibboundscheck/include -Iinclude -Isrc/inc -Isrc/teecd/  -Isrc/authentication/
+ LIB_CFLAGS := -DDYNAMIC_TA_PATH=\"/var/itrustee/ta/\"
+ LIB_CFLAGS += -Iinclude -Iinclude/cloud -Iext_include -Ilibboundscheck/include -Iinclude -Isrc/inc  -Isrc/authentication/
 @@ -39,10 +41,13 @@ $(TARGET_LIBSEC):
  
  $(TARGET_LIB):$(TARGET_LIBSEC) $(LIB_SOURCES)
@@ -42,5 +42,5 @@ index ee92d02..4d78402 100644
  
  
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

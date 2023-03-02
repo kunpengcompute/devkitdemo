@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           kunpeng-sc-devel
-Version:        1.1.0
+Version:        1.3.0
 Release:        1
 Summary:        kunpeng sc devel
 License:        Apache-2.0
@@ -11,7 +11,7 @@ Source2:        libboundscheck.tar.gz
 Source3:        demo.tar.gz
 
 BuildRequires:  gcc
-Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 1.1.0
+Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 1.3.0
 
 Conflicts: TEE_SDK TEE-devel_SDK
 
@@ -47,7 +47,7 @@ BuildDir=%{_builddir}/%{name}-%{version}
 SdkHome=$RPM_BUILD_ROOT/usr/local/%{name}
 SdkSource=${SdkHome}/source
 SdkUtil=${SdkHome}/utils
-SdkExample=${SdkHome}/example
+SdkExample=${SdkHome}/examples
 SdkInc=$RPM_BUILD_ROOT/usr/include/itrustee_sdk
 
 mkdir -p ${SdkInc}/thirdparty
@@ -63,6 +63,10 @@ cp -r ${BuildDir}/libboundscheck/ ${SdkSource}
 # install utils
 cp -r ${BuildDir}/itrustee_sdk/build/signtools/ ${SdkUtil}
 cp -r ${BuildDir}/itrustee_sdk/build/tools/ ${SdkUtil}
+cp -r ${BuildDir}/itrustee_sdk/build/pack-Config/ ${SdkUtil}
+cp -r ${BuildDir}/itrustee_sdk/build/pack-TA/ ${SdkUtil}
+mkdir -p ${SdkUtil}/pack-Config/xml2tlv_tools/csv
+cp -r ${BuildDir}/itrustee_sdk/build/signtools/tag_parse_dict.csv ${SdkUtil}/pack-Config/xml2tlv_tools/csv
 
 # install include
 cp -r ${BuildDir}/itrustee_sdk/include/* ${SdkInc}

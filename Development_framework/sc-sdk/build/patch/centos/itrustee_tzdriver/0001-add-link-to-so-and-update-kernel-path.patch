@@ -1,20 +1,22 @@
-From e654173ae98203423f8fef137171b0da6c63a70d Mon Sep 17 00:00:00 2001
+From 70c84b19a3276a79c9f2c4271e1d2c1a4b773cd8 Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 15:41:12 +0800
 Subject: [PATCH] add link to so and update kernel path
 
 ---
- CMakeLists.txt | 13 ++++++++++++-
- Makefile       |  3 ++-
- README.en.md   |  1 +
- README.md      |  1 +
- 4 files changed, 16 insertions(+), 2 deletions(-)
+ CMakeLists.txt    | 13 ++++++++++++-
+ Makefile          | 15 ++++++++++++++-
+ README.en.md      |  1 +
+ README.md         |  1 +
+ core/gp_ops.c     | 17 ++++++++++++++---
+ tlogger/tlogger.c |  3 ++-
+ 6 files changed, 44 insertions(+), 6 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cd58879..9a87938 100644
+index 9ef9ef8..2712bc8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -21,11 +21,22 @@ endif()
+@@ -23,11 +23,22 @@ endif()
  
  # you should config right path according to your run-time environment
  set(KPATH /usr/src/kernels)
@@ -36,22 +38,34 @@ index cd58879..9a87938 100644
 +)
 +
  # Set extra options
- set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM")
+ set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
 diff --git a/Makefile b/Makefile
-index 253938d..d6af3f3 100644
+index a5eb619..d2c082e 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -18,7 +18,8 @@ endif
+@@ -19,7 +19,20 @@ endif
  
  # you should config right path according to your run-time environment
  KPATH := /usr/src/kernels
 -KDIR  := $(KPATH)/$(shell ls $(KPATH))
-+KERNEL_VERSION := $(shell rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}')
++KERNEL_VERSION := $(shell uname -r)
 +KDIR  := $(KPATH)/$(KERNEL_VERSION)
++
++GCC_VERSION := $(shell expr `gcc -dumpversion | cut -f1 -d.`)
++GCC_VERSION_LIST := 2 3 4 5 6 7 8 9
++GCC_MATCH := $(findstring $(GCC_VERSION), $(GCC_VERSION_LIST))
++
++
++KERNEL_VERSION_LIST := 4.18.0-305.10.2.el7.aarch64 4.18.0-348.20.1.el7.aarch64
++KERNEL_MATCH := $(findstring $(KERNEL_VERSION), $(KERNEL_VERSION_LIST))
++
++ifeq ("$(GCC_VERSION)_$(KERNEL_VERSION)", "$(GCC_MATCH)_$(KERNEL_MATCH)")
++    $(error "Require gcc version >= 10, current gcc version is $(GCC_VERSION). If you install in a custom directory, please add a soft link pointing to the gcc binary in the /usr/bin directory.")
++endif
  
- EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH
- EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core
+ EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
+ EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core -I$(PWD)/tzdriver_internal/tee_trace_event
 diff --git a/README.en.md b/README.en.md
 index 0fb93ed..cdab479 100644
 --- a/README.en.md
@@ -65,14 +79,86 @@ index 0fb93ed..cdab479 100644
  5.License
  please see License/Tzdriver_License for more details
 diff --git a/README.md b/README.md
-index 37198d0..faf8b11 100644
+index a277830..4cd12c0 100644
 --- a/README.md
 +++ b/README.md
-@@ -26,3 +26,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
-    2.使用root用户，执行insmod tzdriver.ko
-    3.使用root用户，执行/usr/bin/teecd&
-    4.运行测试CA 和TA
-+   5.如果要卸载tzdriver，需要重启服务器才可生效
+@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
+    2）使用root用户，执行insmod tzdriver.ko
+    3）使用root用户，执行/usr/bin/teecd&
+    4）运行测试CA 和TA
++   5）如果要卸载tzdriver，需要重启服务器才可生效
+diff --git a/core/gp_ops.c b/core/gp_ops.c
+index 7484811..9b4fa34 100644
+--- a/core/gp_ops.c
++++ b/core/gp_ops.c
+@@ -158,7 +158,8 @@ static bool is_usr_refmem_valid(const union tc_ns_client_param *client_param)
+ 	uint64_t buffer_addr = client_param->memref.buffer |
+ 		((uint64_t)client_param->memref.buffer_h_addr << ADDR_TRANS_NUM);
+ 
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
++#if ((LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) && \
++    LINUX_VERSION_CODE != KERNEL_VERSION(4, 18, 0)) || \
+ 	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)size_addr, sizeof(uint32_t)) == 0)
+ #else
+@@ -168,7 +169,8 @@ static bool is_usr_refmem_valid(const union tc_ns_client_param *client_param)
+ 
+ 	get_user(size, (uint32_t *)(uintptr_t)size_addr);
+ 
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
++#if ((LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) && \
++    LINUX_VERSION_CODE != KERNEL_VERSION(4, 18, 0)) || \
+ 	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)buffer_addr, size) == 0)
+ #else
+@@ -194,7 +196,8 @@ static bool is_usr_valmem_valid(const union tc_ns_client_param *client_param)
+ #endif
+ 		return false;
+ 
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
++#if ((LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) && \
++    LINUX_VERSION_CODE != KERNEL_VERSION(4, 18, 0)) || \
+ 	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)b_addr, sizeof(uint32_t)) == 0)
+ #else
+@@ -566,7 +569,11 @@ static int fill_shared_mem_info(void *start_vaddr, uint32_t pages_no,
+ 	if (page_num != pages_no) {
+ 		tloge("get page phy addr failed\n");
+ 		if (page_num > 0)
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
++			release_pages(pages, page_num, false);
++#else
+ 			release_pages(pages, page_num);
++#endif
+ 		vfree(pages);
+ 		return -EFAULT;
+ 	}
+@@ -581,7 +588,11 @@ static int fill_shared_mem_info(void *start_vaddr, uint32_t pages_no,
+ 	for (i = 0; i < pages_no; i++) {
+ 		struct page *page = pages[i];
+ 		if (page == NULL) {
++#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 15, 0))
++			release_pages(pages, page_num, false);
++#else
+ 			release_pages(pages, page_num);
++#endif
+ 			vfree(pages);
+ 			return -EFAULT;
+ 		}
+diff --git a/tlogger/tlogger.c b/tlogger/tlogger.c
+index 90183a1..c116566 100644
+--- a/tlogger/tlogger.c
++++ b/tlogger/tlogger.c
+@@ -644,7 +644,8 @@ static int get_tlogcat_f_stat(void)
+ 
+ static int check_user_arg(unsigned long arg, size_t arg_len)
+ {
+-#if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
++#if ((LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) && \
++    LINUX_VERSION_CODE != KERNEL_VERSION(4, 18, 0)) || \
+ 	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
+ 	return (int)access_ok(VERIFY_READ,
+ 		(void __user *)(uintptr_t)arg, arg_len);
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

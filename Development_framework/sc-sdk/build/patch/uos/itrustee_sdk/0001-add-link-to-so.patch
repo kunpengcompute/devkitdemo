@@ -1,33 +1,38 @@
-From c1339532700c327e6edb2c003178650284153447 Mon Sep 17 00:00:00 2001
+From 8555d73eb6a0221dfb7a0419c3caea06fb16b8c3 Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 16:46:40 +0800
 Subject: [PATCH] add link to so
 
 ---
- Makefile | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Makefile | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+ create mode 100644 Makefile
 
 diff --git a/Makefile b/Makefile
-index 0f5cdff..800398d 100644
---- a/Makefile
+new file mode 100644
+index 0000000..cf80f32
+--- /dev/null
 +++ b/Makefile
-@@ -1,6 +1,7 @@
- CUR_DIR=$(shell pwd)
- iTrustee_SDK_PATH=${CUR_DIR}
--TARGET_APP := libteec_adaptor.so
+@@ -0,0 +1,19 @@
++CUR_DIR=$(shell pwd)
++iTrustee_SDK_PATH=${CUR_DIR}
 +TARGET_APP := libteec_adaptor.so.1
 +
- APP_SOURCES += $(iTrustee_SDK_PATH)/src/CA/cloud/libteec_adaptor.c
- APP_CFLAGS += -fstack-protector-strong -fPIC -ftrapv -s -D_FORTIFY_SOURCE=2 -O2
- APP_CFLAGS += -I$(iTrustee_SDK_PATH)/include/CA -I$(iTrustee_SDK_PATH)/thirdparty/open_source/libboundscheck/include
-@@ -8,6 +9,7 @@ APP_CFLAGS += -I$(iTrustee_SDK_PATH)/include/CA -I$(iTrustee_SDK_PATH)/thirdpart
- APP_LDFLAGS += -z text -z now -z relro -z noexecstack -pie -shared
- $(TARGET_APP): $(APP_SOURCE)
- 	@$(CC) $(APP_CFLAGS) $(APP_LDFLAGS) $(APP_SOURCES) -o $@
++APP_SOURCES += $(iTrustee_SDK_PATH)/src/CA/libteec_adaptor.c
++APP_CFLAGS += -fstack-protector-strong -fPIC -ftrapv -s -D_FORTIFY_SOURCE=2 -O2
++APP_CFLAGS += -I$(iTrustee_SDK_PATH)/include/CA -I$(iTrustee_SDK_PATH)/thirdparty/open_source/libboundscheck/include
++
++APP_LDFLAGS += -z text -z now -z relro -z noexecstack -pie -shared
++$(TARGET_APP): $(APP_SOURCE)
++	@$(CC) $(APP_CFLAGS) $(APP_LDFLAGS) $(APP_SOURCES) -o $@
 +	@ln -s libteec_adaptor.so.1 libteec_adaptor.so
- 
- install: $(TARGET_APP)
- 	install -d /opt/itrustee_sdk
++
++install: $(TARGET_APP)
++	install -d /opt/itrustee_sdk
++	cp -r build include License thirdparty /opt/itrustee_sdk
++	install -pm 644 libteec_adaptor.so /lib64/ 
++clean:
++	rm -rf *.o $(TARGET_APP)
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

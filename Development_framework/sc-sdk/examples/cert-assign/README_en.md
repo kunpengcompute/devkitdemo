@@ -41,7 +41,7 @@ This demo is used to issue an X509 certificate to users. It creates a root certi
 
 4. Replace the `manifest.txt` file in the `./TA/` directory with the `manifest.txt` file used for applying for a developer certificate.
 
-5. Install the TA demo. When compiling the TA, you need to statically link the OpenSSL encryption and decryption library applicable to the TEE. After `kunpeng-sc-devel-1.1.0` is installed, the OpenSSL encryption and decryption library applicable to the TEE is installed to `/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a`. For reference, see **Compiling and Generating the libcrypto.a File for TEE**.
+5. Install the TA demo. When compiling the TA, you need to statically link the OpenSSL encryption and decryption library applicable to the TEE. After `kunpeng-sc-devel-1.1.0` is installed, the OpenSSL encryption and decryption library applicable to the TEE is installed to `/usr/local/kunpeng-sc-devel/examples/cert-assign/lib/libcrypto.a`. For reference, see **Compiling and Generating the libcrypto.a File for TEE**.
 
    ```shell
    cd ./TA/

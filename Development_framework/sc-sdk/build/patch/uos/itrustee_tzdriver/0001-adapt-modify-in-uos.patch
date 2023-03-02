@@ -1,22 +1,22 @@
-From ca176228e383c6ce929eb8c3a6b2e5a363217d42 Mon Sep 17 00:00:00 2001
+From ec5fc80f81cf7bb7e5fe44155a2994a872d5a718 Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 16:49:25 +0800
 Subject: [PATCH] adapt modify in uos
 
 ---
- CMakeLists.txt    | 16 +++++++++++++---
- Makefile          |  8 ++++----
+ CMakeLists.txt    | 14 ++++++++++++--
+ Makefile          |  7 ++++---
  README.en.md      |  1 +
  README.md         |  1 +
  core/gp_ops.c     |  8 ++++----
  tlogger/tlogger.c |  2 +-
- 6 files changed, 24 insertions(+), 12 deletions(-)
+ 6 files changed, 23 insertions(+), 10 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cd58879..7113efd 100644
+index 9ef9ef8..446b651 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -20,14 +20,24 @@ libboundscheck/src/securecutil.o libboundscheck/src/secureprintoutput_a.o libbou
+@@ -22,12 +22,22 @@ libboundscheck/src/securecutil.o libboundscheck/src/secureprintoutput_a.o libbou
  endif()
  
  # you should config right path according to your run-time environment
@@ -39,32 +39,31 @@ index cd58879..7113efd 100644
 +)
 +
  # Set extra options
--set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH")
-+set(CMAKE_EXTRA_FLAGS "-DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_TEE_LOG_ACHIVE_PATH=\\\\\\\"/var/log/tee/last_teemsg\\\\\\\"")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID")
+ set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
 diff --git a/Makefile b/Makefile
-index 253938d..5a7db05 100644
+index a5eb619..ac1a163 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -17,15 +17,15 @@ libboundscheck/src/securecutil.o libboundscheck/src/secureprintoutput_a.o libbou
+@@ -18,10 +18,10 @@ libboundscheck/src/securecutil.o libboundscheck/src/secureprintoutput_a.o libbou
  endif
  
  # you should config right path according to your run-time environment
 -KPATH := /usr/src/kernels
 -KDIR  := $(KPATH)/$(shell ls $(KPATH))
 +KPATH := /usr/src
-+KDIR  := $(KPATH)/$(shell dpkg -l | grep linux-headers | awk '{print $$2}' head -n 1)
++KDIR  := $(KPATH)/$(shell dpkg -l | grep linux-headers | awk '{print $$2}' | head -n 1)
  
--EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH
-+EXTRA_CFLAGS += -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH
- EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core
- EXTRA_CFLAGS += -I$(PWD)/tlogger -I$(PWD)/kthread_affinity
- EXTRA_CFLAGS += -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM
- EXTRA_CFLAGS += -DCONFIG_TEE_LOG_ACHIVE_PATH=\"/var/log/tee/last_teemsg\"
--EXTRA_CFLAGS += -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID
-+EXTRA_CFLAGS += -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID -DUOS=1
+-EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
++EXTRA_CFLAGS += -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
+ EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core -I$(PWD)/tzdriver_internal/tee_trace_event
+ EXTRA_CFLAGS += -I$(PWD)/tlogger -I$(PWD)/tzdriver_internal/kthread_affinity -I$(PWD)/tzdriver_internal/include
+ EXTRA_CFLAGS += -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE
+@@ -29,6 +29,7 @@ EXTRA_CFLAGS += -DCONFIG_TEE_LOG_ACHIVE_PATH=\"/var/log/tee/last_teemsg\"
+ EXTRA_CFLAGS += -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID -DCONFIG_NOCOPY_SHAREDMEM
+ EXTRA_CFLAGS += -DTEECD_PATH_UID_AUTH_CTX=\"/usr/bin/teecd:0\"
+ EXTRA_CFLAGS += -DCONFIG_AUTH_SUPPORT_UNAME -DCONFIG_AUTH_HASH -std=gnu99
++EXTRA_CFLAGS += -DUOS=1
  all:
  	make -C $(KDIR) M=$(PWD) modules
  clean:
@@ -81,59 +80,59 @@ index 0fb93ed..cdab479 100644
  5.License
  please see License/Tzdriver_License for more details
 diff --git a/README.md b/README.md
-index 37198d0..faf8b11 100644
+index a277830..4cd12c0 100644
 --- a/README.md
 +++ b/README.md
-@@ -26,3 +26,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
-    2.使用root用户，执行insmod tzdriver.ko
-    3.使用root用户，执行/usr/bin/teecd&
-    4.运行测试CA 和TA
-+   5.如果要卸载tzdriver，需要重启服务器才可生效
+@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
+    2）使用root用户，执行insmod tzdriver.ko
+    3）使用root用户，执行/usr/bin/teecd&
+    4）运行测试CA 和TA
++   5）如果要卸载tzdriver，需要重启服务器才可生效
 diff --git a/core/gp_ops.c b/core/gp_ops.c
-index f73aca0..c07fd38 100644
+index 7484811..e2a00e2 100644
 --- a/core/gp_ops.c
 +++ b/core/gp_ops.c
-@@ -160,7 +160,7 @@ static bool is_usr_refmem_valid(union tc_ns_client_param *client_param)
- 	uint32_t size = 0;
+@@ -159,7 +159,7 @@ static bool is_usr_refmem_valid(const union tc_ns_client_param *client_param)
+ 		((uint64_t)client_param->memref.buffer_h_addr << ADDR_TRANS_NUM);
  
  #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
 -	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
 +	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71) || UOS == 1)
- 	if (!access_ok(VERIFY_READ,
- 		(void *)(uintptr_t)client_param->memref.size_addr,
- 		sizeof(uint32_t)))
-@@ -174,7 +174,7 @@ static bool is_usr_refmem_valid(union tc_ns_client_param *client_param)
- 	get_user(size, (uint32_t *)(uintptr_t)client_param->memref.size_addr);
- 
- #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
--	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
-+	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71) || UOS == 1)
- 	if (!access_ok(VERIFY_READ,
- 		(void *)(uintptr_t)client_param->memref.buffer, size))
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)size_addr, sizeof(uint32_t)) == 0)
  #else
-@@ -188,7 +188,7 @@ static bool is_usr_refmem_valid(union tc_ns_client_param *client_param)
- static bool is_usr_valmem_valid(union tc_ns_client_param *client_param)
- {
+ 	if (access_ok((void *)(uintptr_t)size_addr, sizeof(uint32_t)) == 0)
+@@ -169,7 +169,7 @@ static bool is_usr_refmem_valid(const union tc_ns_client_param *client_param)
+ 	get_user(size, (uint32_t *)(uintptr_t)size_addr);
+ 
  #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
 -	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
 +	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71) || UOS == 1)
- 	if (!access_ok(VERIFY_READ,
- 		(void *)(uintptr_t)client_param->value.a_addr,
- 		sizeof(uint32_t)))
-@@ -200,7 +200,7 @@ static bool is_usr_valmem_valid(union tc_ns_client_param *client_param)
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)buffer_addr, size) == 0)
+ #else
+ 	if (access_ok((void *)(uintptr_t)buffer_addr, size) == 0)
+@@ -187,7 +187,7 @@ static bool is_usr_valmem_valid(const union tc_ns_client_param *client_param)
+ 		((uint64_t)client_param->value.b_h_addr << ADDR_TRANS_NUM);
+ 
+ #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
+-	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
++	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71) || UOS == 1)
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)a_addr, sizeof(uint32_t)) == 0)
+ #else
+ 	if (access_ok((void *)(uintptr_t)a_addr, sizeof(uint32_t)) == 0)
+@@ -195,7 +195,7 @@ static bool is_usr_valmem_valid(const union tc_ns_client_param *client_param)
  		return false;
  
  #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
 -	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71))
 +	LINUX_VERSION_CODE == KERNEL_VERSION(4, 19, 71) || UOS == 1)
- 	if (!access_ok(VERIFY_READ,
- 		(void *)(uintptr_t)client_param->value.b_addr,
- 		sizeof(uint32_t)))
+ 	if (access_ok(VERIFY_READ, (void *)(uintptr_t)b_addr, sizeof(uint32_t)) == 0)
+ #else
+ 	if (access_ok((void *)(uintptr_t)b_addr, sizeof(uint32_t)) == 0)
 diff --git a/tlogger/tlogger.c b/tlogger/tlogger.c
-index 436ad05..faef72f 100644
+index 90183a1..f7c537e 100644
 --- a/tlogger/tlogger.c
 +++ b/tlogger/tlogger.c
-@@ -652,7 +652,7 @@ static int get_tlogcat_f_stat(void)
+@@ -645,7 +645,7 @@ static int get_tlogcat_f_stat(void)
  static int check_user_arg(unsigned long arg, size_t arg_len)
  {
  #if (LINUX_VERSION_CODE < KERNEL_VERSION(4, 19, 18) || \
@@ -143,5 +142,5 @@ index 436ad05..faef72f 100644
  		(void __user *)(uintptr_t)arg, arg_len);
  #else
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

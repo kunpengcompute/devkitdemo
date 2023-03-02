@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           kunpeng-sc
-Version:        1.1.0
+Version:        1.3.0
 Release:        1
 Summary:        kunpeng sc
 License:        Apache-2.0
