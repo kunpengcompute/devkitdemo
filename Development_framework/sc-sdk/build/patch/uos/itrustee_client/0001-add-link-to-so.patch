@@ -1,17 +1,17 @@
-From 0962bda731970b718b8da7ac15f7ad6e2234cc70 Mon Sep 17 00:00:00 2001
+From fc47ce4cfea9b04716762e3d24fc4858504f37e6 Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 16:44:43 +0800
 Subject: [PATCH] add link to so
 
 ---
- Makefile | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ Makefile | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/Makefile b/Makefile
-index ee92d02..266d31c 100644
+index 9b2e9da..ac5cd9f 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,14 +1,14 @@
+@@ -1,9 +1,9 @@
 -TARGET_LIB := libteec.so
 +TARGET_LIB := libteec.so.1
  TARGET_APP := teecd
@@ -21,20 +21,14 @@ index ee92d02..266d31c 100644
 -TARGET_LIBSEC := libboundscheck.so
 +TARGET_LIBSEC := libboundscheck.so.1
  
- LIB_CFLAGS := -DSEC_STORAGE_DATA_KUNPENG_PATH -DSECURITY_AUTH_ENHANCE
- LIB_CFLAGS += -Iinclude -Iinclude/cloud -Iext_include -Ilibboundscheck/include -Iinclude -Isrc/inc -Isrc/teecd/  -Isrc/authentication/
--LIB_CFLAGS += -lboundscheck -Llibboundscheck/lib -shared
- LIB_CFLAGS += -Werror -Wall -Wextra -fstack-protector-all -Wl,-z,relro,-z,now,-z,noexecstack -s -fPIC -D_FORTIFY_SOURCE=2 -O2
-+LIB_LDFLAGS := -lboundscheck -Llibboundscheck/lib -shared
- 
- ifeq ($(TOOL_CHAIN),1)
- 	CC := aarch64-linux-gnu-gcc
+ LIB_CFLAGS := -DDYNAMIC_TA_PATH=\"/var/itrustee/ta/\"
+ LIB_CFLAGS += -Iinclude -Iinclude/cloud -Iext_include -Ilibboundscheck/include -Iinclude -Isrc/inc  -Isrc/authentication/
 @@ -39,10 +39,13 @@ $(TARGET_LIBSEC):
  
  $(TARGET_LIB):$(TARGET_LIBSEC) $(LIB_SOURCES)
  	@echo "compile libteec.so"
 -	@$(CC) $(LIB_CFLAGS) $(LIB_CFLAGS) -o $@ $(LIB_SOURCES)
-+	@$(CC) $(LIB_CFLAGS) -o $@ $(LIB_SOURCES) $(LIB_LDFLAGS)
++	@$(CC) $(LIB_CFLAGS) -o $@ $(LIB_SOURCES)
 +	@ln -s libteec.so.1 libteec.so
  	@mkdir -p $(TARGET_DIR)
 +	@mv libteec.so.1 $(TARGET_DIR)
@@ -46,5 +40,5 @@ index ee92d02..266d31c 100644
  
  
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

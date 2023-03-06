@@ -1,4 +1,4 @@
-From e654173ae98203423f8fef137171b0da6c63a70d Mon Sep 17 00:00:00 2001
+From 70b445af02e566972b4e40583764fc21a22c40ad Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 15:41:12 +0800
 Subject: [PATCH] add link to so and update kernel path
@@ -11,10 +11,10 @@ Subject: [PATCH] add link to so and update kernel path
  4 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index cd58879..9a87938 100644
+index 9ef9ef8..2712bc8 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -21,11 +21,22 @@ endif()
+@@ -23,11 +23,22 @@ endif()
  
  # you should config right path according to your run-time environment
  set(KPATH /usr/src/kernels)
@@ -36,13 +36,13 @@ index cd58879..9a87938 100644
 +)
 +
  # Set extra options
- set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM")
+ set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
 diff --git a/Makefile b/Makefile
-index 253938d..d6af3f3 100644
+index a5eb619..cf7b66a 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -18,7 +18,8 @@ endif
+@@ -19,7 +19,8 @@ endif
  
  # you should config right path according to your run-time environment
  KPATH := /usr/src/kernels
@@ -50,8 +50,8 @@ index 253938d..d6af3f3 100644
 +KERNEL_VERSION := $(shell rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}')
 +KDIR  := $(KPATH)/$(KERNEL_VERSION)
  
- EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_AUTH_ENHANCE -DCONFIG_CLOUDSERVER_TEECD_AUTH
- EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core
+ EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
+ EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core -I$(PWD)/tzdriver_internal/tee_trace_event
 diff --git a/README.en.md b/README.en.md
 index 0fb93ed..cdab479 100644
 --- a/README.en.md
@@ -65,14 +65,14 @@ index 0fb93ed..cdab479 100644
  5.License
  please see License/Tzdriver_License for more details
 diff --git a/README.md b/README.md
-index 37198d0..faf8b11 100644
+index a277830..4cd12c0 100644
 --- a/README.md
 +++ b/README.md
-@@ -26,3 +26,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
-    2.使用root用户，执行insmod tzdriver.ko
-    3.使用root用户，执行/usr/bin/teecd&
-    4.运行测试CA 和TA
-+   5.如果要卸载tzdriver，需要重启服务器才可生效
+@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
+    2）使用root用户，执行insmod tzdriver.ko
+    3）使用root用户，执行/usr/bin/teecd&
+    4）运行测试CA 和TA
++   5）如果要卸载tzdriver，需要重启服务器才可生效
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

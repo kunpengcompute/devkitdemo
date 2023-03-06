@@ -1,35 +1,39 @@
-From e323d0505c52550ba2952db24f516991557ced98 Mon Sep 17 00:00:00 2001
+From 0937425e265ec9b753704b879c3ca18e6ec5b438 Mon Sep 17 00:00:00 2001
 From: huangyongtao1 <hyt3161@163.com>
 Date: Fri, 19 Aug 2022 15:38:42 +0800
 Subject: [PATCH] add link to so
 
 ---
- Makefile | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ Makefile | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Makefile
 
 diff --git a/Makefile b/Makefile
-index 0f5cdff..2ed9c1e 100644
---- a/Makefile
+new file mode 100644
+index 0000000..e227f62
+--- /dev/null
 +++ b/Makefile
-@@ -1,13 +1,16 @@
- CUR_DIR=$(shell pwd)
- iTrustee_SDK_PATH=${CUR_DIR}
--TARGET_APP := libteec_adaptor.so
+@@ -0,0 +1,20 @@
++CUR_DIR=$(shell pwd)
++iTrustee_SDK_PATH=${CUR_DIR}
 +TARGET_APP := libteec_adaptor.so.1
 +SO_NAME := libteec_adaptor.so
 +
- APP_SOURCES += $(iTrustee_SDK_PATH)/src/CA/cloud/libteec_adaptor.c
- APP_CFLAGS += -fstack-protector-strong -fPIC -ftrapv -s -D_FORTIFY_SOURCE=2 -O2
- APP_CFLAGS += -I$(iTrustee_SDK_PATH)/include/CA -I$(iTrustee_SDK_PATH)/thirdparty/open_source/libboundscheck/include
- 
- APP_LDFLAGS += -z text -z now -z relro -z noexecstack -pie -shared
- $(TARGET_APP): $(APP_SOURCE)
--	@$(CC) $(APP_CFLAGS) $(APP_LDFLAGS) $(APP_SOURCES) -o $@
++APP_SOURCES += $(iTrustee_SDK_PATH)/src/CA/libteec_adaptor.c
++APP_CFLAGS += -fstack-protector-strong -fPIC -ftrapv -s -D_FORTIFY_SOURCE=2 -O2
++APP_CFLAGS += -I$(iTrustee_SDK_PATH)/include/CA -I$(iTrustee_SDK_PATH)/thirdparty/open_source/libboundscheck/include
++
++APP_LDFLAGS += -z text -z now -z relro -z noexecstack -pie -shared
++$(TARGET_APP): $(APP_SOURCE)
 +	@$(CC) $(APP_CFLAGS) $(APP_LDFLAGS) $(APP_SOURCES) -Wl,-soname,$(SO_NAME) -o $@
 +	@ln -s libteec_adaptor.so.1 libteec_adaptor.so
- 
- install: $(TARGET_APP)
- 	install -d /opt/itrustee_sdk
++
++install: $(TARGET_APP)
++	install -d /opt/itrustee_sdk
++	cp -r build include License thirdparty /opt/itrustee_sdk
++	install -pm 644 libteec_adaptor.so /lib64/ 
++clean:
++	rm -rf *.o $(TARGET_APP)
 -- 
-2.36.1.windows.1
+2.35.1.windows.2
 

@@ -41,7 +41,7 @@ cert-assign demo是使用鲲鹏机密计算特性开发的证书签发系统的�
 
 4. 将 `./TA/` 目录下的 `manifest.txt` 文件替换成申请开发者证书时使用的 `manifest.txt` 文件
 
-5. 安装TA demo，编译TA时需要静态链接适用于TEE的OpenSSL加解密库，安装`kunpeng-sc-devel-1.1.0`后会将适用于TEE的OpenSSL加解密库安装到 `/usr/local/kunpeng-sc-devel/example/cert-assign/lib/libcrypto.a` ，也可以参考 **编译生成适用于TEE的libcrypto.a** 章节自行编译。
+5. 安装TA demo，编译TA时需要静态链接适用于TEE的OpenSSL加解密库，安装`kunpeng-sc-devel-1.1.0`后会将适用于TEE的OpenSSL加解密库安装到 `/usr/local/kunpeng-sc-devel/examples/cert-assign/lib/libcrypto.a` ，也可以参考 **编译生成适用于TEE的libcrypto.a** 章节自行编译。
 
    ```shell
    cd ./TA/

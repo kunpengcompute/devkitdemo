@@ -42,7 +42,7 @@ include_directories(
 )
 
 link_directories(
-    ${iTrustee_SDK_PATH}/example/cert-assign/lib
+    ${iTrustee_SDK_PATH}/examples/cert-assign/lib
 )
 
 # Set options

@@ -1,5 +1,5 @@
 Package: kunpeng-sc
-Version: 1.1.0
+Version: 1.3.0
 Section: utils
 Priority: optional
 Depends: libssl-dev, zlib1g-dev
