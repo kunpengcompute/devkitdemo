@@ -38,6 +38,13 @@ int main(int argc, char* argv[])
     }
     int ierr = MPI_Init(&argc, &argv);
     assert(ierr == MPI_SUCCESS);
+    MPI_Initialized(&flag);
+    printf("flag: %d\n", flag);
+    if (flag == 0) {
+        printf("No initialized\n");
+    } else {
+        printf("Initialized\n");
+    }
     int world_rank;
     ierr = MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     assert(ierr == MPI_SUCCESS);
