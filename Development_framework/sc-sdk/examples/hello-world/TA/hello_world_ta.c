@@ -56,8 +56,7 @@ TEE_Result HelloWorld(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
         SLogError("Bad expected parameter types.");
         return TEE_ERROR_BAD_PARAMETERS;
     }
-    char *msgCA = params[PARAMS_IDX0].memref.buffer;
-    SLogTrace("Recv from CA, msg: %s", msgCA);
+    SLogTrace("Recv from CA, msg: %s", params[PARAMS_IDX0].memref.buffer);
 
     char *msgHelloWorld = "Hello World!";
     TEE_MemMove(params[PARAMS_IDX1].memref.buffer, msgHelloWorld, strlen(msgHelloWorld));
@@ -67,6 +66,7 @@ TEE_Result HelloWorld(uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 TEE_Result TA_InvokeCommandEntryPoint(void *sessionContext, uint32_t cmdId,
                                       uint32_t paramTypes, TEE_Param params[PARAMS_SIZE])
 {
+    (void)sessionContext;
     TEE_Result ret;
 
     SLogTrace("---- TA_InvokeCommandEntryPoint ----cmdid: %d------- ", cmdId);
