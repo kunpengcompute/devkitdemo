@@ -20,7 +20,10 @@ project(secret-vote-ca)
 set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel)
 
 # Add source files
-set(SRCS secret_vote_ca.c)
+set(SRCS
+    secret_vote_ca.c
+    ${iTrustee_SDK_PATH}/source/itrustee_sdk/src/CA/libteec_adaptor.c
+)
 
 # Add header file include directories
 include_directories(
@@ -38,6 +41,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Generate shared lib
 add_library(secret-vote-ca SHARED ${SRCS})
-target_link_libraries(secret-vote-ca teec_adaptor dl pthread crypto boundscheck)
+target_link_libraries(secret-vote-ca dl pthread crypto boundscheck)
 set_target_properties(secret-vote-ca PROPERTIES COMPILE_FLAGS ${CMAKE_FLAGS})
 set_target_properties(secret-vote-ca PROPERTIES LINK_FLAGS ${CMAKE_LDFLAGS})

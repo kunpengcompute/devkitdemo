@@ -22,6 +22,7 @@ set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel)
 # Add source files
 set(
         SRCS ../data_sealing_ca.c
+        ${iTrustee_SDK_PATH}/source/itrustee_sdk/src/CA/libteec_adaptor.c
 )
 
 # Add header file include directories
@@ -40,7 +41,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Generate execute file
 add_executable(data-sealing ${SRCS})
-target_link_libraries(data-sealing teec_adaptor dl pthread boundscheck)
+target_link_libraries(data-sealing dl pthread boundscheck)
 set_target_properties(data-sealing PROPERTIES COMPILE_FLAGS ${CMAKE_TEEC_FLAGS})
 set_target_properties(data-sealing PROPERTIES LINK_FLAGS ${CMAKE_TEEC_LDFLAGS})
 
