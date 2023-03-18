@@ -20,7 +20,10 @@ project(hello-world C)
 set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel)
 
 # Add source files
-set(SRCS hello_world_ca.c)
+set(SRCS 
+    hello_world_ca.c
+    ${iTrustee_SDK_PATH}/source/itrustee_sdk/src/CA/libteec_adaptor.c
+)
 
 # Add header file include directories
 include_directories(
@@ -41,7 +44,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Generate shared lib
 add_executable(hello-world ${SRCS})
-target_link_libraries(hello-world teec_adaptor dl pthread boundscheck)
+target_link_libraries(hello-world dl pthread boundscheck)
 set_target_properties(hello-world PROPERTIES COMPILE_FLAGS ${CMAKE_FLAGS})
 set_target_properties(hello-world PROPERTIES LINK_FLAGS ${CMAKE_LDFLAGS})
 

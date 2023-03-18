@@ -157,7 +157,7 @@ function get_src_code() {
         exit 1
     fi
 
-    wget https://gitee.com/lsjhw/devkitdemo/releases/download/1.0.1/libcrypto.a --no-check-certificate
+    wget https://gitee.com/lsjhw/devkitdemo/releases/download/1.3.0/libcrypto.a --no-check-certificate
     if [[ $? -ne 0 ]]; then
         echo "libcrypto.a download failed."
         rm -rf ${SrcPath}

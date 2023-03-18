@@ -20,7 +20,10 @@ project(cert-assign C)
 set(iTrustee_SDK_PATH /usr/local/kunpeng-sc-devel)
 
 # Add source files
-set(SRCS cert_assign_ca.c)
+set(SRCS 
+    cert_assign_ca.c
+    ${iTrustee_SDK_PATH}/source/itrustee_sdk/src/CA/libteec_adaptor.c
+)
 
 # Add header file include directories
 include_directories(
@@ -38,7 +41,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Generate shared lib
 add_executable(cert-assign ${SRCS})
-target_link_libraries(cert-assign teec_adaptor dl pthread crypto boundscheck)
+target_link_libraries(cert-assign dl pthread crypto boundscheck)
 set_target_properties(cert-assign PROPERTIES COMPILE_FLAGS ${CMAKE_FLAGS})
 set_target_properties(cert-assign PROPERTIES LINK_FLAGS ${CMAKE_LDFLAGS})
 
