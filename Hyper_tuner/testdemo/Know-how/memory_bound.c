@@ -12,7 +12,7 @@ void MemoryBoundBench(Point *pointA, double *ret, int n)
     
     int i, j;
     #pragma omp parallel for
-    for (i = 0; i < n; i ++) {
+    for (i = 0; i < n; i++) {
         ret[i] = 0.0;
         for (j = 0; j < n; j++) {
             ret[i] += pointA[i].x + pointA[j].y;
@@ -29,7 +29,7 @@ void MemoryBoundBench_OPT(Point *pointA, double *ret, int n)
     int i, j, k;
     for (k = 0; k< n; k += BLOCK_SIZE) {
         #pragma omp parallel for
-        for (i = 0; i < n; i ++) {
+        for (i = 0; i < n; i++) {
             ret[i] = 0.0;
             for (j = 0; j < BLOCK_SIZE; j++) {
                 ret[i] += pointA[i].x + pointA[j + k].y;
