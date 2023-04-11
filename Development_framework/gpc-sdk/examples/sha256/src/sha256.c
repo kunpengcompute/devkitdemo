@@ -106,9 +106,9 @@ void sha256_update(SHA256_CTX *ctx, const BYTE data[], size_t len)
 {
 	WORD i;
 
-	for (i = 0; i < len; ++i) {
-		ctx->data[ctx->datalen] = data[i];
-		ctx->datalen++;
+	for (i = 0; i < len; i += 64) {
+		memcpy(ctx->data, data + i, len);
+		ctx->datalen += len;
 		if (ctx->datalen == 64) {
 			// 64 byte = 512 bit  means the buffer ctx->data has fully stored one chunk of message
 			// so do the sha256 hash map for the current chunk
