@@ -6,10 +6,10 @@ public class DeadLock {
 		new Thread(()->{
 			try{
 				System.out.println("thread1 is running");
-				sysnchronized (lockOne){
+				synchronized (lockOne){
 					System.out.println("thread1 get lock obj1");
 					Thread.sleep(1000L);
-					sysnchronized (lockTwo){
+					synchronized (lockTwo){
 					    System.out.println("thread12 get lock obj2");
 					    Thread.sleep(1000L);
 				    }
@@ -21,10 +21,10 @@ public class DeadLock {
 		new Thread(()->{
 			try{
 				System.out.println("thread2 is running");
-				sysnchronized (lockTwo){
+				synchronized (lockTwo){
 					System.out.println("thread2 get lock obj2");
 					Thread.sleep(1000L);
-					sysnchronized (lockOne){
+					synchronized (lockOne){
 					    System.out.println("thread2 get lock obj1");
 					    Thread.sleep(1000L);
 				    }
