@@ -9,13 +9,13 @@ public class MethodDemoOne{
 	public static void test(int threadNum) throws InterruptedException {
 		while(threadNum > 0){
 			MethodDemoOne demoOne = new MethodDemoOne();
-			demoOne.calculate(199999);
+			demoOne.factor(199999);
 			Thread.sleep(1000L);
 			--threadNum;
 		}
 	}
 	
-	void factor(int number) {
+	public void factor(int number) {
 		long start = System.currentTimeMillis();
 		
 		for(int i = 2; i <= number; ++i) {

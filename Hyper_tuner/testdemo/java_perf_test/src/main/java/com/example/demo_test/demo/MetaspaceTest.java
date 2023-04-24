@@ -1,43 +1,43 @@
 package com.example.demo_test.demo;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MetaspaceTest extends ClaseeLoader{
+public class MetaspaceTest extends ClassLoader{
 	public void test(){
-		// Àà³ÖÓĞ
-		List<Class<?>> classes = new ArrayList<~>();
-		// Ñ­»·1000w´ÎÉú³É1000w¸ö²»Í¬µÄÀà
-		for(int i = 0; i < 100000;++i){
+		// ç±»æŒæœ‰
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		// å¾ªç¯1000wæ¬¡ç”Ÿæˆ1000wä¸ªä¸åŒçš„ç±»
+		for(int i = 0; i < 1000000;++i){
 			
 			ClassWriter cw = new ClassWriter(0);
 			
-			// ¶¨ÒåÒ»¸öÀàÃûÎªClass{i},ËüµÄ·ÃÎÊÓòÎªpublic,¸¸ÀàÎªjava/lang/Object£¬²»ÊµÏÖÈÎºÎ½Ó¿Ú
-			cw.visit(OpCodes.V1_1, OpCodes.ACC_PUBLIC, "Class" + i, null, "java/lang/Object", null);
-			// ¶¨Òå¹¹Ôìº¯Êı
+			// å®šä¹‰ä¸€ä¸ªç±»åä¸ºClass{i},å®ƒçš„è®¿é—®åŸŸä¸ºpublic,çˆ¶ç±»ä¸ºjava/lang/Objectï¼Œä¸å®ç°ä»»ä½•æ¥å£
+			cw.visit(Opcodes.V1_1, Opcodes.ACC_PUBLIC, "Class" + i, null, "java/lang/Object", null);
+			// å®šä¹‰æ„é€ å‡½æ•°
 			
-			MethodVisitor mw = cw.visitMethod(OpCodes.ACC_PUBLIC, "<init>", "{}V", null ,null);
+			MethodVisitor mw = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null ,null);
 			
-			// µÚÒ»¸öÖ¸ÁîÎª¼ÓÔØthis
-			mw.visitVarInsn(OpCodes.ALOAD, 0);
+			// ç¬¬ä¸€ä¸ªæŒ‡ä»¤ä¸ºåŠ è½½this
+			mw.visitVarInsn(Opcodes.ALOAD, 0);
 			
-			// µÚ¶ş¸öÖ¸ÁîÎªµ÷ÓÃ¸¸ÀàµÄObjectµÄ¹¹Ôìº¯Êı
-			mw.visitMethodInsn(OpCodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+			// ç¬¬äºŒä¸ªæŒ‡ä»¤ä¸ºè°ƒç”¨çˆ¶ç±»çš„Objectçš„æ„é€ å‡½æ•°
+			mw.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
 			
-			// µÚÈıÌõÖ¸ÁîÎªRETURN
-			mw.visitInsn(OpCodes.RETURN);
+			// ç¬¬ä¸‰æ¡æŒ‡ä»¤ä¸ºRETURN
+			mw.visitInsn(Opcodes.RETURN);
 			mw.visitMaxs(1, 1);
 			mw.visitEnd();
 			
 			MetaspaceTest test  = new MetaspaceTest();
 			byte[] code = cw.toByteArray();
-			// ¶¨ÒåÀà
-			Class<?> exampleClass = test.defineClass("Claass" + i, code, 0, code.length);
-			classes.add(exampleClass)
+			// å®šä¹‰ç±»
+			Class<?> exampleClass = test.defineClass("Class" + i, code, 0, code.length);
+			classes.add(exampleClass);
 		}
 	}
 }
