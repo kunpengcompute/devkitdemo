@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 	<parent>
 	    <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.14.RELEASE</version>
-		</relativePath>
+            <artifactId>spring-boot-starter-parent</artifactId>
+            <version>1.5.14.RELEASE</version>
+	    <relativePath/>
 	</parent>
     <groupId>com.example</groupId>
     <artifactId>java_perf_test</artifactId>
