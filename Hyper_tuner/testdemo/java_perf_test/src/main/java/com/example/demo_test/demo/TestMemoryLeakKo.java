@@ -1,5 +1,9 @@
 package com.example.demo_test.demo;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 public class TestMemoryLeakKo{  
       public static HashSet<List<Person>> hashSetPerson = new HashSet<>();
       
