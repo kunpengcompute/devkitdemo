@@ -19,7 +19,7 @@ public class GcTestController {
 	
 	private HashMap<String, SoftReference<int[]>> bigData = new HashMap<>();
 	
-	@GetMapping("/gctest")
+	@GetMapping("/bigdata")
 	public void fullGcBigData(){
 		int i = 0;
 		while(i++ < 150){
