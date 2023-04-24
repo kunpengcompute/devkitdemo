@@ -17,19 +17,19 @@ public class MetaspaceTest extends ClassLoader{
 			ClassWriter cw = new ClassWriter(0);
 			
 			// 定义一个类名为Class{i},它的访问域为public,父类为java/lang/Object，不实现任何接口
-			cw.visit(OpCodes.V1_1, OpCodes.ACC_PUBLIC, "Class" + i, null, "java/lang/Object", null);
+			cw.visit(Opcodes.V1_1, Opcodes.ACC_PUBLIC, "Class" + i, null, "java/lang/Object", null);
 			// 定义构造函数
 			
-			MethodVisitor mw = cw.visitMethod(OpCodes.ACC_PUBLIC, "<init>", "()V", null ,null);
+			MethodVisitor mw = cw.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null ,null);
 			
 			// 第一个指令为加载this
-			mw.visitVarInsn(OpCodes.ALOAD, 0);
+			mw.visitVarInsn(Opcodes.ALOAD, 0);
 			
 			// 第二个指令为调用父类的Object的构造函数
-			mw.visitMethodInsn(OpCodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
+			mw.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
 			
 			// 第三条指令为RETURN
-			mw.visitInsn(OpCodes.RETURN);
+			mw.visitInsn(Opcodes.RETURN);
 			mw.visitMaxs(1, 1);
 			mw.visitEnd();
 			
