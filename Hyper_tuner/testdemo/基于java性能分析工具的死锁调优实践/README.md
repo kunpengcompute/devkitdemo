@@ -1,3 +1,5 @@
-1、下载死锁demo，并上传到服务器
-2、先执行javac DeadLock.java 编译DeadLock.java文件
-3、再执行java DeadLock 启动程序  
+1銆佷笅杞芥閿乨emo锛屽苟涓婁紶鍒版湇鍔″櫒
+2銆佸厛鎵цjavac DeadLock.java 缂栬瘧DeadLock.java鏂囦欢
+3銆佸啀鎵цjava DeadLock 鍚姩绋嬪簭  
+4銆佸鎵цjava UnDeadLock.java绋嬪簭缂栬瘧UnDeadLock.java鏂囦欢
+5銆佸啀鎵цjava UnDeadLock 鍚姩绋嬪簭
