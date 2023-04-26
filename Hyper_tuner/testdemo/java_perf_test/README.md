@@ -1,24 +1,33 @@
-¹¹½¨Ö¸µ¼£º
-1¡¢½«java_perf_test¹¤³ÌÏÂÔØµ½±¾µØ
-2¡¢ÔÚcmd¿ØÖÆÌ¨ÖĞ£¬½øÈëµ½java_perf_testÄ¿Â¼
-3¡¢Ö´ĞĞmvn clean install -DskipTests ÃüÁî½øĞĞ¹¹½¨(Ğè°²×°maven)
-4¡¢¹¹½¨³É¹¦ºó£¬¿ÉÔÚ¹¹½¨ÈÕÖ¾ÖĞÕÒµ½¶ÔÓ¦°üÂ·¾¶
-5¡¢½«¹¹½¨³É¹¦µÄ°üÉÏ´«µ½Òª²¿ÊğµÄ·şÎñÆ÷£¬Ñ¡Ôñjdk11Æô¶¯ÏîÄ¿ java -Xlog:gc*=info,gc+heap=debug:file=/home/gc-%t.log -jar demo_test-0.0.1-SNAPSHOT.jar Æô¶¯ÏîÄ¿
-6¡¢Èô´æÔÚ¶Ë¿ÚÕ¼ÓÃÇé¿ö£¬¿É×ÔĞĞĞŞ¸Äapplication.ymlÎÄ¼ş¶Ë¿ÚÅäÖÃ
-ÏîÄ¿Æô¶¯³É¹¦ºó£º
+windowsæ„å»ºæŒ‡å¯¼ï¼š
+1ã€å°†java_perf_testå·¥ç¨‹ä¸‹è½½åˆ°æœ¬åœ°
+2ã€åœ¨cmdæ§åˆ¶å°ä¸­ï¼Œè¿›å…¥åˆ°java_perf_testç›®å½•
+3ã€æ‰§è¡Œmvn clean install -DskipTests å‘½ä»¤è¿›è¡Œæ„å»º(éœ€å®‰è£…maven)
+4ã€æ„å»ºæˆåŠŸåï¼Œå¯åœ¨æ„å»ºæ—¥å¿—ä¸­æ‰¾åˆ°å¯¹åº”åŒ…è·¯å¾„
+5ã€å°†æ„å»ºæˆåŠŸçš„åŒ…ä¸Šä¼ åˆ°è¦éƒ¨ç½²çš„æœåŠ¡å™¨ï¼Œé€‰æ‹©jdk11å¯åŠ¨é¡¹ç›® java -Xlog:gc*=info,gc+heap=debug:file=/home/gc-%t.log -jar demo_test-0.0.1-SNAPSHOT.jar å¯åŠ¨é¡¹ç›®
+6ã€è‹¥å­˜åœ¨ç«¯å£å ç”¨æƒ…å†µï¼Œå¯è‡ªè¡Œä¿®æ”¹application.ymlæ–‡ä»¶ç«¯å£é…ç½®
+é¡¹ç›®å¯åŠ¨æˆåŠŸåï¼š
 
-µ÷ÓÃÈçÏÂÁ´½Ó´¥·¢ÈÕÖ¾£º
-ÄÚ´æÒç³ö
+linuxæ„å»ºæŒ‡å¯¼ï¼š
+1ã€å°†java_perf_testå·¥ç¨‹ä¸‹è½½åˆ°æœ¬åœ°
+2ã€æ‰§è¡Œmvn clean install -DskipTests å‘½ä»¤è¿›è¡Œæ„å»º(éœ€å®‰è£…maven)
+4ã€æ„å»ºæˆåŠŸåï¼Œå¯åœ¨æ„å»ºæ—¥å¿—ä¸­æ‰¾åˆ°å¯¹åº”åŒ…è·¯å¾„
+5ã€é€‰æ‹©jdk11å¯åŠ¨é¡¹ç›® java -Xlog:gc*=info,gc+heap=debug:file=/home/gc-%t.log -jar demo_test-0.0.1-SNAPSHOT.jar å¯åŠ¨é¡¹ç›®
+6ã€è‹¥å­˜åœ¨ç«¯å£å ç”¨æƒ…å†µï¼Œå¯è‡ªè¡Œä¿®æ”¹application.ymlæ–‡ä»¶ç«¯å£é…ç½®
+é¡¹ç›®å¯åŠ¨æˆåŠŸåï¼š
+
+
+è°ƒç”¨å¦‚ä¸‹é“¾æ¥è§¦å‘æ—¥å¿—ï¼š
+å†…å­˜æº¢å‡º
 http://ip:9118/gctest/testOOM
-ÄêÇá´úgc
+å¹´è½»ä»£gc
 http://ip:9118/gctest/young
-ÏµÍ³gc
+ç³»ç»Ÿgc
 http://ip:9118/gctest/systemgc
-´ó¶ÔÏógc
+å¤§å¯¹è±¡gc
 http://ip:9118/gctest/bigdata
-Ôª¿Õ¼ägc
+å…ƒç©ºé—´gc
 http://ip:9118/gctest/metaspace
 
-ÈÈµãº¯Êıµ÷ÓÃ£º
+çƒ­ç‚¹å‡½æ•°è°ƒç”¨ï¼š
 http://ip:9118/test/testHotMethod/20
 http://ip:9118/test/testHotMethodTwo/20
