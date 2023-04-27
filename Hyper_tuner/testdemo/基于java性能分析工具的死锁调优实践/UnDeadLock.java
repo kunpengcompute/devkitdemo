@@ -1,4 +1,4 @@
-public class DeadLock {
+public class UnDeadLock {
 	private static final Integer lockOne = new Integer(1);
 	private static final Integer lockTwo = new Integer(2);
 	private static volatile Integer i = 1;
