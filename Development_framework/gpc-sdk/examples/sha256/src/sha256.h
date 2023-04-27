@@ -24,7 +24,7 @@
 #include <stdint.h>
 /****************************** MACROS ******************************/
 #define SHA256_BLOCK_SIZE 32            // SHA256 outputs a 32 byte digest
-#define MAX_DATA_LEN 1024
+#define MAX_DATA_LEN 64
 
 /*****************************sha256 implementation switch*****************/
 extern int ON_ARM;

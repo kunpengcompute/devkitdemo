@@ -49,7 +49,6 @@ int sha256_test(const char *filepath)
 		memset(test_data, 0x1, sizeof(test_data));
 		len = fread(test_data, 1, MAX_DATA_LEN, fp);
 		if (len != 0) {
-			test_data[len] = '\0';
 			sha256_update(&ctx, test_data, len);
 		}
 	}
