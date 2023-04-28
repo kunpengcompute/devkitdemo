@@ -1,0 +1,37 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="${%HardwareArchitecture}" field="hardwareArchitecture" description="Machine Architecture for Tool Deployment: arm or x86">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Prefix}" field="prefix" description="Directory for the Porting Advisor tool package. Eusure that the Jenkins service user has sufficient operation permissions on the directory. Recommended directory:/home/$${user}.">
+        <f:textbox name="prefix" value="${it.prefix}" default=""/>
+    </f:entry>
+
+    <f:entry title="${%Command}" field="command" description="Example. For details about the parameters:https://www.hikunpeng.com/document/detail/zh/kunpengdevps/porting/usermanual/kunpengpt_06_0056.html.">
+        <f:textbox name="command" value="${it.command}" default="/opt/portadv/tools/cmd/bin/porting-advisor -S /usr1/devkitdemo-main/ --tos openeuler20.03.sp3 --cmd make -c gcc4.8.5"/>
+    </f:entry>
+
+    <f:entry title="${%Scantype}" field="scantype" description="Typer to be scanned:sourcecode or binarypackage.Configure either sourcecode or binarypackage based on site requirements.">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%Scanpath}" field="scanpath" description="files or paths of the files to be scanned.The paths must be absolute paths.
+    scantype is sourcecode:you can enter multiple paths and separate them with commas (,).Example:/path/to/sourcecode1,/path/to/sourcecode2
+    scantype is binarypackage:The wildcard character * is supported. The value with a wildcard (*) must be enclosed in double quotation marks. The paths must be absolute paths. If you enter a path without the filename, all RPM, JAR, DEB, TAR, ZIP, GZIP, WAR, and EAR files in the directory will be scanned. You can enter multiple files or paths and separate them with commas (,).">
+        <f:textbox />
+    </f:entry>
+
+    <f:entry title="${%TargetOS}" field="targetos" description="Name and version of the target Linux OS.The tools suppotes the following OSs:'bclinux7.6','bclinux7.7','centos7.4','centos7.5','centos7.6','centos7.7','centos8.0','centos8.1','centos8.2','debian10','deepinv15.2','euleros2.8','isoet5.1','kylinv10sp1','kylinv10sp2','linxos6.0.90','neokylinv7u6','neokylinv7u6','openeuler20.03','openeuler20.03sp1','openeuler20.03sp2','openeuler20.03sp3','openeuler22.03','openeuler22.03sp1','susesles15.1','ubuntu18.04.x','ubuntu20.04.x','uos20-1050e','uos20sp1','uoseuler20'">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%Compiler}" field="compiler" description="Specified version of the compiler.The tool supports the following GCC versions:'bisheng compiler2.1.0','bisheng compiler2.3.0','bisheng compiler2.4.0','bisheng compiler2.5.0','gcc4.8.5','gcc4.9.3','gcc5.1.0','gcc5.2.0','gcc5.3.0','gcc5.4.0','gcc5.5.0','gcc6.1.0','gcc6.2.0','gcc6.3.0','gcc6.4.0','gcc6.5.0','gcc7.1.0','gcc7.2.0','gcc7.3.0','gcc7.4.0','gcc8.1.0','gcc8.2.0','gcc8.3.0','gcc9.1.0','gcc9.2.0','gcc9.3.0','gcc10.1.0','gcc10.2.0','gcc10.3.0'">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%Cmd}" field="cmd" description="Complete software build command to be used. The build command must contain the 'make' field.Example:'make all' 'make' 'cmake'">
+        <f:textbox />
+    </f:entry>
+    <f:entry title="${%Extendedparameter}" field="extendedparameter" description="This parameter is mandatory. Example: '--ee True' '-D debug' '--interpreted'">
+        <f:textbox />
+    </f:entry>
+</j:jelly>
