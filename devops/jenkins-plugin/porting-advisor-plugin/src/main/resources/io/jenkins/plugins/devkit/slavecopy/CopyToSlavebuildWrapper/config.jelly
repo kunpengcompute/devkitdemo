@@ -1,0 +1,66 @@
+<!--
+  - The MIT License
+  -
+  - Copyright (c) 2009-2012, Manufacture Française des Pneumatiques Michelin, Romain Seguy
+  -
+  - Permission is hereby granted, free of charge, to any person obtaining a copy
+  - of this software and associated documentation files (the "Software"), to deal
+  - in the Software without restriction, including without limitation the rights
+  - to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  - copies of the Software, and to permit persons to whom the Software is
+  - furnished to do so, subject to the following conditions:
+  -
+  - The above copyright notice and this permission notice shall be included in
+  - all copies or substantial portions of the Software.
+  -
+  - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  - IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  - FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  - AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  - LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  - OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  - THE SOFTWARE.
+  -->
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="${%Includes}" field="includes">
+        <f:textbox/>
+    </f:entry>
+    <f:entry title="${%RelativeTo}" field="relativeTo">
+        <f:radio name="copytoslave.relativeTo"
+                 value="userContent"
+                 checked="${instance.relativeTo == 'userContent' or instance.relativeTo == null}"
+                 id="relativeTo.userContent"/>
+        <label class="attach-previous">${%UserContentRelative}</label><br/>
+        <j:if test="${descriptor.somewhereElseEnabled}">
+            <f:radio name="copytoslave.relativeTo"
+                     value="somewhereElse"
+                     checked="${instance.relativeTo == 'somewhereElse'}"
+                     id="relativeTo.somewhereElse"/>
+            <label class="attach-previous"><code>${descriptor.somewhereElsePath}</code></label><br/>
+        </j:if>
+        <j:if test="${descriptor.relativeToHomeEnabled}">
+            <f:radio name="copytoslave.relativeTo" value="home" checked="${instance.relativeTo == 'home'}" id="relativeTo.home"/>
+            <label class="attach-previous">${%HomeRelative}</label><br/>
+        </j:if>
+        <f:radio name="copytoslave.relativeTo" value="workspace" checked="${instance.relativeTo == 'workspace'}" id="relativeTo.workspace"/>
+        <label class="attach-previous">${%WorkspaceRelative}</label>
+    </f:entry>
+    <f:advanced>
+        <f:entry title="${%Excludes}" field="excludes">
+            <f:textbox/>
+        </f:entry>
+        <f:entry field="flatten">
+            <f:checkbox
+                name="flatten"
+                checked="${instance.flatten}"/>
+            <label class="attach-previous">${%Flatten}</label>
+        </f:entry>
+        <f:entry field="includeAntExcludes">
+            <f:checkbox
+                name="includeAntExcludes"
+                checked="${instance.includeAntExcludes}"/>
+            <label class="attach-previous">${%IncludeAntExcludes}</label>
+        </f:entry>
+    </f:advanced>
+</j:jelly>
