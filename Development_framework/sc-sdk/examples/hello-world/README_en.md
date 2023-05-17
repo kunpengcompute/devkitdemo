@@ -26,7 +26,7 @@ This demo is a simple secure computing application, including CA and TA, contain
 2. Go to the project root directory.
 
    ```shell
-   cd ./devkitdemo/Development_framework/sc-sdk/examples/hello_world/
+   cd ./devkitdemo/Development_framework/sc-sdk/examples/hello-world/
    ```
 
 3. Set the absolute paths of the developer private key and config file in `TA/config_cloud.ini`.
