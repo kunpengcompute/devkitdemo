@@ -47,7 +47,7 @@ English | [简体中文](README.md)
 6. Run the demo.
 
     ```shell
-    tee_teleport -r HelloWorld -i sessionID.txt
+    tee_teleport -r HelloWorld.class -i sessionID.txt
     ```
 
 7. Obtain the log.

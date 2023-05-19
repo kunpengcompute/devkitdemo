@@ -54,7 +54,7 @@ java-hello-world demo是使用鲲鹏机密计算高级语言特性开发的hello
 6. 运行
 
     ```shell
-    tee_teleport -r HelloWorld -i sessionID.txt
+    tee_teleport -r HelloWorld.class -i sessionID.txt
     ```
 
 7. 获取日志
