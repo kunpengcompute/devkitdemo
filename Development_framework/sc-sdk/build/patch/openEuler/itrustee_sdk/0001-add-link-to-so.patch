@@ -1,11 +1,12 @@
-From 0937425e265ec9b753704b879c3ca18e6ec5b438 Mon Sep 17 00:00:00 2001
-From: huangyongtao1 <hyt3161@163.com>
-Date: Fri, 19 Aug 2022 15:38:42 +0800
+From 1930610cc18e3ddea6faff1669e4aa5425995ad8 Mon Sep 17 00:00:00 2001
+From: lishengjie <lishengjie12@huawei.com>
+Date: Sat, 15 Jul 2023 14:59:21 +0800
 Subject: [PATCH] add link to so
 
 ---
- Makefile | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ Makefile                     | 20 ++++++++++++++++++++
+ test/CA/tee_upgrade/Makefile |  9 +++++----
+ 2 files changed, 25 insertions(+), 4 deletions(-)
  create mode 100644 Makefile
 
 diff --git a/Makefile b/Makefile
@@ -34,6 +35,29 @@ index 0000000..e227f62
 +	install -pm 644 libteec_adaptor.so /lib64/ 
 +clean:
 +	rm -rf *.o $(TARGET_APP)
+diff --git a/test/CA/tee_upgrade/Makefile b/test/CA/tee_upgrade/Makefile
+index 34fdfa0..7566ad1 100644
+--- a/test/CA/tee_upgrade/Makefile
++++ b/test/CA/tee_upgrade/Makefile
+@@ -2,13 +2,14 @@
+ obj-m := tee_upgrade.o
+ tee_upgrade-objs := upgrade.o
+ 
+-EXTRA_CFLAGS += -I$(PWD)/../../../thirdparty/open_source/libboundscheck/include
++EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include
+ 
+-KPATH	:= /usr/src/kernels
+-KDIR	:= $(KPATH)/$(shell ls $(KPATH))
++KPATH := /usr/src/kernels
++KERNEL_VERSION := $(shell rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}')
++KDIR  := $(KPATH)/$(KERNEL_VERSION)
+ 
+ #The dynamic upgrade of tee depends on the tzdriver library.
+-EXTRA_CFLAGS += -I$(PWD)/../tzdriver
++EXTRA_CFLAGS += -I$(PWD)/../driver/itrustee_tzdriver
+ 
+ all:
+ 	make -C $(KDIR) M=$(PWD) modules
 -- 
-2.35.1.windows.2
+2.27.0
 

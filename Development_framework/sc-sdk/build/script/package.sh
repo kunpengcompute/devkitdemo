@@ -22,7 +22,7 @@ PatchPath=${RootPath}/patch
 ScriptPath=${RootPath}/script
 SrcPath=${RootPath}/src
 OutputPath=${RootPath}/output
-PackageVersion="2.0.0"
+PackageVersion="2.0.1"
 
 # workdir
 DebBuild="/root/debbuild"
@@ -132,9 +132,6 @@ function get_src_code() {
         rm -rf ${SrcPath}
         exit 1
     fi
-    # cd itrustee_sdk
-    # git reset --hard b65c2702db4773958d4db98ce592089afded9eaa
-    # cd ..
 
     git clone https://gitee.com/openeuler/itrustee_client.git
     if [[ $? -ne 0 ]]; then
@@ -142,9 +139,6 @@ function get_src_code() {
         rm -rf ${SrcPath}
         exit 1
     fi
-    cd itrustee_client
-    git reset --hard b21a213637013232526165638b9e6be6370e6248
-    cd ..
 
     git clone https://gitee.com/openeuler/itrustee_tzdriver.git
     if [[ $? -ne 0 ]]; then
@@ -152,9 +146,6 @@ function get_src_code() {
         rm -rf ${SrcPath}
         exit 1
     fi
-    cd itrustee_tzdriver
-    git reset --hard 96a320f812f79e928894e93dada536b442a32d32
-    cd ..
 
     git clone https://gitee.com/openeuler/libboundscheck.git
     if [[ $? -ne 0 ]]; then
@@ -163,7 +154,7 @@ function get_src_code() {
         exit 1
     fi
 
-    git clone -b devkitdemo-23.0.1 https://github.com/kunpengcompute/devkitdemo.git
+    git clone --depth 1 -b devkitdemo-23.0.1 https://github.com/kunpengcompute/devkitdemo.git
     if [[ $? -ne 0 ]]; then
         echo "devkitdemo download failed."
         rm -rf ${SrcPath}

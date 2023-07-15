@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           kunpeng-sc-devel
-Version:        2.0.0
+Version:        2.0.1
 Release:        1
 Summary:        kunpeng sc devel
 License:        Apache-2.0
@@ -11,7 +11,7 @@ Source2:        libboundscheck.tar.gz
 Source3:        demo.tar.gz
 
 BuildRequires:  gcc
-Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 2.0.0
+Requires:       openssl-devel zlib-devel kernel-devel kunpeng-sc = 2.0.1
 
 Conflicts: TEE_SDK TEE-devel_SDK
 
@@ -66,8 +66,6 @@ cp -r ${BuildDir}/itrustee_sdk/build/tools/ ${SdkUtil}
 cp -r ${BuildDir}/itrustee_sdk/build/pack-Config/ ${SdkUtil}
 cp -r ${BuildDir}/itrustee_sdk/build/pack-TA/ ${SdkUtil}
 cp -r ${BuildDir}/itrustee_sdk/build/pack-App/ ${SdkUtil}
-mkdir -p ${SdkUtil}/pack-Config/xml2tlv_tools/csv
-cp -r ${BuildDir}/itrustee_sdk/build/signtools/tag_parse_dict.csv ${SdkUtil}/pack-Config/xml2tlv_tools/csv
 
 # install include
 cp -r ${BuildDir}/itrustee_sdk/include/* ${SdkInc}
