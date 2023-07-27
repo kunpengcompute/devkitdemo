@@ -1,10 +1,7 @@
 package io.jenkins.plugins.devkit.utils;
 
-import hudson.FilePath;
-import hudson.model.TaskListener;
 import org.apache.tools.ant.util.StringUtils;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +16,10 @@ public class ParameterFmt implements Serializable {
     private String cmd;
     private String targetos;
     private String extendedparameter;
-    private String prefix;
 
-    public void ParameterFmt(String command, String hardwareArchitecture, String scantype, String scanpath,
-                             String compiler, String cmd, String targetos, String extendedparameter, String prefix) {
+
+    public void parameterFmt(String command, String hardwareArchitecture, String scantype, String scanpath,
+                             String compiler, String cmd, String targetos, String extendedparameter) {
         this.setCommands(command);
         this.setHardwareArchitectures(hardwareArchitecture);
         this.setScantype(scantype);
@@ -31,16 +28,8 @@ public class ParameterFmt implements Serializable {
         this.setCmd(cmd);
         this.setTargetos(targetos);
         this.setExtendedparameter(extendedparameter);
-        this.setPrefix(prefix);
     }
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    private void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
     public String getCommands() {
         return commands;
     }
@@ -97,36 +86,27 @@ public class ParameterFmt implements Serializable {
         return extendedparameter;
     }
 
-    private void setExtendedparameter(String extendedparameter) {
+    public void setExtendedparameter(String extendedparameter) {
         this.extendedparameter = extendedparameter;
     }
 
-
-    public String toStringCmd(TaskListener listener) {
+    @Override
+    public String toString() {
         List<String> params = new ArrayList<String>();
-//        listener.getLogger().println("[INFO]generate command");
-        prefix = prefix.length() > 0 ? prefix : "/opt";
-        String toolHome = prefix.trim() + File.separator + "portadv/tools/cmd/bin/porting-advisor";
-//        listener.getLogger().println("[INFO]toolHome: "+ toolHome);
+        String toolHome = commands.split(" ")[0];
         params.add(toolHome);
         params.add(this.paramStrFmt(scantype, null));
-//        listener.getLogger().println("[INFO]scantype: "+ scantype);
         params.add(scanpath);
-//        listener.getLogger().println("[INFO]scanpath: "+ scanpath);
         if (compiler.length() > 0) {
             params.add(this.paramStrFmt("compiler", compiler));
         }
-//        listener.getLogger().println("[INFO]compiler: "+ compiler);
         if (cmd.length() > 0) {
             params.add(this.paramStrFmt("cmd", cmd));
         }
-//        listener.getLogger().println("[INFO]cmd: "+ cmd);
         params.add(this.paramStrFmt("targetos", targetos));
-//        listener.getLogger().println("[INFO]targetos: "+ targetos);
         if (extendedparameter.length() > 0) {
             params.add(extendedparameter);
         }
-//        listener.getLogger().println("[INFO]extendedparameter: "+ extendedparameter);
         return StringUtils.join(params, " ");
     }
 
@@ -139,14 +119,19 @@ public class ParameterFmt implements Serializable {
             case "binarypackage":
                 fmtStr = "-P ";
                 break;
-            case "targetos":
-                fmtStr = "--tos " + paramValue;
+            case "cmd":
+                fmtStr = "--cmd " + paramValue;
                 break;
             case "compiler":
                 fmtStr = "-C " + paramValue;
                 break;
-            case "cmd":
-                fmtStr = "--cmd " + paramValue;
+            case "output":
+                fmtStr = "-O " + paramValue;
+                break;
+            case "targetos":
+                fmtStr = "--tos " + paramValue;
+                break;
+            default:
                 break;
         }
         return fmtStr;

@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BashCmdExec {
-    public static void callProcessBuilder(String userCommand, TaskListener listener) {
-        List<String> command = new ArrayList<>();
+    public static int callProcessBuilder(String userCommand, TaskListener listener) {
+        List<String> command = new ArrayList<String>();
         command.add("sh");
         command.add("-c");
         command.add(userCommand);
@@ -19,6 +19,7 @@ public class BashCmdExec {
         processBuilder.command(command);
         // 将标准输入流和错误输入流合并，通过标准输入流读取信息
         processBuilder.redirectErrorStream(true);
+        int exitValue = -1;
         try {
             //启动进程
             Process start = processBuilder.start();
@@ -35,12 +36,20 @@ public class BashCmdExec {
                 outputString.append(s);
                 listener.getLogger().println(s);
             }
+            try {
+                exitValue = start.waitFor();
+                if (exitValue != 0 ) {
+                    listener.error("Exec" + command + "failed!");
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             inputStreamReader.close();
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
-            listener.getLogger().println("[ERROR]: " + e);
         }
+        return exitValue;
     }
 
 }

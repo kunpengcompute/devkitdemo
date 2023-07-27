@@ -133,10 +133,16 @@ public class MyFilePath implements Serializable {
                     f = new File(baseDir, fileName);
                 }
                 if (!flatten && tarEntry.isDirectory()) {
-                    f.mkdirs();
+                    boolean ret = f.mkdirs();
+                    if (!ret) {
+                        throw new IOException("mkdir fail");
+                    }
                 } else {
                     if (!flatten && f.getParentFile() != null) {
-                        f.getParentFile().mkdirs();
+                        boolean ret = f.getParentFile().mkdirs();
+                        if (!ret) {
+                            throw new IOException("mkparentdir fail");
+                        }
                     }
 
                     IOUtils.copy(t, f);
