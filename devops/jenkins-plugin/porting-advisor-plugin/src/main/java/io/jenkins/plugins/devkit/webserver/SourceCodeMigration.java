@@ -4,17 +4,15 @@ import hudson.FilePath;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import io.jenkins.plugins.devkit.utils.CreateRepoFiles;
 import io.jenkins.plugins.devkit.utils.SourceScanParamsFmt;
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.nio.file.Path;
 
 public class SourceCodeMigration {
 
@@ -23,7 +21,7 @@ public class SourceCodeMigration {
     private final String createTaskRequestMethod;
     private final String getTaskRequestMethod;
     private String apiUrl;
-    private  Run<?,?> build;
+    private Run<?, ?> build;
     private FilePath workspace;
 
     private TaskListener listener;
@@ -32,8 +30,8 @@ public class SourceCodeMigration {
     private String password;
 
     SourceScanParamsFmt sourceScanParamsFmt = new SourceScanParamsFmt();
-    public SourceCodeMigration(Run<?,?> build, String webserverIp,
-                               String webserverPort, TaskListener listener, FilePath workspace) {
+
+    public SourceCodeMigration(Run<?, ?> build, String webserverIp, String webserverPort, TaskListener listener, FilePath workspace) {
         this.webserverIp = webserverIp;
         this.webserverPort = webserverPort;
         this.createTaskRequestMethod = "POST";
@@ -45,10 +43,10 @@ public class SourceCodeMigration {
     }
 
 
-
     public String getUsername() {
         return username;
     }
+
     public String getPassword() {
         return password;
     }
@@ -65,7 +63,7 @@ public class SourceCodeMigration {
         BufferedReader in = null;
         String taskID = "";
         this.apiUrl = ApiInfo.getApiSourceCodeUrl(this.webserverIp, this.webserverPort, "sourceScan");
-        try{
+        try {
             //login and get the return token
             UserAccount userAccount = new UserAccount(this.username, this.password);
             String head = userAccount.getToken(this.webserverIp, this.webserverPort);
@@ -111,6 +109,7 @@ public class SourceCodeMigration {
 
         return taskID;
     }
+
     public Integer getTaskProcess(String taskType, String taskID) {
         StringBuffer buf = new StringBuffer();
         String result = "";
@@ -131,7 +130,7 @@ public class SourceCodeMigration {
                 buf.append(line);
             }
             byte[] bresult = buf.toString().getBytes(StandardCharsets.UTF_8);
-            result = new String (bresult, StandardCharsets.UTF_8);
+            result = new String(bresult, StandardCharsets.UTF_8);
             JSONObject jsonObject = JSONObject.fromObject(result);
             JSONObject resData = (JSONObject) jsonObject.get("data");
             progress = (Integer) resData.get("progress");
@@ -190,8 +189,9 @@ public class SourceCodeMigration {
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
-            if (responseCode ==200) {
-                String reportFile = this.workspace + File.separator + taskID + "_report.html";
+            if (responseCode == 200) {
+//                String reportFile = this.workspace + File.separator + taskID + "_report.html";
+                Path repoPath = CreateRepoFiles.getInstance().getPath(this.workspace, taskID);
                 listener.getLogger().println("ScanFileName： " + taskID + "_report.html");
 //                    String reportFilePath = this.build.getRootDir().toString();
 //                    String buildJobUrl = this.build.getUrl();
@@ -201,10 +201,12 @@ public class SourceCodeMigration {
 //                    if (m.find()) { buildJobNum = m.group(1); }
 //                    String reportUrl = "http://" + webserverIp + ":" + webserverPort + "/" +buildJobUrl + "execution/node/" +
 //                            buildJobNum + "/ws/" + taskID + "_report.html";
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(reportFile)), StandardCharsets.UTF_8));
+//                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(reportFile)), StandardCharsets.UTF_8));
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(repoPath), StandardCharsets.UTF_8));
                 out.write(String.valueOf(response));
                 out.close();
-                listener.getLogger().println("本地扫描报告路径： " + reportFile);
+//                listener.getLogger().println("本地扫描报告路径： " + reportFile);
+                listener.getLogger().println("本地扫描报告路径： " + repoPath);
 //                    listener.getLogger().println("在线扫描报告路径： " + reportUrl);
             } else {
                 listener.getLogger().println("下载报告异常。");
@@ -224,14 +226,11 @@ public class SourceCodeMigration {
             }
         }
     }
-    public JSONObject sourceCodeMigrationProcess(SourceCodeMigration sourceCodeMigration, String sourcedir,
-                                                 String constructtool, String compilecommand, String targetos,
-                                                 String gfortran, String customizedmacros, Boolean interpreted,
-                                                 Boolean sourceenhancecheck) throws Exception {
+
+    public JSONObject sourceCodeMigrationProcess(SourceCodeMigration sourceCodeMigration, String sourcedir, String constructtool, String compilecommand, String targetos, String gfortran, String customizedmacros, Boolean interpreted, Boolean sourceenhancecheck) throws Exception {
         String taskType = "0";
         String reportType = "1";
-        sourceScanParamsFmt.sourceScanParamsFmt(sourcedir, constructtool, compilecommand, targetos, gfortran,
-                customizedmacros, interpreted, sourceenhancecheck);
+        sourceScanParamsFmt.sourceScanParamsFmt(sourcedir, constructtool, compilecommand, targetos, gfortran, customizedmacros, interpreted, sourceenhancecheck);
         String createTaskParam = sourceScanParamsFmt.createTask();
         String taskID = sourceCodeMigration.createTask(createTaskParam);
         return sourceCodeMigration.isTaskFinished(taskType, taskID);

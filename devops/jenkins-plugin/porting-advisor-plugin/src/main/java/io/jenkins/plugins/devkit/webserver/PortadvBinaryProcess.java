@@ -1,20 +1,17 @@
 package io.jenkins.plugins.devkit.webserver;
 
-import java.io.*;
 import hudson.FilePath;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import jnr.ffi.annotations.In;
+import io.jenkins.plugins.devkit.utils.CreateRepoFiles;
 import net.sf.json.JSONObject;
 
-import java.io.PrintStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Map;
+import java.nio.file.Path;
 
 public class PortadvBinaryProcess {
     private final String webserverIp;
@@ -31,8 +28,7 @@ public class PortadvBinaryProcess {
     private String username;
     private String password;
 
-    public PortadvBinaryProcess(Run<?, ?> build, TaskListener listener, FilePath workspace,
-                                String webserverIp, String webserverPort) {
+    public PortadvBinaryProcess(Run<?, ?> build, TaskListener listener, FilePath workspace, String webserverIp, String webserverPort) {
         this.webserverIp = webserverIp;
         this.webserverPort = webserverPort;
         this.workspace = workspace;
@@ -45,6 +41,7 @@ public class PortadvBinaryProcess {
         this.build = build;
 
     }
+
     public void setPackpath(String packpath) {
         this.packpath = packpath;
     }
@@ -77,6 +74,7 @@ public class PortadvBinaryProcess {
         params.put("target_kernel", this.targetkernel);
         return params.toString();
     }
+
     private String createTask() throws Exception {
         //login and get the return token
         UserAccount userAccount = new UserAccount(this.username, this.password);
@@ -107,8 +105,12 @@ public class PortadvBinaryProcess {
             } else {
                 build.setResult(Result.FAILURE);
             }
-            if (responseCode == 404) { listener.getLogger().println("在URL中的资源对象不存在"); }
-            if (responseCode == 500) { listener.getLogger().println("服务内部错误"); }
+            if (responseCode == 404) {
+                listener.getLogger().println("在URL中的资源对象不存在");
+            }
+            if (responseCode == 500) {
+                listener.getLogger().println("服务内部错误");
+            }
         } catch (Exception e) {
             listener.getLogger().println("GET请求异常！" + e);
             e.printStackTrace();
@@ -126,6 +128,7 @@ public class PortadvBinaryProcess {
 
         return taskID;
     }
+
     private Integer getTaskProcess(String taskID, String taskType) throws Exception {
         UserAccount userAccount = new UserAccount(this.username, this.password);
         String head = userAccount.getToken(this.webserverIp, this.webserverPort);
@@ -154,7 +157,7 @@ public class PortadvBinaryProcess {
                 progress = -1;
                 build.setResult(Result.FAILURE);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             listener.getLogger().println("GET请求异常！" + e);
             e.printStackTrace();
             build.setResult(Result.FAILURE);
@@ -171,11 +174,14 @@ public class PortadvBinaryProcess {
 
         return progress;
     }
+
     private boolean isTaskFinished(String taskID) throws Exception {
         Integer taskProgress = 0;
         while (true) {
             taskProgress = this.getTaskProcess(taskID, "7");
-            if (taskProgress.equals(-1)) { return false; }
+            if (taskProgress.equals(-1)) {
+                return false;
+            }
             String printProcess = new String(new char[taskProgress]).replace("\0", " |");
             listener.getLogger().println("【扫描进度】软件包扫描任务 ： " + taskID + "任务进度 " + taskProgress + "%" + printProcess);
             if (taskProgress.equals(100)) {
@@ -184,6 +190,7 @@ public class PortadvBinaryProcess {
             Thread.sleep(300);
         }
     }
+
     public void downloadReport(String taskID, String reportType) throws Exception {
         BufferedReader in = null;
         UserAccount userAccount = new UserAccount(this.username, this.password);
@@ -201,11 +208,14 @@ public class PortadvBinaryProcess {
                 response.append(inputLine);
             }
             if (responseCode == 200) {
-                String reportFile = this.workspace + File.separator + taskID + "_report.html";
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(reportFile)), StandardCharsets.UTF_8));
+//                String reportFile = this.workspace + File.separator + taskID + "_report.html";
+//                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(reportFile)), StandardCharsets.UTF_8));
+                Path repoPath = CreateRepoFiles.getInstance().getPath(this.workspace, taskID);
+                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(repoPath), StandardCharsets.UTF_8));
                 out.write(String.valueOf(response));
                 out.close();
-                listener.getLogger().println("本地扫描报告路径： " + reportFile);
+//                listener.getLogger().println("本地扫描报告路径： " + reportFile);
+                listener.getLogger().println("本地扫描报告路径： " + repoPath);
             } else {
                 listener.getLogger().println("下载报告异常。");
                 build.setResult(Result.FAILURE);
@@ -225,12 +235,14 @@ public class PortadvBinaryProcess {
         }
 
     }
+
     public void process() throws Exception {
         String responseID = this.createTask();
         if (this.isTaskFinished(responseID)) {
-            this.downloadReport(responseID,  "2");
+            this.downloadReport(responseID, "2");
         }
     }
+
     public void report(String responseID) {
         //遗留问题：获取报告地址
     }
