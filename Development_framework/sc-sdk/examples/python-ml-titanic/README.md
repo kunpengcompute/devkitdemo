@@ -37,7 +37,7 @@ python-ml-titanic是使用鲲鹏机密计算高级语言特性开发的python机
     cp /usr/local/kunpeng-sc-devel/utils/pack-App/titanic.sec ./
     ```
 
-4. 安装依赖库, 可以参考 **使用鸿蒙SDK编译Python依赖库** 章节编译依赖库。
+4. 安装依赖库, 可以参考 **使用机密OS SDK编译Python依赖库** 章节编译依赖库。
 
     ```shell
     # 签名
@@ -56,239 +56,249 @@ python-ml-titanic是使用鲲鹏机密计算高级语言特性开发的python机
     tee_teleport -c titanic.sec
     ```
 
-6. 运行
+6. 输入文件
 
     ```shell
-    tee_teleport -n input -r titanic.py -i sessionID.txt
+    tee_teleport -n input -i sessionID.txt
     ```
 
-7. 获取日志
+7. 运行
+
+    ```shell
+    tee_teleport -r titanic.py -i sessionID.txt
+    ```
+
+8. 获取日志
 
     ```shell
     tee_teleport -o output/tee.log -i sessionID.txt
     ```
 
-8. 卸载
+9. 卸载
 
     ```shell
     tee_teleport -e -i sessionID.txt
     ```
 
-## 使用鸿蒙SDK编译Python依赖库
+## 使用机密OS SDK编译Python依赖库
 
-**编译脚本中涉及到的路径，请以自己环境上实际建立的路径为准并针对性的修改，比如SDK路径、Python安装路径、源码下载构建路径等等。文档和编译脚本中给出的是示例路径。**
+### 安装机密OS SDK
 
-三方库的版本确定流程：先在x86的python上用pip3安装三方库，用`pip3 freeze`查看版本，再找对应版本的三方库的源代码。 需要重新编译前，需要删除编译生成的中间文件，或者把源代码目录删除，重新解压，或者用`git clean -xdf`清理。
-
-本文中的hongmeng指的是hongmeng运行环境，即交叉编译的产物要运行的环境。
-
-Python编译
-
-（1）在交叉编译前，首先在host机器上编译安装对应的Python版本，这里采用的Python版本为3.6.15
-
-（2）host上编译Python
 ```shell
-# 下载Python及三方库源代码的一般方法，以python3.6.15版本为例，后面其他的三方库下载方法类似，不再赘述
-git clone https://github.com/python/cpython.git -b v3.6.15 --depth=1
-cd cpython
-git pull --unshallow
-git submodule sync
-git submodule update --init --recursive --jobs 0
-# 在host上编译安装Python
-#cd 到cpython目录，执行 ./configure --prefix=$HOME/pyinstall 其中prefix指定自定义的安装路径
-make -j && make install
-# 安装后设置环境变量
-export PYTHONHOME=/home/xxx/pyinstall
-export PATH=/home/xxx/pyinstall/bin:$PATH
-#PYTHONPATH用于指定pip安装的包要安装在哪个位置
-export PYTHONPATH=/home/xxx/pyinstall:/home/xxx/python_build/build/lib/python3.6/site-packages/
-
-#使用python3 -V测试是否安装成功
+mkdir -p /opt/ccos_build
+cd /opt/ccos_build
+wget -O BoostKit-ccos_sdk_1.0.0.zip https://kunpeng-repo.obs.cn-north-4.myhuaweicloud.com/Kunpeng%20BoostKit/Kunpeng%20BoostKit%2023.0.RC2/BoostKit-ccos_sdk_1.0.0.zip
+unzip BoostKit-ccos_sdk_1.0.0.zip
+tar -xf ccos_sdk.tgz
 ```
 
-编译安装Python后， 需要升级pip，使用命令`python3 -m pip install --upgrade pip`
-
-(3) 交叉编译Python及Python自身依赖的三方库
-
-安装鸿蒙sdk，作为交叉编译使用的工具链，这里假设安装路径为/home/xxx/hm-sdk
-
-分别使用鸿蒙sdk编译Python依赖库：
-
-| 依赖库    |  版本     | 下载地址 |
-| ----     | ----      | --- |
-| zlib     | 1.2.11    | https://github.com/madler/zlib.git |
-| libffi   | 3.3-rc0   | https://github.com/libffi/libffi.git |
-| libuuid  | 1.0.0     | https://sourceforge.net/projects/libuuid/files/libuuid-1.0.0.tar.gz/download |
-
-编译完成后，复制每个依赖库安装目录的lib目录下的文件到鸿蒙sdk安装路径的/home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/lib下，复制每个依赖库安装目录的include目录下的文件到鸿蒙sdk安装路径的/home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/include下。
-
-使用第一步下载的Python源代码，解压后进入源码目录下编译Python
-
+### 编译安装Linux Python
 ```shell
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-./configure --prefix=/home/xxx/pyintall CFLAGS="-D_GNE_SOURCE -fwrapv -DFFI_MMAP_EXEC_WRIT -I/home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/include" LDFLAGS="-L/home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/lib/ -Wl,-rpath /home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/lib/" --host=aarch64-linux-gnu --build=x86_64-linux-gnu --enable-shared -disable-ipv6 ac_cv_file__dev_ptmx=yes ac_cv_file__dev_ptc=no
+wget -O Python-3.6.15.tgz https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz
+tar -zxf Python-3.6.15.tgz
+
+cd Python-3.6.15
+./configure --prefix=/opt/ccos_build/python_linux
 make -j 4
 make install
-cp -ar /home/xxx/pyinstall/lib/* /home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/lib/
-cp -ar /home/xxx/pyinstall/include/* /home/xxx/hm-sdk/sysroots/aarch64-euler-elf_all_in_one/usr/include/
-./build_3.6.sh /home/xxx/hm-sdk /home/xxx/pyinstal
 ```
 
-交叉编译好的Python安装在python_build/output_python目录下，拷贝出来备用
+### 编译安装第三方库
 
+依赖的第三方库版本
 
-### 编译numpy 1.19.5
+|   name         | version |
+| -------------- | ------- |
+| openblas       | 0.3.9   |
+| numpy          | 1.19.5  |
+| scipy          | 1.5.4   |
+| scikit-learn   | 0.24.2  |
+| xgboost        | 1.5.1   |
+| joblib         | 1.1.1   |
+
+1. 下载代码
 
 ```shell
-#首先在host机器上安装numpy和Cython
-pip3 install numpy==1.19.5
-pip3 install Cython
-#进入到hm-sdk目录，刷新环境变量
-source environment-setup-aarch64-euler-elf
-#指定Fortran编译器
-cd hm-sdk/sysroots/x86_64-eulersdk-linux/usr/bin
-ln -s aarch64-hongmeng-musl-gfortran gfortran
-# 确保gfortran在PATH路径里，可以通过在shell下执行gfortran确认
-#交叉编译numpy前需要先交叉编译openblas库，下载版本tag为0.3.9的源代码
-export PATH=/home/xxx/hm-sdk/sysroots/x86_64-eulersdk-linux/usr/bin:$PATH
-export CFLAGS="-fstack-protector-strong -O2 -pipe -D__linux__ -D_GNU_SOURCE -fPIC -fwrapv -DOS_LINUX"
-cd 到openblas源码根目录
-make TARGET=ARMV8 HOSTCC=gcc BINARY=64 CC=aarch64-euler-elf-gcc FC=aarch64-euler-elf-gfortran
-OSNAME=LINUX
-# .a转换为.so
-cp /home/xxx/hm-sdk/sysroots/x86_64-eulersdk-linux/usr/aarch64-hongmeng-musl/lib64/libgfortran.a .
-aarch64-euler-elf-gcc -shared -o libgfortran.so -Wl,--whole-archive libgfortran.a -Wl,--no-whole-archive
-aarch64-euler-elf-gcc -shared -o libopenblas_armv8p-r0.3.9.so -Wl,--whole-archive libopenblas_armv8pr0.3.9.a libgfortran.a -Wl,--no-whole-archive
-#安装交叉编译好的openblas到指定目录
-make PREFIX=/home/xxx/myblas TARGET=ARMV8 install
-#从GitHub下载numpy源代码，指定tag为v1.19.5，方法同Python源码下载
-cd到numpy很目录
+cp -rf build_mllib /opt/ccos_build/
+cd /opt/ccos_build/build_mllib
+wget https://github.com/scikit-learn/scikit-learn/archive/refs/tags/0.24.2.tar.gz -O scikit-learn-0.24.2.tar.gz
+wget https://github.com/scipy/scipy/archive/refs/tags/v1.5.4.tar.gz -O scipy-1.5.4.tar.gz
+wget https://github.com/pandas-dev/pandas/archive/refs/tags/v1.1.5.tar.gz -O pandas-1.1.5.tar.gz
+wget https://github.com/numpy/numpy/archive/refs/tags/v1.19.5.tar.gz -O numpy-1.19.5.tar.gz
+wget https://github.com/joblib/joblib/archive/refs/tags/1.1.1.tar.gz -O joblib-1.1.1.tar.gz
+wget https://github.com/xianyi/OpenBLAS/archive/refs/tags/v0.3.9.tar.gz -O OpenBLAS-0.3.9.tar.gz
+git clone https://github.com/dmlc/xgboost.git -b v1.5.1
+cd xgboost
+git submodule sync
+git submodule update --init --recursive --jobs 0
+```
+
+2. 安装依赖软件
+
+```shell
+yum install gcc-gfortran
+yum install openblas openblas-devel
+```
+
+3. 导入环境变量
+
+```shell
+export PYTHONPATH=/opt/ccos_build/python_linux
+export PYTHONHOME=/opt/ccos_build/python_linux
+export PATH=/opt/ccos_build/python_linux/bin:$PATH
+```
+
+4. 编译numpy依赖软件openblas
+
+```shell
+cd /opt/ccos_build/build_mllib
+bash -xe build_openblas.sh
+```
+
+5. 编译numpy
+
+```shell
+cd /opt/ccos_build/build_mllib
+tar -zxf numpy-1.19.5.tar.gz
+cd numpy-1.19.5
 cp site.cfg.example site.cfg
-#编辑site.cfg文件，放开以下注释并修改为实际的路径
-129 [openblas]
-130 libraries = openblas
-131 library_dirs = /home/xxx/myblas/lib
-
-132 include_dirs = /home/xxx/myblas/include
-#在Python_build下执行
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-python3 setup.py install --prefix=/home/xxx/build/
-#交叉编译好的numpy会安装在python_build/build目录下，拷贝整个文件夹出来备用，这个文件夹就是可以在鸿蒙上运行的numpy库
 ```
 
-### 编译scipy 1.5.4
+编辑site.cfg文件，放开以下注释并修改为openblas库的实际路径
 
 ```shell
-#首先在host上安装pybind11
-pip3 install pybind11
-#下载scipy的源码，指定tag为1.5.4
-cd 到scipy的根目录
-# 修改site.cfg，修改方式同numpy
-#在Python_build下执行
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-python3 setup.py install --prefix=/home/xxx/build/
-#编译过程中如果遇到cannot find -lnpymath的错误，需要把交叉编译好的numpy/core/lib/libnpymath.a拷贝到pyinstall的numpy目录下
-cd /home/xxx/pyinstall/lib/python3.6/site-packages/numpy/core/lib
-mv libnpymath.a libnpymath.a.bak
-cp xxx/libnpymath.a /home/xxx/pyinstall/lib/python3.6/site-packages/numpy/core/lib
-#其中xxx/libnpymath.a是上一步交叉编译出来的静态库
+sed -i '132s?# \[openblas\]?\[openblas\]?' site.cfg
+sed -i '133s?# libraries = openblas?libraries = openblas?' site.cfg
+sed -i '134s?# library_dirs = /opt/OpenBLAS/lib?library_dirs = /opt/ccos_build/build_mllib/build/lib?' site.cfg
+sed -i '135s?# include_dirs = /opt/OpenBLAS/include?include_dirs = /opt/ccos_build/build_mllib/build/include?' site.cfg
 ```
 
-### 编译xgboost 1.6.2
+替换完成后如下：
+```
+[openblas]
+libraries = openblas
+library_dirs = /opt/ccos_build/build_mllib/build/lib
+include_dirs = /opt/ccos_build/build_mllib/build/include
+```
 
-这里采用关闭openmp的编译方法，如果使用openmp需测试是否能产生正确的计算结果。
+执行编译
+```shell
+cd /opt/ccos_build/build_mllib
+python3 -m pip install Cython==0.29.36
+python3 -m pip install numpy==1.19.5
+bash -xe build_numpy.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
+```
+
+6. 编译scipy
 
 ```shell
-# git下载源代码，版本用1.6.2
-# 修改编译脚本 CMakeLists.txt
-project(xgboost LANGUAGES CXX C VERSION 1.6.2)
-
-### hongmeng build
-set(CMAKE_C_COMPILER "/home/xxx/hm-sdk/sysroots/x86_64-eulersdk-linux/usr/bin/aarch64-euler-elf-gcc")
-set(CMAKE_CXX_COMPILER "/home/xxx/hm-sdk/sysroots/x86_64-eulersdk-linux/usr/bin/aarch64-euler-elf-g
-++")
-set(CMAKE_SYSROOT "/home/xxx/hm-sdk/sysroots/aarch64-euler-elf")
-add_compile_options("-march=armv8-a")
-add_compile_options("-mlittle-endian")
-set(CMAKE_LINKER "/home/xxx/hm-sdk/sysroots/x86_64-eulersdk-linux/usr/bin/aarch64-euler-elf-ld")
-add_definitions(-D__GLIBC__)
-# 修改
-option(USE_OPENMP "Build with OpenMP support." OFF)
-
-# 修改python-package/setup.py
-'use-openmp': (None, 'Build with OpenMP support.', 0),
-
-self.use_openmp = 0
-
-if shutil.which('ninja'):
- build_tool = 'make'
-
-# 修改include/xgboost/base.h57到61行修改如下：（删除原来的include和XGBOOST_PARALLEL_SORT等定义，使用std::sort）
-#if defined(__GNUC__) && ((__GNUC__ == 4 && __GNUC_MINOR__ >= 8) || __GNUC__ > 4) && \
- !defined(__CUDACC__) && !defined(__sun) && !defined(sun)
-#define XGBOOST_PARALLEL_SORT(X, Y, Z) std::sort((X), (Y), (Z))
-#define XGBOOST_PARALLEL_STABLE_SORT(X, Y, Z) std::stable_sort((X), (Y), (Z))
-#elif defined(_MSC_VER) && (!__INTEL_COMPILER)
-# libgomp目前还不支持
-
-#在Python_build下执行
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-python3 setup.py install --prefix=/home/xxx/build/
+cd /opt/ccos_build/build_mllib
+tar -zxf scipy-1.5.4.tar.gz
+cd scipy-1.5.4
+cp site.cfg.example site.cfg
 ```
 
-### 编译sklearn 0.24.2
+编辑site.cfg文件，放开以下注释并修改为openblas库的实际路径
 
 ```shell
-#git下载代码 版本0.24.2
-#在环境变量中加入
-export PYTHON_CROSSENV=1
-# 因为sklearn的Makefile里直接用了python，在~/.bin/里加入python软连接指向python3.6，并加入PATH
-#编译前现在host上安装scipy和sklearn
-pip3 install scipy==1.5.4
-pip3 install scikit-learn==0.24.2
-#在Python_build下执行
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-python3 setup.py install --prefix=/home/xxx/build/
-# 如果出现问题
-ImportError: cannot import name '_lsap_module'
-# 将lib/python3.6/site-packages/scipy/optimize/_lsap_module.cpython-36m-x86_64-linux-gnu.so重命名为
-_lsap_module.so
+sed -i '129s?# \[openblas\]?\[openblas\]?' site.cfg
+sed -i '130s?# libraries = openblas?libraries = openblas?' site.cfg
+sed -i '131s?# library_dirs = /opt/OpenBLAS/lib?library_dirs = /opt/ccos_build/build_mllib/build/lib?' site.cfg
+sed -i '132s?# include_dirs = /opt/OpenBLAS/include?include_dirs = /opt/ccos_build/build_mllib/build/include?' site.cfg
 ```
 
-### 编译pandas 1.1.5
+替换完成后如下：
+```
+[openblas]
+libraries = openblas
+library_dirs = /opt/ccos_build/build_mllib/build/lib
+include_dirs = /opt/ccos_build/build_mllib/build/include
+```
+
+执行编译
+
+**需要先将libgfortran.a复制到/opt/ccos_build/ccos_sdk/sysroots/ccos/usr/lib/aarch64-hongmeng-musl/7.3.0/目录下**
 
 ```shell
-#git下载代码pandas-1.1.5
-# 先在host机器上安装一些依赖库，也可以在编译过程中自动安装
-pip3 install pytz
-pip3 install python-dateutil
-pip3 install six==1.16.0
-#在Python_build下执行
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-python3 setup.py install --prefix=/home/xxx/build/
+cd /opt/ccos_build/build_mllib
+python3 -m pip install pybind11==2.10.4
+bash -xe build_scipy.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-### 编译joblib 1.1.1
+7. 编译xgboost
 
 ```shell
-# git下载joblib代码，版本为1.1.1
-#在Python_build下执行
-source /home/xxx/hm-sdk/environment-setup-aarch64-euler-elf
-python3 setup.py install --prefix=/home/xxx/build/
+cd /opt/ccos_build/build_mllib
+bash -xe build_xgboost.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-### 其他三方库编译
-
-可以直接把x86三方库复制到hongmeng使用的有six，threadpoolctl，date-util。这些库都是纯Python文件，所以不需要交叉编译。
-
-### 运行指导
-
-准备交叉编译好的Python解释器目录，为了让Python能在鸿蒙上运行，需要从SDK里拷贝一些库文件到Python解释器的lib目录。
+8. 编译scikit-learn
 
 ```shell
-# 从编译好的openblas目录拷贝文件到Python解释器目录(以下命令为示例，需要根据实际的路径修改使用,hm-sdk指SDK的路径，output_python指代编译好的Python解释器路径)：
-cd openblas/lib
-cp libopenblas_armv8p-r0.3.9.so output_python/lib/libopenblas.so
-cp libgfortran.so output_python/lib/
-# 如果运行时提示找不到某个库，首先考虑去SDK中搜索这个库的名字，并把相应的库文件拷贝到Python解释器lib目录下，注意不要拷贝软链接文件；其次考虑当前Python解释器目录下对应的库的命名是否正确。比如/lib/python3.6/site-packages/scipy/optimize/lsap_module.cpython-36m-x86_64-linux-gnu.so，需要改名为lsap_module.cpython-36m.so，这样在鸿蒙运行环境中才能正确识别
+cd /opt/ccos_build/build_mllib
+python3 -m pip install scipy==1.5.4
+tar -zxf scikit-learn-0.24.2.tar.gz
+bash -xe build_sklearn.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
+
+9. 编译pandas
+
+```shell
+cd /opt/ccos_build/build_mllib
+python3 -m pip install pytz==2023.3
+python3 -m pip install six==1.16.0
+python3 -m pip install python-dateutil==2.8.2
+python3 -m pip install joblib==1.1.1
+tar -zxf pandas-1.1.5.tar.gz
+```
+
+为了避免pandas的so中的符号与机密OS中的符号冲突，需要将parser_init修改为pandas_parser_init
+
+```
+pandas/_libs/src/parser/tokenizer.c:146:int parser_init(parser_t *self) {
+pandas/_libs/src/parser/tokenizer.h:184:int parser_init(parser_t *self);
+pandas/_libs/parsers.pyx:224:    int parser_init(parser_t *self) nogil
+pandas/_libs/parsers.pyx:385:        parser_init(self.parser)
+```
+
+```
+pandas/_libs/src/parser/tokenizer.c:146:int pandas_parser_init(parser_t *self) {
+pandas/_libs/src/parser/tokenizer.h:184:int pandas_parser_init(parser_t *self);
+pandas/_libs/parsers.pyx:224:    int pandas_parser_init(parser_t *self) nogil
+pandas/_libs/parsers.pyx:385:        pandas_parser_init(self.parser)
+```
+
+```shell
+bash -xe build_pandas.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
+```
+
+10. 编译joblib
+
+```shell
+cd /opt/ccos_build/build_mllib
+bash -xe build_joblib.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
+```
+
+11. 复制所有第三方库到一个目录
+
+```shell
+cd /opt/ccos_build/build_mllib
+mkdir mllib
+cp -rf build/lib/python3.6/site-packages/joblib-1.1.1-py3.6.egg/joblib/ ./mllib/
+cp -rf build/lib/python3.6/site-packages/numpy-1.19.5-py3.6-linux-aarch64.egg/numpy/ ./mllib/
+cp -rf build/lib/python3.6/site-packages/pandas-1.1.5-py3.6-linux-aarch64.egg/pandas/ ./mllib/
+cp -rf build/lib/python3.6/site-packages/scikit_learn-0.24.2-py3.6-linux-aarch64.egg/sklearn/ ./mllib/
+cp -rf build/lib/python3.6/site-packages/scipy-1.5.4-py3.6-linux-aarch64.egg/scipy/ ./mllib/
+cp -rf build/lib/python3.6/site-packages/threadpoolctl-3.2.0-py3.6.egg/threadpoolctl.py ./mllib/
+cp -rf build/lib/python3.6/site-packages/xgboost ./mllib/
+cp -rf build/lib/python3.6/site-packages/site.py ./mllib/
+
+cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/dateutil/ ./mllib/
+cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/pytz/ ./mllib/
+cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/six.py ./mllib/
+
+# 复制pkg_resources
+cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/pkg_resources ./mllib/
+```
+
+使用签名工具将mllib目录进行打包签名后，就可以部署到机密OS中使用了。
