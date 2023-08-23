@@ -1,6 +1,6 @@
-From 70b445af02e566972b4e40583764fc21a22c40ad Mon Sep 17 00:00:00 2001
-From: huangyongtao1 <hyt3161@163.com>
-Date: Fri, 19 Aug 2022 15:41:12 +0800
+From fca56e46e1873b60309be0c61e547cdcf94bbb77 Mon Sep 17 00:00:00 2001
+From: lishengjie <lishengjie12@huawei.com>
+Date: Sat, 15 Jul 2023 13:07:57 +0800
 Subject: [PATCH] add link to so and update kernel path
 
 ---
@@ -11,10 +11,10 @@ Subject: [PATCH] add link to so and update kernel path
  4 files changed, 16 insertions(+), 2 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 9ef9ef8..2712bc8 100644
+index 2b6abb7..2aa5c9d 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -23,11 +23,22 @@ endif()
+@@ -24,11 +24,22 @@ endif()
  
  # you should config right path according to your run-time environment
  set(KPATH /usr/src/kernels)
@@ -37,12 +37,12 @@ index 9ef9ef8..2712bc8 100644
 +
  # Set extra options
  set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=1000 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=100 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
 diff --git a/Makefile b/Makefile
-index a5eb619..cf7b66a 100644
+index d353a40..fdd49d6 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -19,7 +19,8 @@ endif
+@@ -38,7 +38,8 @@ endif
  
  # you should config right path according to your run-time environment
  KPATH := /usr/src/kernels
@@ -50,8 +50,8 @@ index a5eb619..cf7b66a 100644
 +KERNEL_VERSION := $(shell rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}')
 +KDIR  := $(KPATH)/$(KERNEL_VERSION)
  
+ EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-linux-gnu/10.3.1/include
  EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
- EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core -I$(PWD)/tzdriver_internal/tee_trace_event
 diff --git a/README.en.md b/README.en.md
 index 0fb93ed..cdab479 100644
 --- a/README.en.md
@@ -74,5 +74,5 @@ index a277830..4cd12c0 100644
     4）运行测试CA 和TA
 +   5）如果要卸载tzdriver，需要重启服务器才可生效
 -- 
-2.35.1.windows.2
+2.27.0
 
