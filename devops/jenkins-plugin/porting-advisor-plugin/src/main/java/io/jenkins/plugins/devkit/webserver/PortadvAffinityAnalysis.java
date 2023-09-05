@@ -1,17 +1,16 @@
 package io.jenkins.plugins.devkit.webserver;
 
 import hudson.FilePath;
-import hudson.model.Api;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import io.jenkins.cli.shaded.org.apache.sshd.common.util.buffer.Buffer;
-import jnr.ffi.annotations.In;
-import net.sf.json.JSONObject;
+import io.jenkins.plugins.devkit.utils.HtmlRepoFiles;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,6 +102,7 @@ public class PortadvAffinityAnalysis {
     public void setOsMappingDir(String osMappingDir) {
         this.osMappingDir = osMappingDir;
     }
+
     private void setResult(Result result) {
         if (this.build != null) {
             this.build.setResult(result);
@@ -179,8 +179,9 @@ public class PortadvAffinityAnalysis {
                 return "";
         }
     }
+
     private String getTaskType() {
-        switch (this.srvType){
+        switch (this.srvType) {
             case running_mode:
                 return "5";
             case byte_alignment:
@@ -215,9 +216,9 @@ public class PortadvAffinityAnalysis {
                 return "";
         }
     }
+
     private String createTask() throws Exception {
-        String api_url = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort,
-                this.srvType, "create");
+        String api_url = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort, this.srvType, "create");
         if (this.srvType == SrvType.weakconsistency || this.srvType == SrvType.vecanalyzer) {
             if (!this.scanfile.endsWith(".bc") && this.stage == 1) {
                 api_url += "compilefile/";
@@ -265,8 +266,7 @@ public class PortadvAffinityAnalysis {
         UserAccount userAccount = new UserAccount(this.username, this.password);
         String head = userAccount.getToken(this.webserverIp, this.webserverPort);
         String apiData = "";
-        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort,
-                this.srvType, "progress");
+        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort, this.srvType, "progress");
         String url = apiUrl + "?task_type=" + this.getTaskType() + "&task_id=" + taskID;
         this.logger.println(url);
         HttpURLConnection connection = APIClient.httpResponse(url, head, apiData, "GET");
@@ -290,26 +290,22 @@ public class PortadvAffinityAnalysis {
                 || response.toString().contains("0x0d0400") || response.toString().contains("0x0d0402")
                 || response.toString().contains("0x0d0c00") || response.toString().contains("0x0d0c02")
                 || response.toString().contains("0x0e0300") || response.toString().contains("0x0e0302")
-                || response.toString().contains("0x0d0b00")
-                || response.toString().contains("0x0d0a00")
-                || response.toString().contains("0x0d0e00")
-                || response.toString().contains("0x0d0d00") || response.toString().contains("0x0d0d02")) {
+                || response.toString().contains("0x0d0b00") || response.toString().contains("0x0d0a00")
+                || response.toString().contains("0x0d0e00") || response.toString().contains("0x0d0d00")
+                || response.toString().contains("0x0d0d02")) {
             if (progress < 0) {
                 progress = 100;
             }
-        } else if (response.toString().contains("0x0d0501")
-                || response.toString().contains("0x0d0401")
-                || response.toString().contains("0x0d0c01")
-                || response.toString().contains("0x0e0301")
-                || response.toString().contains("0x0d0b01")
-                || response.toString().contains("0x0d0a01")
+        } else if (response.toString().contains("0x0d0501") || response.toString().contains("0x0d0401")
+                || response.toString().contains("0x0d0c01") || response.toString().contains("0x0e0301")
+                || response.toString().contains("0x0d0b01") || response.toString().contains("0x0d0a01")
                 || response.toString().contains("0x0d0e01")) {
             if (progress < 0) {
                 progress = 10;
             }
         } else {
             if (this.srvType == SrvType.vecanalyzer && this.stage == 2) {
-                progress =100;
+                progress = 100;
             } else {
                 System.out.println("任务执行失败");
                 this.setResult(Result.FAILURE);
@@ -317,6 +313,7 @@ public class PortadvAffinityAnalysis {
         }
         return progress;
     }
+
     private boolean isTaskFinished(String taskID) throws Exception {
         Integer taskProgress = 0;
         while (true) {
@@ -330,12 +327,12 @@ public class PortadvAffinityAnalysis {
         }
 
     }
+
     public void downloadReport(String responseID) throws Exception {
         UserAccount userAccount = new UserAccount(this.username, this.password);
         String head = userAccount.getToken(this.webserverIp, this.webserverPort);
         String apiData = "";
-        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort,
-                this.srvType, "get");
+        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort, this.srvType, "get");
         String url = apiUrl + "?task_type=" + this.getTaskType() + "&task_id=" + responseID + "&download_html=true";
         HttpURLConnection connection = APIClient.httpResponse(url, head, apiData, "GET");
         int responseCode = connection.getResponseCode();
@@ -350,7 +347,6 @@ public class PortadvAffinityAnalysis {
             in.close();
             //打印响应结果
             this.logger.println("【下载报告成功】--->下载成功 ： " + response);
-            String reportFile = this.workspace + File.separator + responseID + "_report.html";
             String buildJobUrl = "";
             if (this.build != null) {
                 buildJobUrl = this.build.getUrl();
@@ -358,28 +354,26 @@ public class PortadvAffinityAnalysis {
             Pattern r = Pattern.compile("(\\d+)");
             Matcher m = r.matcher(buildJobUrl);
             String buildJobNum = "";
-            if (m.find()) { buildJobNum = m.group(1); }
-            String reportUrl = "http://" + webserverIp + ":" + webserverPort + "/" +buildJobUrl + "execution/node/" +
+            if (m.find()) {
+                buildJobNum = m.group(1);
+            }
+            String reportUrl = "http://" + webserverIp + ":" + webserverPort + "/" + buildJobUrl + "execution/node/" +
                     buildJobNum + "/ws/" + responseID + "_report.html";
             try {
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(reportFile), "UTF-8"));
-                out.write(String.valueOf(response));
-                out.close();
-                this.logger.println("本地扫描报告路径： " + reportFile);
-//                this.logger.println("在线扫描报告链接： " + reportUrl);
+                HtmlRepoFiles.getInstance().writeTo(this.workspace, responseID, response.toString(), this.listener);
             } catch (IOException e) {
                 this.setResult(Result.FAILURE);
-                throw  e;
+                throw e;
             }
         }
     }
+
     public String getBcFileList() throws Exception {
         UserAccount userAccount = new UserAccount(this.username, this.password);
         String head = userAccount.getToken(this.webserverIp, this.webserverPort);
         String apiData = "";
         String bcFileList = "";
-        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort,
-                this.srvType, "create") + this.stageOneID + "/bcfilelist/";
+        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort, this.srvType, "create") + this.stageOneID + "/bcfilelist/";
         HttpURLConnection connection = APIClient.httpResponse(apiUrl, head, apiData, "GET");
         int responseCode = connection.getResponseCode();
         this.logger.println("Response Code : " + responseCode);
@@ -402,13 +396,13 @@ public class PortadvAffinityAnalysis {
         }
         return bcFileList;
     }
+
     public String getCompileLogID() throws Exception {
         UserAccount userAccount = new UserAccount(this.username, this.password);
         String head = userAccount.getToken(this.webserverIp, this.webserverPort);
         this.logtaskid = "";
         String apiData = this.getData(srvType);
-        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort,
-                this.srvType, "create") + "/compilelog/";
+        String apiUrl = ApiInfo.getApiAffinityAnaUrl(this.webserverIp, this.webserverPort, this.srvType, "create") + "/compilelog/";
         HttpURLConnection connection = APIClient.httpResponse(apiUrl, head, apiData, "POST");
         int responseCode = connection.getResponseCode();
         this.logger.println("Response Code : " + responseCode);
@@ -453,7 +447,5 @@ public class PortadvAffinityAnalysis {
             this.downloadReport(responseID);
         }
     }
-    public static void main(String[] args) throws Exception {
 
-    }
 }

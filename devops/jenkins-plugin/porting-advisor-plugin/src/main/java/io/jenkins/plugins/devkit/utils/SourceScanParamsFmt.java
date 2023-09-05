@@ -1,6 +1,10 @@
 package io.jenkins.plugins.devkit.utils;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+import net.sf.json.JsonConfig;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.Serializable;
 
@@ -28,7 +32,6 @@ public class SourceScanParamsFmt implements Serializable {
         this.setInterpreted(interpreted);
         this.setSourceenhancecheck(sourceenhancecheck);
     }
-
 
     public void setConstructtool(String constructtool) {
         this.constructtool = constructtool;
@@ -118,21 +121,33 @@ public class SourceScanParamsFmt implements Serializable {
         this.cgocompiler = cgocompiler;
     }
 
+    private static JSON setNullCompilerOrCgocompiler() {
+        return JSONSerializer.toJSON("{\"type\":\"\",\"version\":\"\"}", new JsonConfig());
+    }
+
     public String createTask() {
         JSONObject params = new JSONObject();
         JSONObject targetOSInfo = this.toKernel(targetos);
         params.put("sourcedir", sourcedir);
-        params.put("compiler", this.getCompiler());
-        params.put("cgocompiler", this.getCgocompiler());
-        params.put("constructtool", constructtool);
         params.put("compilecommand", compilecommand);
         params.put("targetos", targetos);
         params.put("targetkernel", targetOSInfo.get("kernel"));
-        params.put("gfortran", gfortran);
-        params.put("customizedmacros", customizedmacros);
         params.put("interpreted", interpreted);
         params.put("sourceenhancecheck", sourceenhancecheck);
-        return "{\"info\": " + params.toString() + "}";
+        if (interpreted.equals(Boolean.TRUE) && StringUtils.isBlank(compilecommand)) {
+            params.put("compiler", setNullCompilerOrCgocompiler());
+            params.put("cgocompiler", setNullCompilerOrCgocompiler());
+            params.put("constructtool", "");
+            params.put("gfortran", "");
+            params.put("customizedmacros", "");
+        } else {
+            params.put("compiler", this.getCompiler());
+            params.put("cgocompiler", this.getCgocompiler());
+            params.put("constructtool", constructtool);
+            params.put("gfortran", gfortran);
+            params.put("customizedmacros", customizedmacros);
+        }
+        return "{\"info\": " + params + "}";
     }
 
     public JSONObject toKernel(String targetOS) {
@@ -170,7 +185,6 @@ public class SourceScanParamsFmt implements Serializable {
         jsonObject.put("bclinux7.6", "{\"kernel\": \"4.19.25\", \"compiler\": \"gcc\", \"version\": \"4.8.5\"}");
         jsonObject.put("bclinux7.7", "{\"kernel\": \"4.19.25\", \"compiler\": \"gcc\", \"version\": \"4.8.5\"}");
         jsonObject.put("isoft5.1", "{\"kernel\": \"4.19.90\", \"compiler\": \"gcc\", \"version\": \"7.3.0\"}");
-
 
         String kernelInfo = (String) jsonObject.get(targetOS);
         return JSONObject.fromObject(kernelInfo);
