@@ -25,7 +25,7 @@ option(FFT "This is a default FFT library nolocking." double)
 set(TARGET_FILE fft_demo)
 
 # Set KML path
-set(KML_PATH /usr/local/kml)
+set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)
 
 # Set compiler
 set(CMAKE_C_COMPILER mpicc)
