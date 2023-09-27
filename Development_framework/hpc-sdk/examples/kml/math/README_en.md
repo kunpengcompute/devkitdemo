@@ -33,6 +33,8 @@ There are multiple versions of KML_MATH:
 
 3. Compile the demo.
 
+   Replace **set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)** in the **CMakeLists.txt** file with **set(KML_PATH** *workspace*). *workspace* indicates the actual installation path of the math library.
+
    ```shell
    mkdir build
    cd build
