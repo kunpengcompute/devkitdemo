@@ -39,6 +39,8 @@ KML_BLAS有多个版本：
 
 3. 编译demo
 
+   需要将CMakeLists.txt里set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)替换成set(KML_PATH workspace)，workspace是数学库真实安装路径。
+
    ```shell
    mkdir build
    cd build

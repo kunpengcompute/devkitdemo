@@ -22,7 +22,7 @@ set(SRC src/blas_demo.c)
 set(TARGET_FILE blas_demo)
 
 # Set KML path
-set(KML_PATH /usr/local/kml)
+set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)
 
 # Add header file include directories
 include_directories(${KML_PATH}/include)
