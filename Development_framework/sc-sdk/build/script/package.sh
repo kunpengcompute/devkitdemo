@@ -46,6 +46,9 @@ function get_os_info() {
             OsName="centOS"
             OsArch="Redhat"
         fi
+    elif [[ ${osNameTrip} =~ "KylinLinuxAdvancedServerV10(Sword)" ]]; then
+        OsName="kylin"
+        OsArch="Redhat"
     fi
 
     if [[ ${OsName} == "" || ${OsArch} == "" ]]; then
@@ -78,6 +81,8 @@ function apply_patch() {
         patchDir="${PatchPath}/centos"
     elif [[ ${OsName} =~ "uos" ]]; then
         patchDir="${PatchPath}/uos"
+    elif [[ ${OsName} =~ "kylin" ]]; then
+        patchDir="${PatchPath}/kylin"
     fi
 
     # set git user name and email
@@ -215,6 +220,8 @@ function copy_files() {
             specDir="${ScriptPath}/openEuler/spec"
         elif [[ ${OsName} =~ "centOS" ]]; then
             specDir="${ScriptPath}/centos/spec"
+        elif [[ ${OsName} =~ "kylin" ]]; then
+            specDir="${ScriptPath}/kylin/spec"
         fi
         cp ${specDir}/* ${RpmBuild}/SPECS
     elif [[ ${OsArch} =~ "Debian" ]]; then
@@ -245,6 +252,10 @@ function close_auto_compile_python() {
         cd /usr/lib/rpm/redhat
         cp macros macros.bak
         sed -i '/brp-python-bytecompile/d' macros
+    elif [[ ${OsName} =~ "kylin" ]]; then
+        cd /usr/lib/rpm/kylin
+        cp macros macros.bak
+        sed -i '/%{?py_auto_byte_compile:%{?__brp_python_bytecompile}}/d' macros
     fi
 }
 
@@ -255,6 +266,9 @@ function recover_auto_compile_python() {
     elif [[ ${OsName} =~ "centOS" ]]; then
         rm /usr/lib/rpm/redhat/macros
         mv /usr/lib/rpm/redhat/macros.bak /usr/lib/rpm/redhat/macros
+    elif [[ ${OsName} =~ "kylin" ]]; then
+        rm /usr/lib/rpm/kylin/macros
+        mv /usr/lib/rpm/kylin/macros.bak /usr/lib/rpm/kylin/macros
     fi
 }
 
