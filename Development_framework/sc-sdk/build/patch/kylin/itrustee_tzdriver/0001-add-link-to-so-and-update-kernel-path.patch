@@ -1,0 +1,85 @@
+From b9c9535044d6b09ef69dbbf4120918f6b94c1cfb Mon Sep 17 00:00:00 2001
+From: wkstone128 <240602361@qq.com>
+Date: Thu, 26 Oct 2023 10:01:00 +0800
+Subject: [PATCH] add link to so and update kernel patch
+
+---
+ CMakeLists.txt | 14 ++++++++++++--
+ Makefile       |  5 +++--
+ README.en.md   |  1 +
+ README.md      |  1 +
+ 4 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 2b6abb7..969b3ed 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,13 +24,23 @@ endif()
+ 
+ # you should config right path according to your run-time environment
+ set(KPATH /usr/src/kernels)
+-execute_process(COMMAND ls ${KPATH} OUTPUT_VARIABLE KDIR)
++execute_process(COMMAND rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}' OUTPUT_VARIABLE KDIR)
+ # Remove the last char \n
+ string(STRIP ${KDIR} KDIR)
+ set(KERNEL_DIR ${KPATH}/${KDIR})
+ 
++# Add header file include directories
++include_directories(
++    ./
++    ./libboundscheck/include
++    ./auth
++    ./core
++    ./tlogger
++    ./kthread_affinity
++)
++
+ # Set extra options
+-set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
++set(CMAKE_EXTRA_FLAGS "-DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=100 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_TEE_LOG_ACHIVE_PATH=\\\\\\\"/var/log/tee/last_teemsg\\\\\\\"")
+ set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID -DCONFIG_NOCOPY_SHAREDMEM")
+diff --git a/Makefile b/Makefile
+index 9417880..cac8ca6 100644
+--- a/Makefile
++++ b/Makefile
+@@ -38,11 +38,12 @@ endif
+ 
+ # you should config right path according to your run-time environment
+ KPATH := /usr/src/kernels
+-KDIR  := $(KPATH)/$(shell ls $(KPATH))
++KERNEL_VERSION := $(shell rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}')
++KDIR  := $(KPATH)/$(KERNEL_VERSION)
+ 
+ EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-linux-gnu/10.3.1/include
+ EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-openEuler-linux-gnu/12/include
+-EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
++EXTRA_CFLAGS += -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
+ EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core -I$(PWD)/tzdriver_internal/tee_trace_event
+ EXTRA_CFLAGS += -I$(PWD)/tlogger -I$(PWD)/tzdriver_internal/kthread_affinity -I$(PWD)/tzdriver_internal/include
+ EXTRA_CFLAGS += -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=100 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE
+diff --git a/README.en.md b/README.en.md
+index 0fb93ed..cdab479 100644
+--- a/README.en.md
++++ b/README.en.md
+@@ -28,6 +28,7 @@ then you will see tzdriver.ko under the folder "tzdriver"
+ 2) # insmod tzdriver.ko
+ 3) # /usr/bin/teecd &
+ 4) run any CA
++5) If you want to detele tzdriver after installing it, you need to reboot the server.
+ 
+ 5.License
+ please see License/Tzdriver_License for more details
+diff --git a/README.md b/README.md
+index a277830..4cd12c0 100644
+--- a/README.md
++++ b/README.md
+@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
+    2）使用root用户，执行insmod tzdriver.ko
+    3）使用root用户，执行/usr/bin/teecd&
+    4）运行测试CA 和TA
++   5）如果要卸载tzdriver，需要重启服务器才可生效
+-- 
+2.42.0
+
