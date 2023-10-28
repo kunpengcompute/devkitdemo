@@ -17,7 +17,7 @@ Requires:       openssl-devel zlib-devel kernel-devel
 Conflicts:      TEE_SDK TEE-devel_SDK
 
 %description
-Kunpeng sc for Secure Computing Application Development. Support os: kylin v10 (sword).
+Kunpeng sc for Secure Computing Application Development. Support os: Kylin V10.
 
 %prep
 BuildDir=%{_builddir}/%{name}-%{version}

@@ -46,7 +46,7 @@ function get_os_info() {
             OsName="centOS"
             OsArch="Redhat"
         fi
-    elif [[ ${osNameTrip} =~ "KylinLinuxAdvancedServerV10(Sword)" ]]; then
+    elif [[ ${osNameTrip} =~ "KylinLinuxAdvancedServerV10" ]]; then
         OsName="kylin"
         OsArch="Redhat"
     fi
@@ -279,8 +279,13 @@ function output() {
 
     cd ${OutputPath}
     if [[ ${OsArch} =~ "Redhat" ]]; then
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-${PackageVersion}-1.aarch64.rpm ${OutputPath}
-        cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-${PackageVersion}-1.aarch64.rpm ${OutputPath}
+        if [[ ${OsName} =~ "kylin" ]]; then
+            cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-${PackageVersion}-1.ky10.aarch64.rpm ${OutputPath}
+            cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-${PackageVersion}-1.ky10.aarch64.rpm ${OutputPath}
+        else
+            cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-${PackageVersion}-1.aarch64.rpm ${OutputPath}
+            cp ${RpmBuild}/RPMS/aarch64/kunpeng-sc-devel-${PackageVersion}-1.aarch64.rpm ${OutputPath}
+        fi
     elif [[ ${OsArch} =~ "Debian" ]]; then
         cp ${DebBuild}/kunpeng-sc/script/kunpeng-sc_${PackageVersion}_arm64.deb ${OutputPath}
         cp ${DebBuild}/kunpeng-sc-devel/script/kunpeng-sc-devel_${PackageVersion}_arm64.deb ${OutputPath}
