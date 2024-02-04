@@ -22,7 +22,7 @@ set(SRC src/lapack_demo.c)
 set(TARGET_FILE lapack_demo)
 
 # Set KML path
-set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)
+set(KML_PATH /opt/kml/2.2.0/bisheng3.1.0)
 
 # Set compiler
 set(CMAKE_C_COMPILER mpicc)
@@ -49,5 +49,9 @@ add_compile_options(-fopenmp)
 
 # Generate execute file
 add_executable(${TARGET_FILE} ${SRC})
-target_link_libraries(${TARGET_FILE} ${KLAPACK} ${LAPACK_ADAPT} ${KBLAS} gfortran m ${KSERVICE})
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+    target_link_libraries(${TARGET_FILE} ${KLAPACK} ${LAPACK_ADAPT} ${KBLAS} m ${KSERVICE} flang pgmath)
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    target_link_libraries(${TARGET_FILE} ${KLAPACK} ${LAPACK_ADAPT} ${KBLAS} gfortran m ${KSERVICE})
+endif()
 

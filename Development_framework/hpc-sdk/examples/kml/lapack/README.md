@@ -28,12 +28,13 @@
 
 3. 编译demo
 
-   需要将CMakeLists.txt里set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)替换成set(KML_PATH workspace)，workspace是数学库真实安装路径。
+   需要将CMakeLists.txt里set(KML_PATH /opt/kml/2.2.0/bisheng3.1.0)替换成set(KML_PATH workspace)，workspace是数学库真实安装路径。
 
    ```shell
    mkdir build
    cd build
-   cmake ..
+   # 指定编译器，默认使用clang
+   cmake -DCMAKE_C_COMPILER=clang ..
    make
    ```
 

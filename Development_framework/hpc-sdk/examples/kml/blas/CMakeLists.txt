@@ -25,7 +25,7 @@ option(BLAS "This is a default BLAS library nolocking." nolocking)
 set(TARGET_FILE blas_demo)
 
 # Set KML path
-set(KML_PATH /opt/kml/2.1.0/bisheng3.0.0)
+set(KML_PATH /opt/kml/2.2.0/bisheng3.1.0)
 
 # Set compiler
 set(CMAKE_C_COMPILER mpicc)
