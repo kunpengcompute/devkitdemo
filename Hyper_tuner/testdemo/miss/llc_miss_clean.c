@@ -1,5 +1,5 @@
 /*
-gcc -g llc_miss.c -o llc_miss
+gcc -g llc_miss_clean.c -o llc_miss_clean
 */
 #include <stdio.h>
 #include <malloc.h>
