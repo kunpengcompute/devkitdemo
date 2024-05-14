@@ -4,13 +4,13 @@ English | [简体中文](README.md)
 
 ## Introduction
 
-1. [HyperScan](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/system-lib/cg-hyperscan/kunpengaccel_hyperscan_02_0001.html)
+1. [HyperScan](https://www.hikunpeng.com/document/detail/en/kunpengaccel/system-lib/cg-hyperscan/kunpengaccel_hyperscan_02_0001.html)
    is an Intel-developed high-performance regular expression matching library. It is developed using PCRE as the prototype and is open-sourced under the BSD license.
 
 ## Build Dependency
 1. Ensure **HyperScan** has been compiled;
-[Download](https://github.com/kunpengcompute/hyperscan)
-[Reference](https://support.huaweicloud.com/cg-hyperscan-kunpengaccel/kunpengaccel_hyperscan_02_0001.html)
+[Download](https://codeload.github.com/kunpengcompute/hyperscan/zip/aarch64)
+[Reference](https://www.hikunpeng.com/document/detail/en/kunpengaccel/system-lib/cg-hyperscan/kunpengaccel_hyperscan_02_0001.html)
 compile the source code dynamic library: -DBUILD_SHARED_LIBS=ON
 
 2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK

@@ -6,9 +6,9 @@
 
 1. [KAEzip](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/compress/devg-kaezip/kunpengaccel_kaezip_0001.html)是鲲鹏加速引擎的压缩模块，使用鲲鹏硬加速模块实现deflate算法，结合无损用户态驱动框架，提供高性能Gzip/zlib格式压缩接口。
 
-[KAEdriver下载地址](https://github.com/kunpengcompute/KAEdriver)
-[KAEzip下载地址](https://github.com/kunpengcompute/KAEdriver)
-[编译参考](https://github.com/kunpengcompute/KAEzip)
+[KAEdriver下载地址](https://gitee.com/kunpengcompute/KAE/tree/kae1/)
+[KAEzip下载地址](https://gitee.com/kunpengcompute/KAE/tree/kae1/)
+[编译参考](https://www.hikunpeng.com/document/detail/en/kunpengaccel/compress/devg-kaezip/kunpengaccel_kaezip_0005.html)
 
 2. Or install **kunpeng-gpc** and **kunpeng-gpc-devle** SDK
 
