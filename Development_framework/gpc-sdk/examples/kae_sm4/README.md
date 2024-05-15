@@ -7,7 +7,7 @@
 
 ## 使用依赖
 
-确保已安装 **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)**
+确保已安装 **[Kunpeng KAEdriver 1.3.12](https://www.hikunpeng.com/document/detail/zh/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)**
 
 ## 使用教程
 

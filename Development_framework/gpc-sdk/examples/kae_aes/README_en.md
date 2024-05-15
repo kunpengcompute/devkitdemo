@@ -8,7 +8,7 @@ The **AES demo** shows a code example of symmetric encryption using AES algorith
 
 ## Dependencies
 
-Ensure that **[Kunpeng KAEdriver 1.3.11](https://www.hikunpeng.com/document/detail/en/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)** has been installed.
+Ensure that **[Kunpeng KAEdriver 1.3.12](https://www.hikunpeng.com/document/detail/en/kunpengaccel/encryp-decryp/devg-kae/kunpengaccel_16_0011.html)** has been installed.
 
 ## Guidance
 
