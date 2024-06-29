@@ -1,36 +1,37 @@
 # python-ml-titanic demo
 
-简体中文 | [English](README_en.md)
+English | [简体中文](README.md)
 
-## 介绍
-python-ml-titanic是使用鲲鹏机密计算高级语言特性开发的python机器学习参考实现
+## Introduction
+python-ml-titanic is a reference implementation of Python machine learning developed using the high-level languages based on Kunpeng Confidential Computing.
 
-[鲲鹏机密计算特性介绍](https://www.hikunpeng.com/zh/developer/boostkit/confidential-computing)
+[Introduction to Kunpeng Confidential Computing](https://www.hikunpeng.com/en/developer/boostkit/confidential-computing)
 
-此demo是一个使用Python机器学习库对泰坦尼克号生存数据进行预测的安全计算高级语言应用，展示了安全计算高级语言应用开发和运行的流程。
+This demo is a secure computing high-level language application that uses the Python machine learning library to predict the survival data for the Titanic. It shows the application development and running process.
 
-## 使用依赖
+## Dependencies
 
-1. 确保环境上已安装机密计算SDK，需要同时安装相同版本的 `kunpeng-sc-2.0.0` 和 `kunpeng-sc-devel-2.0.0`，下载地址[机密计算SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/)
-2. 确保tzdriver正常加载，执行 `lsmod | grep tzdriver` 查看
-3. 确保守护进程正常启动，执行 `ps -ef | grep teecd` 查看
+1. Ensure that `kunpeng-sc-2.0.0` and `kunpeng-sc-devel-2.0.0` of the same version have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
+2. Run the `lsmod | grep tzdriver` command to check whether the tzdriver is properly loaded.
+3. Run the `ps -ef | grep teecd` command to check whether the daemon is started properly.
 
-## 使用教程
+## Usage Guidance
 
-1. 获取代码
+1. Obtain the code.
 
     ```shell
     git clone https://github.com/kunpengcompute/devkitdemo.git
     ```
 
-2. 进入到项目根路径
+2. Go to the project root directory.
 
     ```shell
     cd ./devkitdemo/Development_framework/sc-sdk/examples/python-ml-titanic/
     ```
 
-3. 打包
-    先将开发者证书(ta_cert.der)和私钥(private_key.pem)放到`/usr/local/kunpeng-sc-devel/utils/pack-App/pack_tools/`目录下
+3. Pack the demo.
+    Put the developer certificate (ta_cert.der) and private key (private_key.pem) to the `/usr/local/kunpeng-sc-devel/utils/pack-App/pack_tools/` directory.
+
     ```shell
     cp -rf titanic /usr/local/kunpeng-sc-devel/utils/pack-App/
     cd /usr/local/kunpeng-sc-devel/utils/pack-App/
@@ -39,52 +40,52 @@ python-ml-titanic是使用鲲鹏机密计算高级语言特性开发的python机
     cp /usr/local/kunpeng-sc-devel/utils/pack-App/titanic.sec ./
     ```
 
-4. 安装依赖库, 可以参考 **使用机密OS SDK编译Python依赖库** 章节编译依赖库。
+4. Install the dependencies. For details, see the section **Compiling Python Dependency Libraries Using the Confidential OS SDK**.
 
     ```shell
-    # 签名
+    # Signature
     cp -rf mllib /usr/local/kunpeng-sc-devel/utils/pack-App/
     cd /usr/local/kunpeng-sc-devel/utils/pack-App/
     python3 pack.py mllib
     cd -
     cp /usr/local/kunpeng-sc-devel/utils/pack-App/mllib.sec ./
-    # 安装
+    # Installation
     tee_teleport -m mllib.sec -t python
     ```
 
-5. 安装
+5. Install the demo.
 
     ```shell
     tee_teleport -c titanic.sec
     ```
 
-6. 输入应用运行所需要的文件
+6. Input the files required for running the demo.
 
     ```shell
     tee_teleport -n input -i sessionID.txt
     ```
 
-7. 运行
+7. Run the demo.
 
     ```shell
     tee_teleport -r titanic.py -i sessionID.txt
     ```
 
-8. 获取日志
+8. Obtain the log.
 
     ```shell
     tee_teleport -o output/tee.log -i sessionID.txt
     ```
 
-9. 卸载
+9. Uninstall the demo.
 
     ```shell
     tee_teleport -e -i sessionID.txt
     ```
 
-## 使用机密OS SDK编译Python依赖库
+## Compiling Python Dependency Libraries Using the Confidential OS SDK
 
-### 安装机密OS SDK
+### Installing the Confidential OS SDK
 
 ```shell
 mkdir -p /opt/ccos_build
@@ -94,7 +95,7 @@ unzip BoostKit-ccos_sdk_1.0.0.zip
 tar -xf ccos_sdk.tgz
 ```
 
-### 编译安装Linux Python
+### Compiling and Installing Linux Python
 ```shell
 wget -O Python-3.6.15.tgz https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz
 tar -zxf Python-3.6.15.tgz
@@ -105,11 +106,11 @@ make -j 4
 make install
 ```
 
-### 编译安装第三方库
+### Compiling and Installing Third-Party Libraries
 
-依赖的第三方库版本
+Third-party library versions
 
-|   name         | version |
+|   Name         | Version |
 | -------------- | ------- |
 | openblas       | 0.3.9   |
 | numpy          | 1.19.5  |
@@ -118,7 +119,7 @@ make install
 | xgboost        | 1.5.1   |
 | joblib         | 1.1.1   |
 
-1. 下载代码
+1. Download the code.
 
 ```shell
 cp -rf build_mllib /opt/ccos_build/
@@ -135,14 +136,14 @@ git submodule sync
 git submodule update --init --recursive --jobs 0
 ```
 
-2. 安装依赖软件
+2. Install dependencies.
 
 ```shell
 yum install gcc-gfortran
 yum install openblas openblas-devel
 ```
 
-3. 导入环境变量
+3. Import environment variables.
 
 ```shell
 export PYTHONPATH=/opt/ccos_build/python_linux
@@ -150,14 +151,14 @@ export PYTHONHOME=/opt/ccos_build/python_linux
 export PATH=/opt/ccos_build/python_linux/bin:$PATH
 ```
 
-4. 编译numpy依赖软件openblas
+4. Compile OpenBLAS on which NumPy depends.
 
 ```shell
 cd /opt/ccos_build/build_mllib
 bash -xe build_openblas.sh
 ```
 
-5. 编译numpy
+5. Compile numpy.
 
 ```shell
 cd /opt/ccos_build/build_mllib
@@ -166,7 +167,7 @@ cd numpy-1.19.5
 cp site.cfg.example site.cfg
 ```
 
-编辑site.cfg文件，放开以下注释并修改为openblas库的实际路径
+Modify the **site.cfg** file. Uncomment the following content and replace them to the actual directories of the OpenBLAS library:
 
 ```shell
 sed -i '132s?# \[openblas\]?\[openblas\]?' site.cfg
@@ -175,7 +176,7 @@ sed -i '134s?# library_dirs = /opt/OpenBLAS/lib?library_dirs = /opt/ccos_build/b
 sed -i '135s?# include_dirs = /opt/OpenBLAS/include?include_dirs = /opt/ccos_build/build_mllib/build/include?' site.cfg
 ```
 
-替换完成后如下：
+After the replacement:
 ```
 [openblas]
 libraries = openblas
@@ -183,7 +184,7 @@ library_dirs = /opt/ccos_build/build_mllib/build/lib
 include_dirs = /opt/ccos_build/build_mllib/build/include
 ```
 
-执行编译
+Perform the compilation.
 ```shell
 cd /opt/ccos_build/build_mllib
 python3 -m pip install Cython==0.29.36
@@ -191,7 +192,7 @@ python3 -m pip install numpy==1.19.5
 bash -xe build_numpy.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-6. 编译scipy
+6. Compile scipy.
 
 ```shell
 cd /opt/ccos_build/build_mllib
@@ -200,7 +201,7 @@ cd scipy-1.5.4
 cp site.cfg.example site.cfg
 ```
 
-编辑site.cfg文件，放开以下注释并修改为openblas库的实际路径
+Modify the **site.cfg** file. Uncomment the following content and replace them to the actual directories of the OpenBLAS library:
 
 ```shell
 sed -i '129s?# \[openblas\]?\[openblas\]?' site.cfg
@@ -209,7 +210,7 @@ sed -i '131s?# library_dirs = /opt/OpenBLAS/lib?library_dirs = /opt/ccos_build/b
 sed -i '132s?# include_dirs = /opt/OpenBLAS/include?include_dirs = /opt/ccos_build/build_mllib/build/include?' site.cfg
 ```
 
-替换完成后如下：
+After the replacement:
 ```
 [openblas]
 libraries = openblas
@@ -217,9 +218,9 @@ library_dirs = /opt/ccos_build/build_mllib/build/lib
 include_dirs = /opt/ccos_build/build_mllib/build/include
 ```
 
-执行编译
+Perform the compilation.
 
-**需要先将libgfortran.a复制到/opt/ccos_build/ccos_sdk/sysroots/ccos/usr/lib/aarch64-hongmeng-musl/7.3.0/目录下**
+**Before the compilation, copy libgfortran.a to /opt/ccos_build/ccos_sdk/sysroots/ccos/usr/lib/aarch64-hongmeng-musl/7.3.0/.**
 
 ```shell
 cd /opt/ccos_build/build_mllib
@@ -227,14 +228,14 @@ python3 -m pip install pybind11==2.10.4
 bash -xe build_scipy.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-7. 编译xgboost
+7. Compile xgboost.
 
 ```shell
 cd /opt/ccos_build/build_mllib
 bash -xe build_xgboost.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-8. 编译scikit-learn
+8. Compile scikit-learn.
 
 ```shell
 cd /opt/ccos_build/build_mllib
@@ -243,7 +244,7 @@ tar -zxf scikit-learn-0.24.2.tar.gz
 bash -xe build_sklearn.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-9. 编译pandas
+9. Compile pandas.
 
 ```shell
 cd /opt/ccos_build/build_mllib
@@ -254,7 +255,7 @@ python3 -m pip install joblib==1.1.1
 tar -zxf pandas-1.1.5.tar.gz
 ```
 
-为了避免pandas的so中的符号与机密OS中的符号冲突，需要将parser_init修改为pandas_parser_init
+To avoid the conflict between the identifiers in the SO file (dynamic library file) of pandas and those in the confidential OS, change `parser_init` to `pandas_parser_init`:
 
 ```
 pandas/_libs/src/parser/tokenizer.c:146:int parser_init(parser_t *self) {
@@ -274,14 +275,14 @@ pandas/_libs/parsers.pyx:385:        pandas_parser_init(self.parser)
 bash -xe build_pandas.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-10. 编译joblib
+10. Compile joblib.
 
 ```shell
 cd /opt/ccos_build/build_mllib
 bash -xe build_joblib.sh /opt/ccos_build/ccos_sdk /opt/ccos_build/python_linux
 ```
 
-11. 复制所有第三方库到一个目录
+11. Copy all third-party libraries to one directory.
 
 ```shell
 cd /opt/ccos_build/build_mllib
@@ -299,8 +300,8 @@ cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/dateutil/ ./mlli
 cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/pytz/ ./mllib/
 cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/six.py ./mllib/
 
-# 复制pkg_resources
+# Copy pkg_resources
 cp -rf /opt/ccos_build/python_linux/lib/python3.6/site-packages/pkg_resources ./mllib/
 ```
 
-使用签名工具将mllib目录进行打包签名后，就可以部署到机密OS中使用了。
+After the `mllib` directory is packaged and signed by using the signature tool, the directory can be deployed in the confidential OS.

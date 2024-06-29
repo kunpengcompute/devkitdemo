@@ -2,11 +2,18 @@
 
 English | [简体中文](README.md)
 
+## Introduction
+java-hello-world demo is a reference implementation of hello-world developed using the high-level languages based on Kunpeng Confidential Computing.
+
+[Introduction to Kunpeng Confidential Computing](https://www.hikunpeng.com/en/developer/boostkit/confidential-computing)
+
+This demo is a simple high-level language application for secure computing. It shows the application development and running process.
+
 ## Dependencies
 
 1. Ensure that `kunpeng-sc-2.0.0` and `kunpeng-sc-devel-2.0.0` of the same version have been installed in the environment. Download the [Confidential Computing SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/).
 2. Run the `lsmod | grep tzdriver` command to check whether the tzdriver is properly loaded.
-3. Run the  `ps -ef | grep teecd` command to check whether the daemon is started properly.
+3. Run the `ps -ef | grep teecd` command to check whether the daemon is started properly.
 
 ## Usage Guidance
 
@@ -30,8 +37,8 @@ English | [简体中文](README.md)
     cp src/HelloWorld.class hellojava/
     ```
 
-4. pack the demo.
-    Put the developer certificate (ta_cert.der) and private key (private_key.pem) in the `/usr/local/kunpeng-sc-devel/utils/pack-app/pack_tools/` directory.
+4. Pack the demo.
+    Put the developer certificate (ta_cert.der) and private key (private_key.pem) in the `/usr/local/kunpeng-sc-devel/utils/pack-App/pack_tools/` directory.
     ```shell
     cp -rf hellojava /usr/local/kunpeng-sc-devel/utils/pack-App/
     cd /usr/local/kunpeng-sc-devel/utils/pack-App/
