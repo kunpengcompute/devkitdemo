@@ -1,15 +1,3 @@
-From b9c9535044d6b09ef69dbbf4120918f6b94c1cfb Mon Sep 17 00:00:00 2001
-From: wkstone128 <240602361@qq.com>
-Date: Thu, 26 Oct 2023 10:01:00 +0800
-Subject: [PATCH] add link to so and update kernel patch
-
----
- CMakeLists.txt | 14 ++++++++++++--
- Makefile       |  5 +++--
- README.en.md   |  1 +
- README.md      |  1 +
- 4 files changed, 17 insertions(+), 4 deletions(-)
-
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 2b6abb7..969b3ed 100644
 --- a/CMakeLists.txt
@@ -41,10 +29,10 @@ index 2b6abb7..969b3ed 100644
  set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_TEE_LOG_ACHIVE_PATH=\\\\\\\"/var/log/tee/last_teemsg\\\\\\\"")
  set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DNOT_TRIGGER_AP_RESET -DLAST_TEE_MSG_ROOT_GID -DCONFIG_NOCOPY_SHAREDMEM")
 diff --git a/Makefile b/Makefile
-index 9417880..cac8ca6 100644
+index 8959347..4b20525 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -38,11 +38,12 @@ endif
+@@ -42,12 +42,13 @@ endif
  
  # you should config right path according to your run-time environment
  KPATH := /usr/src/kernels
@@ -54,6 +42,7 @@ index 9417880..cac8ca6 100644
  
  EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-linux-gnu/10.3.1/include
  EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-openEuler-linux-gnu/12/include
+ EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-openEuler-linux/12/include
 -EXTRA_CFLAGS += -fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
 +EXTRA_CFLAGS += -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH
  EXTRA_CFLAGS += -I$(PWD)/libboundscheck/include/ -I$(PWD) -I$(PWD)/auth -I$(PWD)/core -I$(PWD)/tzdriver_internal/tee_trace_event
@@ -80,6 +69,3 @@ index a277830..4cd12c0 100644
     3）使用root用户，执行/usr/bin/teecd&
     4）运行测试CA 和TA
 +   5）如果要卸载tzdriver，需要重启服务器才可生效
--- 
-2.42.0
-
