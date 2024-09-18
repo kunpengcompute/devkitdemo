@@ -1,62 +1,39 @@
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 2b6abb7..9f5c2f4 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
-@@ -24,11 +24,21 @@ endif()
- 
- # you should config right path according to your run-time environment
- set(KPATH /usr/src/kernels)
--execute_process(COMMAND ls ${KPATH} OUTPUT_VARIABLE KDIR)
-+execute_process(COMMAND rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}' OUTPUT_VARIABLE KDIR)
- # Remove the last char \n
- string(STRIP ${KDIR} KDIR)
- set(KERNEL_DIR ${KPATH}/${KDIR})
- 
-+# Add header file include directories
-+include_directories(
-+    ./
-+    ./libboundscheck/include
-+    ./auth
-+    ./core
-+    ./tlogger
-+    ./kthread_affinity
-+)
-+
- # Set extra options
- set(CMAKE_EXTRA_FLAGS "-fstack-protector-strong -DCONFIG_TEELOG -DCONFIG_TZDRIVER_MODULE -DCONFIG_TEECD_AUTH -DCONFIG_PAGES_MEM=y -DCONFIG_CLOUDSERVER_TEECD_AUTH")
- set(CMAKE_EXTRA_FLAGS "${CMAKE_EXTRA_FLAGS} -DCONFIG_CPU_AFF_NR=0 -DCONFIG_BIG_SESSION=100 -DCONFIG_NOTIFY_PAGE_ORDER=4 -DCONFIG_512K_LOG_PAGES_MEM -DCONFIG_TEE_TRACE")
 diff --git a/Makefile b/Makefile
-index 8959347..e17e4bd 100644
+index fec9a1c..1842407 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -42,7 +42,8 @@ endif
+@@ -1,14 +1,16 @@
+-TARGET_LIB := libteec.so
++TARGET_LIB := libteec.so.1
+ TARGET_APP := teecd
+ TARGET_DIR := dist
+ LIBC_SEC   := libboundscheck
+ TARGET_LOG := tlogcat
+-TARGET_LIBSEC := libboundscheck.so
++TARGET_LIBSEC := libboundscheck.so.1
+ TARGET_TEE_TELEPORT := tee_teleport
+ TARGET_AGENTD := agentd
+ WITH_CONFIDENTIAL_CONTAINER ?= true
+ CROSS_DOMAIN_PERF := y
  
- # you should config right path according to your run-time environment
- KPATH := /usr/src/kernels
--KDIR  := $(KPATH)/$(shell ls $(KPATH))
-+KERNEL_VERSION := $(shell rpm -qa|grep kernel-devel | head -n 1 | awk -F "kernel-devel-" '{print $$2}')
-+KDIR  := $(KPATH)/$(KERNEL_VERSION)
++TARGET_LIB_SO_NAME := libteec.so
++
+ COMMON_CFLAGS :=
+ ifeq ($(WITH_CONFIDENTIAL_CONTAINER), true)
+ 	COMMON_CFLAGS += -DCONFIG_PATH_NAMED_SOCKET=\"/var/itrustee/teecd/teecd.sock\"
+@@ -73,10 +75,13 @@ $(TARGET_LIBSEC):
  
- EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-linux-gnu/10.3.1/include
- EXTRA_CFLAGS += -isystem /usr/lib/gcc/aarch64-openEuler-linux-gnu/12/include
-diff --git a/README.en.md b/README.en.md
-index 0fb93ed..cdab479 100644
---- a/README.en.md
-+++ b/README.en.md
-@@ -28,6 +28,7 @@ then you will see tzdriver.ko under the folder "tzdriver"
- 2) # insmod tzdriver.ko
- 3) # /usr/bin/teecd &
- 4) run any CA
-+5) If you want to detele tzdriver after installing it, you need to reboot the server.
+ $(TARGET_LIB):$(TARGET_LIBSEC) $(LIB_SOURCES)
+ 	@echo "compile libteec.so"
+-	@$(CC) $(LIB_CFLAGS) -o $@ $(LIB_SOURCES) $(LIB_LDFLAGS)
++	@$(CC) $(LIB_CFLAGS) -Wl,-soname,$(TARGET_LIB_SO_NAME) -o $@ $(LIB_SOURCES) $(LIB_LDFLAGS)
++	@ln -s libteec.so.1 libteec.so
+ 	@mkdir -p $(TARGET_DIR)
++	@mv libteec.so.1 $(TARGET_DIR)
+ 	@mv libteec.so $(TARGET_DIR)
+-	@cp $(LIBC_SEC)/lib/libboundscheck.so $(TARGET_DIR)
++	@cp $(LIBC_SEC)/lib/libboundscheck.so.1 $(TARGET_DIR)
++	@cp -d $(LIBC_SEC)/lib/libboundscheck.so $(TARGET_DIR)
+ 	@echo "after compile libteec.so"
  
- 5.License
- please see License/Tzdriver_License for more details
-diff --git a/README.md b/README.md
-index a277830..4cd12c0 100644
---- a/README.md
-+++ b/README.md
-@@ -25,3 +25,4 @@ iTrustee OS 非安全侧driver，支持与iTrustee OS通信
-    2）使用root用户，执行insmod tzdriver.ko
-    3）使用root用户，执行/usr/bin/teecd&
-    4）运行测试CA 和TA
-+   5）如果要卸载tzdriver，需要重启服务器才可生效
+ APP_CFLAGS := $(COMMON_CFLAGS) -DSEC_STORAGE_DATA_KUNPENG_PATH -D_GNU_SOURCE
