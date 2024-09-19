@@ -37,3 +37,17 @@ index fec9a1c..1842407 100644
  	@echo "after compile libteec.so"
  
  APP_CFLAGS := $(COMMON_CFLAGS) -DSEC_STORAGE_DATA_KUNPENG_PATH -D_GNU_SOURCE
+diff --git a/src/libteec_vendor/tee_client_api.c b/src/libteec_vendor/tee_client_api.c
+index 7182d94..ba593e5 100644
+--- a/src/libteec_vendor/tee_client_api.c
++++ b/src/libteec_vendor/tee_client_api.c
+@@ -1125,7 +1125,8 @@ static TEEC_Result CheckRegisterShm(const TEEC_Operation *operation)
+         return TEEC_SUCCESS;
+     }
+ 
+-    for (uint32_t paramCnt = 0; paramCnt < TEEC_PARAM_NUM; paramCnt++) {
++    unit32_t paramCnt;
++    for (paramCnt = 0; paramCnt < TEEC_PARAM_NUM; paramCnt++) {
+         if (TEEC_PARAM_TYPE_GET(operation->paramTypes, paramCnt) == TEEC_MEMREF_REGISTER_INOUT) {
+             return TEEC_ERROR_BAD_PARAMETERS;
+         }
