@@ -1,17 +1,8 @@
-From 1709c851349b7ecfb74201c36816015a9d25a27a Mon Sep 17 00:00:00 2001
-From: huangyongtao1 <hyt3161@163.com>
-Date: Fri, 19 Aug 2022 15:28:32 +0800
-Subject: [PATCH] add link to so
-
----
- Makefile | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
 diff --git a/Makefile b/Makefile
-index 9b2e9da..c3829f1 100644
+index fec9a1c..1842407 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -1,9 +1,11 @@
+@@ -1,14 +1,16 @@
 -TARGET_LIB := libteec.so
 +TARGET_LIB := libteec.so.1
  TARGET_APP := teecd
@@ -20,17 +11,22 @@ index 9b2e9da..c3829f1 100644
  TARGET_LOG := tlogcat
 -TARGET_LIBSEC := libboundscheck.so
 +TARGET_LIBSEC := libboundscheck.so.1
-+
-+TARGET_LIB_SO_NAME := libteec.so
+ TARGET_TEE_TELEPORT := tee_teleport
+ TARGET_AGENTD := agentd
+ WITH_CONFIDENTIAL_CONTAINER ?= true
+ CROSS_DOMAIN_PERF := y
  
- LIB_CFLAGS := -DDYNAMIC_TA_PATH=\"/var/itrustee/ta/\"
- LIB_CFLAGS += -Iinclude -Iinclude/cloud -Iext_include -Ilibboundscheck/include -Iinclude -Isrc/inc  -Isrc/authentication/
-@@ -39,10 +41,13 @@ $(TARGET_LIBSEC):
++TARGET_LIB_SO_NAME := libteec.so
++
+ COMMON_CFLAGS :=
+ ifeq ($(WITH_CONFIDENTIAL_CONTAINER), true)
+ 	COMMON_CFLAGS += -DCONFIG_PATH_NAMED_SOCKET=\"/var/itrustee/teecd/teecd.sock\"
+@@ -73,10 +75,13 @@ $(TARGET_LIBSEC):
  
  $(TARGET_LIB):$(TARGET_LIBSEC) $(LIB_SOURCES)
  	@echo "compile libteec.so"
--	@$(CC) $(LIB_CFLAGS) $(LIB_CFLAGS) -o $@ $(LIB_SOURCES)
-+	@$(CC) $(LIB_CFLAGS) $(LIB_CFLAGS) -Wl,-soname,$(TARGET_LIB_SO_NAME) -o $@ $(LIB_SOURCES)
+-	@$(CC) $(LIB_CFLAGS) -o $@ $(LIB_SOURCES) $(LIB_LDFLAGS)
++	@$(CC) $(LIB_CFLAGS) -Wl,-soname,$(TARGET_LIB_SO_NAME) -o $@ $(LIB_SOURCES) $(LIB_LDFLAGS)
 +	@ln -s libteec.so.1 libteec.so
  	@mkdir -p $(TARGET_DIR)
 +	@mv libteec.so.1 $(TARGET_DIR)
@@ -40,7 +36,4 @@ index 9b2e9da..c3829f1 100644
 +	@cp -d $(LIBC_SEC)/lib/libboundscheck.so $(TARGET_DIR)
  	@echo "after compile libteec.so"
  
- 
--- 
-2.35.1.windows.2
-
+ APP_CFLAGS := $(COMMON_CFLAGS) -DSEC_STORAGE_DATA_KUNPENG_PATH -D_GNU_SOURCE
