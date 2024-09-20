@@ -46,7 +46,7 @@ index 7182d94..ba593e5 100644
      }
  
 -    for (uint32_t paramCnt = 0; paramCnt < TEEC_PARAM_NUM; paramCnt++) {
-+    unit32_t paramCnt;
++    uint32_t paramCnt;
 +    for (paramCnt = 0; paramCnt < TEEC_PARAM_NUM; paramCnt++) {
          if (TEEC_PARAM_TYPE_GET(operation->paramTypes, paramCnt) == TEEC_MEMREF_REGISTER_INOUT) {
              return TEEC_ERROR_BAD_PARAMETERS;
