@@ -14,6 +14,7 @@
 # limitations under the License.
 
 # global value define
+Version="1.4.0"
 AppName="kunpeng-sc-devel"
 RootPath=$(pwd)/..
 SrcPath="${RootPath}/source"
@@ -116,7 +117,8 @@ function install_software(){
 
 function create_pkg(){
     cd ${ScriptPath}
-    dpkg-deb -b ../buildroot kunpeng-sc-devel_1.3.0_arm64.deb
+    local package_name="kunpeng-sc-devel_${Version}_arm64.deb"
+    dpkg-deb -b ../buildroot ${package_name}
 }
 
 function clean(){
