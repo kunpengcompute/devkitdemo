@@ -348,10 +348,10 @@ function make_package() {
         close_auto_compile_python
 
         cd ${RpmBuild}/SPECS
-        dos2unix kunpeng-sc-210.spec
-        rpmbuild -ba kunpeng-sc-210.spec
-        dos2unix kunpeng-sc-devel-210.spec
-        rpmbuild -ba kunpeng-sc-devel-210.spec
+        dos2unix kunpeng-sc-210.spec --define "PackageVersion ${PackageVersion}"
+        rpmbuild -ba kunpeng-sc-210.spec --define "PackageVersion ${PackageVersion}"
+        dos2unix kunpeng-sc-devel-210.spec --define "PackageVersion ${PackageVersion}"
+        rpmbuild -ba kunpeng-sc-devel-210.spec --define "PackageVersion ${PackageVersion}"
 
         recover_auto_compile_python
 
