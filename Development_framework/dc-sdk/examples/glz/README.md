@@ -4,33 +4,20 @@
 
 ## 使用依赖
 
-用户需要满足以下最低约束:
-
-- CPU: Kunpeng 920处理器
-- 服务器: TaiShan 200服务器 (型号2280)
-- 操作系统: OpenEuler 20.03 LTS SP1, OpenEuler 22.03 LTS SP1, Kylin V10 SP1
-- cmake3.20.5, gcc7.3.0, g++7.3.0
-- BoostKit_glz软件包
-
-如没有安装BoostKit_glz软件包, 请依照以下步骤安装:
-
-步骤1. 从鲲鹏社区获取[BoostKit_glz指导文档](https://www.hikunpeng.com/zh/developer/boostkit/sds)。 (注: 进入该链接后请点击"基础加速软件包-压缩算法-查看文档")  
-
-步骤2. 根据[压缩算法 特性指南-编译压缩算法]指导，完成[下载压缩算法安装包、获取编译依赖、编译动态库]三部分操作即可  
-
+确保环境上已经安装数据压缩SDK,需要同时安装kunpeng-dc-1.0.0和kunpeng-dc-devel-1.0.0，下载地址[数据压缩SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/)。
 
 ## 使用教程
-步骤1. 获取代码。 (假设当前在/home目录下)
+步骤1. 获取代码
 ```sh
 $ git clone https://github.com/kunpengcompute/devkitdemo.git
 ```
 
-步骤2. 切入到Demo根路径。
+步骤2. 切入到Demo根路径
 ```sh
-$ cd /home/devkitdemo/gpc-sdk/examples/glz
+$ cd ./devkitdemo/Development_framework/dc-sdk/examples/glz
 ```
 
-步骤3. 编译Demo。
+步骤3. 编译Demo
 ```sh
 $ rm -rf build
 $ mkdir -p build
@@ -40,7 +27,7 @@ $ cmake ..
 $ make
 ```
 
-步骤4. 运行Demo。
+步骤4. 运行Demo
 ```sh
 $ ./glz_demo
 ```
@@ -54,12 +41,6 @@ TEST glz level 1 compress success!
 origin size=10192446,after decompress=3587468,compress ratio=2.84
 TEST glz level 1 decompress success!
 origin size=3587468,after decompress=10192446
-```
-
-
-步骤5. 清理Demo。
-```sh
-$ rm -rf build
 ```
 
 ## 接口说明

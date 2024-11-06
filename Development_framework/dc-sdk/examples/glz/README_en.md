@@ -3,30 +3,18 @@
 English | [简体中文](README.md)
 
 ## Dependency
-The following minimum requirements should be guaranteed.
 
-- CPU: Huawei Kunpeng 920 Processor
-- Server: TaiShan 200 Server (model 2280)
-- Operating System: OpenEuler 20.03 LTS SP1, OpenEuler 22.03 LTS SP1, Kylin V10 SP1
-- cmake3.20.5, gcc7.3.0, g++7.3.0
-- BoostKit_glz Software
-
-BoostKit_glz Software should be installed, if not, please follow the steps below: 
-
-Step 1. Download[ BoostKit_glz Guidance Document ](https://www.hikunpeng.com/en/developer/boostkit/sds)from Kunpeng Community. (Note: Please find "Basic Acceleration Software Packages-Compression Algorithm-Download Software")  
-
-Step 2. According to [Compression Algorithm Feature Guide-Compiling the Compression Algorithm]，finish [Downloading the Compression Algorithm Installation Package、Obtaining Compilation Dependencies、Compiling the Dynamic Library]  
-
+Make sure that the data compression SDK is installed on the environment, and both kunpeng-dc-1.0.0 and kunpeng-dc-devel-1.0.0 need to be installed simultaneously. Download the [Data compression SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/).
 
 ## Usage Guidance
-Step 1. Download Codes (Assuming at /home directory).
+Step 1. Download Codes.
 ```sh
 $ git clone https://github.com/kunpengcompute/devkitdemo.git
 ```
 
 Step 2. Change to Demo Directory.
 ```sh
-$ cd /home/devkitdemo/gpc-sdk/examples/glz
+$ cd ./devkitdemo/Development_framework/dc-sdk/examples/glz
 ```
 
 Step 3. Compile Demo.
@@ -53,12 +41,6 @@ TEST glz level 1 compress success!
 origin size=10192446,after decompress=3587468,compress ratio=2.84
 TEST glz level 1 decompress success!
 origin size=3587468,after decompress=10192446
-```
-
-
-Step 5. Clean Demo.
-```sh
-$ rm -rf build
 ```
 
 ## Interface
