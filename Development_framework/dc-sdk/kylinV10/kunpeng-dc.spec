@@ -6,7 +6,7 @@ License:	Commercial
 Source: 	kunpeng-dc.tar.gz
 
 %description
-kunpeng-dc users the Kunpeng proprietary compression algorithm to enhance data compression performance. Support os: Kylin V10.
+kunpeng-dc users the Kunpeng proprietary compression algorithm to enhance data compression performance. Support os: Kylin Linux Advanced Server V10 Tercel.
 
 %prep
 %setup -q
