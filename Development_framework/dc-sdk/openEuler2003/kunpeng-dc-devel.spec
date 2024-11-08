@@ -3,8 +3,6 @@ Version:        1.0.0
 Release:        1
 Summary:        kunpeng dc devel
 License:        Commercial
-Requires:	kunpeng-dc = 1.0.0
-
 Source:         kunpeng-dc-devel.tar.gz
 
 %description
@@ -27,4 +25,4 @@ cp -a %{_builddir}/%{name}-%{version}/ksal_erasure_code.h %{buildroot}/usr/inclu
 /usr/include/ksal/das.h
 /usr/include/ksal/ksal_crc.h
 /usr/include/ksal/ksal_erasure_code.h
-
+/usr/include/ksal
