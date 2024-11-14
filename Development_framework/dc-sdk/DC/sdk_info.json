@@ -1,0 +1,178 @@
+{
+    "tee": {
+        "version": "1.3.0",
+        "CentOS Linux 7 (AltArch)": {
+            "master": {
+                "soft_name": "kunpeng-sc-1.3.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/CentOS7.6/kunpeng-sc-1.3.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-sc-devel-1.3.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/CentOS7.6/kunpeng-sc-devel-1.3.0-1.aarch64.tar.gz"
+            }
+        },
+        "openEuler 20.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-sc-1.3.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/openEuler20.03/kunpeng-sc-1.3.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-sc-devel-1.3.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/openEuler20.03/kunpeng-sc-devel-1.3.0-1.aarch64.tar.gz"
+            }
+        },
+        "uos 20 SP1": {
+            "master": {
+                "soft_name": "kunpeng-sc_1.3.0_arm64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/UOS_20_SP1/kunpeng-sc_1.3.0_arm64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-sc-devel_1.3.0_arm64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/UOS_20_SP1/kunpeng-sc-devel_1.3.0_arm64.tar.gz"
+            }
+        },
+        "Kylin Linux Advanced Server V10": {
+            "sdk_version": "2.0.1",
+            "master": {
+                "soft_name": "kunpeng-sc-2.0.1-1.ky10.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/Kylin_V10/kunpeng-sc-2.0.1-1.ky10.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-sc-devel-2.0.1-1.ky10.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/Kylin_V10/kunpeng-sc-devel-2.0.1-1.ky10.aarch64.tar.gz"
+            }
+        }
+    },
+    "tee2": {
+        "version": "2.0.1",
+        "openEuler 20.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-sc-2.0.1-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/openEuler20.03/kunpeng-sc-2.0.1-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-sc-devel-2.0.1-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/openEuler20.03/kunpeng-sc-devel-2.0.1-1.aarch64.tar.gz"
+            }
+        },
+        "Kylin Linux Advanced Server V10": {
+            "master": {
+                "soft_name": "kunpeng-sc-2.0.1-1.ky10.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/Kylin_V10/kunpeng-sc-2.0.1-1.ky10.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-sc-devel-2.0.1-1.ky10.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/itrustee/Kylin_V10/kunpeng-sc-devel-2.0.1-1.ky10.aarch64.tar.gz"
+            }
+        }
+    },
+    "gpc": {
+        "version": "1.1.0",
+        "CentOS Linux 7 (AltArch)": {
+            "master": {
+                "soft_name": "kunpeng-gpc-1.1.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/CentOS7.6/kunpeng-gpc-1.1.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-gpc-devel-1.1.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/CentOS7.6/kunpeng-gpc-devel-1.1.0-1.aarch64.tar.gz"
+            }
+        },
+        "openEuler 20.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-gpc-1.1.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/openEuler20.03SP1/kunpeng-gpc-1.1.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-gpc-devel-1.1.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/openEuler20.03SP1/kunpeng-gpc-devel-1.1.0-1.aarch64.tar.gz"
+            }
+        },
+        "openEuler 20.03 (LTS)": {
+            "master": {
+                "soft_name": "kunpeng-gpc-1.1.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/openEuler20.03/kunpeng-gpc-1.1.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-gpc-devel-1.1.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/openEuler20.03/kunpeng-gpc-devel-1.1.0-1.aarch64.tar.gz"
+            }
+        },
+        "Ubuntu 18.04.1 LTS": {
+            "master": {
+                "soft_name": "kunpeng-gpc_1.1.0_arm64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/Ubuntu18.04.1/kunpeng-gpc_1.1.0_arm64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-gpc-devel_1.1.0_arm64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/GPC/Ubuntu18.04.1/kunpeng-gpc-devel_1.1.0_arm64.tar.gz"
+            }
+        }
+    },
+    "dio": {
+        "version": "1.0.0",
+        "openEuler 20.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-dio-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DIO/openEuler20.03SP1/kunpeng-dio-1.0.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-dio-devel-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DIO/openEuler20.03SP1/kunpeng-dio-devel-1.0.0-1.aarch64.tar.gz"
+            }
+        },
+        "openEuler 22.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-dio-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DIO/openEuler22.03SP1/kunpeng-dio-1.0.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-dio-devel-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DIO/openEuler22.03SP1/kunpeng-dio-devel-1.0.0-1.aarch64.tar.gz"
+            }
+        },
+        "Kylin Linux Advanced Server V10 (Tercel)": {
+            "master": {
+                "soft_name": "kunpeng-dio-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DIO/Kylin_V10_SP1/kunpeng-dio-1.0.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-dio-devel-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DIO/Kylin_V10_SP1/kunpeng-dio-devel-1.0.0-1.aarch64.tar.gz"
+            }
+        }
+    },
+    "dc": {
+	"version": "1.0.0",
+        "openEuler 20.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-dc-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/openEuler20.03SP1/kunpeng-dc-1.0.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-dc-devel-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/openEuler20.03SP1/kunpeng-dc-devel-1.0.0-1.aarch64.tar.gz"
+            }
+        },
+        "openEuler 22.03 (LTS-SP1)": {
+            "master": {
+                "soft_name": "kunpeng-dc-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/openEuler22.03SP1/kunpeng-dc-1.0.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-dc-devel-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/openEuler22.03SP1/kunpeng-dc-devel-1.0.0-1.aarch64.tar.gz"
+            }
+        },
+        "Kylin Linux Advanced Server V10 (Tercel)": {
+            "master": {
+                "soft_name": "kunpeng-dc-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/Kylin_V10_SP1/kunpeng-dc-1.0.0-1.aarch64.tar.gz"
+            },
+            "devel": {
+                "soft_name": "kunpeng-dc-devel-1.0.0-1.aarch64.tar.gz",
+                "soft_url": "https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/Kylin_V10_SP1/kunpeng-dc-devel-1.0.0-1.aarch64.tar.gz"
+            }
+        }
+    }
+}
