@@ -4,64 +4,18 @@
 
 ## 使用依赖
 
-用户需要满足以下最低约束:
+确保环境上已经安装数据压缩SDK,需要同时安装kunpeng-dc-1.0.0和kunpeng-dc-devel-1.0.0，下载地址[数据压缩SDK](https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/DC/)。
 
-- CPU: Kunpeng 920处理器
-- 服务器: TaiShan 200服务器 (型号2280)
-- 操作系统: OpenEuler 20.03 LTS SP1, OpenEuler 22.03 LTS SP1, Kylin V10 SP1
-- cmake3.20.5, gcc7.3.0, g++7.3.0
-- BoostKit_KSAL软件包
-
-如没有安装BoostKit_KSAL软件包, 请依照以下步骤安装:
-
-步骤1. 从鲲鹏社区获取[BoostKit_KSAL软件包](https://www.hikunpeng.com/zh/developer/boostkit/sds)。 (注: 进入该链接后请点击"应用加速软件包-存储加速算法库-软件包下载")  
-
-步骤2. 获取BoostKit-KSAL_x.x.x.zip, 放置于/home目录下。  
-
-步骤3. 在/home目录下解压BoostKit-KSAL_x.x.x.zip。  
-
-步骤4. 安装解压的RPM包。
-```sh
-$ rpm -ivh /home/libksal-release-*.oe1.aarch64.rpm
-```
-
-步骤5. 确认RPM安装情况。
-```sh
-$ rpm -qi libksal
-```
-显示如下类似信息证明安装成功:
-```
-Name        : libksal
-Version     : 1.3.0
-Release     : 1
-Architecture: aarch64
-Install Date: Fri 26 Apr 2024 09:59:15 AM CST
-Group       : Unspecified
-Size        : 1758092
-License     : GPL
-Signature   : (none)
-Source RPM  : libksal-1.3.0-1.src.rpm
-Build Date  : Tue 23 Apr 2024 02:50:00 PM CST
-Build Host  : buildhost
-Summary     : Kunpeng Storage Acceleration Library
-Description :
-Kunpeng Storage Acceleration Library
-Product Name:           Kunpeng BoostKit
-Product Version:        24.0.0
-Component Name:         BoostKit-KSAL
-Component Version:      1.3.0
-Component AppendInfo:   kunpeng
-```
 
 ## 使用教程
-步骤1. 获取代码。 (假设当前在/home目录下)
+步骤1. 获取代码。
 ```sh
 $ git clone https://github.com/kunpengcompute/devkitdemo.git
 ```
 
 步骤2. 切入到Demo根路径。
 ```sh
-$ cd /home/devkitdemo/gpc-sdk/examples/erausre_code
+$ cd ./devkitdemo/Development_framework/dc-sdk/examples/erausre_code
 ```
 
 步骤3. 编译Demo。
@@ -77,14 +31,9 @@ $ cd ..
 
 步骤4. 运行Demo。
 ```sh
-$ build/erasure_code_demo
+$ ./erasure_code_demo
 ```
 预期结果：decode succ!!
-
-步骤5. 清理Demo。
-```sh
-$ rm -rf build
-```
 
 ## 接口说明
 ```
