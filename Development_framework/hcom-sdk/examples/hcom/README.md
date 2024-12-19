@@ -16,7 +16,7 @@
 
 如没有安装hcom软件包, 请依照以下步骤安装:
 
-步骤1. 获取hcom软件包，放置于/your_path/to/hcom
+步骤1. 获取hcom软件包 https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HCOM/ ，放置于/your_path/to/hcom
 
 步骤2. 安装hcom的RPM包。
 
