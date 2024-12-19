@@ -16,7 +16,7 @@ The following minimum requirements should be guaranteed.
 
 If the hcom package is not installed, please follow these steps。
 
-Step 1: Obtain the hcom package and place it in /your_path/to/hcom.
+Step 1: Obtain the hcom package in https://mirrors.huaweicloud.com/kunpeng/archive/Kunpeng_SDK/HCOM/, and place it in /your_path/to/hcom.
 
 Step 2: Install the RPM package for hcom.
 
