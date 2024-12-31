@@ -23,8 +23,8 @@ gcc -g cache_hit.c -o cache_hit
 #include <stdlib.h>
 #include <sys/time.h>
 
-#define ROW (10 * 1024)
-#define COL (10 * 1024)
+#define ROW (20 * 1024)
+#define COL (20 * 1024)
 #define N   (ROW * COL)
 
 
