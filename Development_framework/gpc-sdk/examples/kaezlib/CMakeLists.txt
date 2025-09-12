@@ -14,22 +14,22 @@
 
 
 cmake_minimum_required(VERSION 3.4.1)
-project(kaezip-demo)
+project(kaezlib-demo)
 
 # Add source files
-set(SRC src/kaezip_demo.c)
+set(SRC src/kaezlib_demo.c)
 
 # Set target file
-set(TARGET_FILE kaezip_demo)
+set(TARGET_FILE kaezlib_demo)
 
-# Set KAEZIP path
-set(KAEZIP_PATH /usr/local)
+# Set KAEZLIB path
+set(KAEZLIB_PATH /usr/local)
 
 # Add header file include directories
-include_directories(${KAEZIP_PATH}/include)
+include_directories(${KAEZLIB_PATH}/include)
 
 # Set lib path
-link_directories(${KAEZIP_PATH}/lib)
+link_directories(${KAEZLIB_PATH}/lib)
 
 # Default build type is debug
 set(CMAKE_BUILD_TYPE "Debug")
