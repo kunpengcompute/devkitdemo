@@ -1,0 +1,6 @@
+pthread_create
+fork
+socket
+bind
+_Z4funcv
+_Z7computei
