@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -35,8 +36,17 @@ void process_buffer(std::vector<char>& buffer) {
 
 int main(int argc, const char *argv[]) {
     string filename = argv[1];
+    clock_t start = clock();
     auto buffer = read_file_to_buffer(filename);
+    clock_t end = clock();
+    double time_spent = (double)(end - start) / CLOCKS_PER_SEC;
+    std::cout << "读取数据时间: " << time_spent << " 秒" << std::endl;
+    clock_t start1 = clock();
     process_buffer(buffer);
+    clock_t end1 = clock();
+    double time_spent1 = (double)(end1 - start1) / CLOCKS_PER_SEC;
+    std::cout << "处理数据时间: " << time_spent1 << " 秒" << std::endl;
 
     return 0;
 }
+
