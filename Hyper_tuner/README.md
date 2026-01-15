@@ -16,4 +16,5 @@ testdemo文件夹包含cache, falsesharing, lock, multiply, test_swap.c文件。
   该文件是触发SWAP优化建议的示例。
 \
 \
-具体使用流程说明书详见华为云鲲鹏开发套件-鲲鹏性能分析工具 https://support.huaweicloud.com/kunpengdevps/kunpengdevps.html
+具体使用流程说明书详见华为云鲲鹏开发套件-鲲鹏性能分析工具 https://www.hikunpeng.com/zh/developer/devkit
+
